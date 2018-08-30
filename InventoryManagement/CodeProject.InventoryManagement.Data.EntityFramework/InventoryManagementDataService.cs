@@ -80,7 +80,6 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 			Product product = await dbConnection.Products.FromSql(sqlStatement, productIdParameter).FirstOrDefaultAsync();
 			return product;
 		}
-
 		/// <summary>
 		/// Update Product
 		/// </summary>
