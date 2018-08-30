@@ -1,0 +1,58 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v2.1",
+    "signature": "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v2.1": {
+      "CodeProject.InventoryManagement.Interfaces/1.0.0": {
+        "dependencies": {
+          "CodeProject.InventoryManagement.Data.Models": "1.0.0",
+          "CodeProject.Shared.Common.Interfaces": "1.0.0",
+          "CodeProject.Shared.Common.Models": "1.0.0"
+        },
+        "runtime": {
+          "CodeProject.InventoryManagement.Interfaces.dll": {}
+        }
+      },
+      "CodeProject.InventoryManagement.Data.Models/1.0.0": {
+        "runtime": {
+          "CodeProject.InventoryManagement.Data.Models.dll": {}
+        }
+      },
+      "CodeProject.Shared.Common.Interfaces/1.0.0": {
+        "runtime": {
+          "CodeProject.Shared.Common.Interfaces.dll": {}
+        }
+      },
+      "CodeProject.Shared.Common.Models/1.0.0": {
+        "runtime": {
+          "CodeProject.Shared.Common.Models.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "CodeProject.InventoryManagement.Interfaces/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "CodeProject.InventoryManagement.Data.Models/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "CodeProject.Shared.Common.Interfaces/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "CodeProject.Shared.Common.Models/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

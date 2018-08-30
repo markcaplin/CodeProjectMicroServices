@@ -1,0 +1,49 @@
+
+<mat-toolbar color="warn">
+  
+    <div style="margin-right:20px;">
+      <a mat-list-item>
+        <mat-icon class="icon">dashboard</mat-icon>
+        <span class="label">Inventory Management</span>
+      </a>
+    </div>
+</mat-toolbar>
+
+<mat-toolbar color="accent">
+
+  <div style="margin-right:20px;">
+    <a mat-list-item [routerLink]="['/inventorymanagement/product-maintenance']">
+      <mat-icon class="icon">dashboard</mat-icon>
+      <span class="label">Product Maintenance</span>
+    </a>
+  </div>
+
+  <div style="margin-right:20px;">
+    <a mat-list-item  [routerLink]="['/inventorymanagement/product-inquiry']">
+      <mat-icon class="icon">dashboard</mat-icon>
+      <span class="label">Product Inquiry</span>
+    </a>
+  </div>
+
+  <div style="margin-right:20px;">
+    <a mat-list-item  [routerLink]="['/inventorymanagement/inventory-adjustments']">
+      <mat-icon class="icon">dashboard</mat-icon>
+      <span class="label">Inventory Adjustments</span>
+    </a>
+  </div>
+
+  <div style="margin-right:20px;">
+    <a mat-list-item  [routerLink]="['/inventorymanagement/order-shipments']">
+      <mat-icon class="icon">dashboard</mat-icon>
+      <span class="label">Order Shipments</span>
+    </a>
+  </div>
+
+  <div style="margin-right:20px;">
+    <a mat-list-item  [routerLink]="['/inventorymanagement/purchase-order-receiving']">
+      <mat-icon class="icon">dashboard</mat-icon>
+      <span class="label">Purchase Order Receiving</span>
+    </a>
+  </div>
+
+</mat-toolbar>

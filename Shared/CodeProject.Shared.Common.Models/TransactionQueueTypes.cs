@@ -1,0 +1,11 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace CodeProject.Shared.Common.Models
+{
+    public static class TransactionQueueTypes
+    {
+		public static string ProductUpdated = "ProductUpdated";
+	}
+}
