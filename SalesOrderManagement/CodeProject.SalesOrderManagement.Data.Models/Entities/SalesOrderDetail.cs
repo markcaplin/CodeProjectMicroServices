@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CodeProject.SalesOrderManagement.Data.Models.Entities
+namespace CodeProject.SalesOrderManagement.Data.Entities
 {
    public  class SalesOrderDetail
     {

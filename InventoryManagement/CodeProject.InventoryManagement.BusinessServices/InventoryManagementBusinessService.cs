@@ -71,6 +71,7 @@ namespace CodeProject.InventoryManagement.BusinessServices
 				await _inventoryManagementDataService.UpdateDatabase();
 
 				TransactionQueue transactionQueue = new TransactionQueue();
+				transactionQueue.MessageQueueDirection = MessageQueueDirection.Outbound;
 				transactionQueue.Payload = GenerateProductUpdatePayload(product);
 				transactionQueue.TransactionCode = TransactionQueueTypes.ProductUpdated;
 				transactionQueue.ExchangeName = MessageQueueExchanges.ProductUpdated;
@@ -144,6 +145,7 @@ namespace CodeProject.InventoryManagement.BusinessServices
 				await _inventoryManagementDataService.UpdateProduct(product);
 
 				TransactionQueue transactionQueue = new TransactionQueue();
+				transactionQueue.MessageQueueDirection = MessageQueueDirection.Outbound;
 				transactionQueue.Payload = GenerateProductUpdatePayload(product);
 				transactionQueue.TransactionCode = TransactionQueueTypes.ProductUpdated;
 				transactionQueue.ExchangeName = MessageQueueExchanges.ProductUpdated;

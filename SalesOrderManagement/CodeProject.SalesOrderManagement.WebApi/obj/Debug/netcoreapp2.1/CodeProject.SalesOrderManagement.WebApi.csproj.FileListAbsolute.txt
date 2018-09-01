@@ -1,0 +1,14 @@
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.WebApi\bin\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.WebApi.deps.json
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.WebApi\bin\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.WebApi.runtimeconfig.json
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.WebApi\bin\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.WebApi.runtimeconfig.dev.json
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.WebApi\bin\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.WebApi.dll
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.WebApi\bin\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.WebApi.pdb
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.WebApi\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.WebApi.csproj.CoreCompileInputs.cache
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.WebApi\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.WebApi.RazorAssemblyInfo.cache
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.WebApi\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.WebApi.RazorAssemblyInfo.cs
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.WebApi\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.WebApi.AssemblyInfoInputs.cache
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.WebApi\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.WebApi.AssemblyInfo.cs
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.WebApi\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.WebApi.RazorTargetAssemblyInfo.cache
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.WebApi\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.WebApi.dll
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.WebApi\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.WebApi.pdb
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.WebApi\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.WebApi.csprojAssemblyReference.cache

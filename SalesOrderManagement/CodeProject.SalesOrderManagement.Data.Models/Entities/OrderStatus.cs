@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CodeProject.SalesOrderManagement.Data.Models.Entities
+namespace CodeProject.SalesOrderManagement.Data.Entities
 {
-    public class OrderStatus
+    public class SalesOrderStatus
     {
-		public int OrderStatusId { get; set; }
+		public int SalesOrderStatusId { get; set; }
 		public int Description { get; set; }
     }
 }

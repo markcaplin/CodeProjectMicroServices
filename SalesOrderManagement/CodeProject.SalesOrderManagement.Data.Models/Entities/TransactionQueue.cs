@@ -7,6 +7,7 @@ namespace CodeProject.SalesOrderManagement.Data.Entities
 	public class TransactionQueue
 	{
 		public int TransactionQueueId { get; set; }
+		public int MessageQueueDirection { get; set; }
 		public string TransactionCode { get; set; }
 		public string Payload { get; set; }
 		public string ExchangeName { get; set; }

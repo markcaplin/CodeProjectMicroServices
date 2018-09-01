@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CodeProject.SalesOrderManagement.Data.Models.Entities
+namespace CodeProject.SalesOrderManagement.Data.Entities
 {
     public class SalesOrder
     {
@@ -16,11 +16,11 @@ namespace CodeProject.SalesOrderManagement.Data.Models.Entities
 		public string ShipToRegion { get; set; }
 		public string ShipToPostalCode { get; set; }
 		public double OrderTotal { get; set; }
-		public int OrderStatusId { get; set; }
+		public int SalesOrderStatusId { get; set; }
 		public Customer Customer { get; set; }
-		public OrderStatus OrderStatus { get; set; }
+		public SalesOrderStatus SalesOrderStatus { get; set; }
 		public DateTime DateCreated { get; set; }
 		public DateTime DateUpdated { get; set; }
 	}
-    }
+
 }

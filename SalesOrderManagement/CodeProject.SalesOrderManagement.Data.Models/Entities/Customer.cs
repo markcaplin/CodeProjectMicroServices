@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CodeProject.SalesOrderManagement.Data.Models.Entities
+namespace CodeProject.SalesOrderManagement.Data.Entities
 {
     public class Customer
     {
@@ -15,5 +15,7 @@ namespace CodeProject.SalesOrderManagement.Data.Models.Entities
 		public string Region { get; set; }
 		public string PostalCode { get; set; }
 		public double CreditLimit { get; set; }
-    }
+		public DateTime DateCreated { get; set; }
+		public DateTime DateUpdated { get; set; }
+	}
 }
