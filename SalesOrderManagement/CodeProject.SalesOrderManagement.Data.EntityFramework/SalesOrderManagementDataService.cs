@@ -192,16 +192,8 @@ namespace CodeProject.SalesOrderManagement.Data.EntityFramework
 		/// <returns></returns>
 		public async Task<List<TransactionQueueInbound>> GetInboundTransactionQueue()
 		{
-			StringBuilder sqlBuilder = new StringBuilder();
-
-			sqlBuilder.AppendLine(" SELECT * FROM TransactionQueueInbound WITH (UPDLOCK) ORDER BY TransactionQueueInboundId ");
-		
-			string sqlStatement = sqlBuilder.ToString();
-
-			List<TransactionQueueInbound> transactionQueue = await dbConnection.TransactionQueueInbound.FromSql(sqlStatement).ToListAsync();
-
+			List<TransactionQueueInbound> transactionQueue = await dbConnection.TransactionQueueInbound.OrderBy(x=>x.TransactionQueueInboundId).ToListAsync();
 			return transactionQueue;
-
 		}
 		/// <summary>
 		/// Delete Inbound Transaction Queue Entry

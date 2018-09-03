@@ -75,7 +75,7 @@ namespace CodeProject.MessageQueueing
 
 			_logger.LogInformation("Receive Messages in Queue at " + DateTime.Now);
 
-			await _messageQueueing.ReceiveMessages(_appConfig.Value.InboundMessageQueue, _subject);
+			await _messageQueueing.ReceiveMessages(_appConfig.Value.InboundMessageQueue, _subject, _messageProcessor);
 
 			//_logger.LogInformation("total messages " + messages.Entity.Count.ToString() + " sent at " + DateTime.Now);
 

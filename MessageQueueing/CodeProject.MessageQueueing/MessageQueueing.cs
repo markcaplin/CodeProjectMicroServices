@@ -130,7 +130,7 @@ namespace CodeProject.MessageQueueing
 		/// </summary>
 		/// <param name="queueName"></param>
 		/// <param name="subject"></param>
-		public async Task ReceiveMessages(string queueName, Subject<MessageQueue> subject)
+		public async Task ReceiveMessages(string queueName, Subject<MessageQueue> subject, IMessageQueueProcessing _messageProcessor)
 		{
 
 			await Task.Delay(0);
@@ -158,9 +158,16 @@ namespace CodeProject.MessageQueueing
 
 				Console.WriteLine("Receiving Message id " + messageQueue.TransactionQueueId);
 
-				_receivedMessages.Add(messageQueue.MessageGuid, e);
+				ResponseModel<MessageQueue> responseMessage = await _messageProcessor.CommitInboundMessage(messageQueue);
+				if (responseMessage.ReturnStatus == true)
+				{
+					Console.WriteLine($"Message Committed: {messageQueue.TransactionQueueId}");
+					_subscription.Ack(e);
+				}
 
-				subject.OnNext(messageQueue);
+				//_receivedMessages.Add(messageQueue.MessageGuid, e);
+
+				//subject.OnNext(messageQueue);
 
 				//break;
 
