@@ -14,7 +14,10 @@ namespace CodeProject.SalesOrderManagement.Data.Entities
 		public string City { get; set; }
 		public string Region { get; set; }
 		public string PostalCode { get; set; }
+		public double AmountOrdered { get; set; }
+		public double AmountShipped { get; set; }
 		public double CreditLimit { get; set; }
+		public DateTime DateShipped { get; set; }
 		public DateTime DateCreated { get; set; }
 		public DateTime DateUpdated { get; set; }
 	}

@@ -14,7 +14,6 @@
     <ProjectReference Include="..\..\Shared\CodeProject.Shared.Common.Utilites\CodeProject.Shared.Common.Utilities.csproj" />
     <ProjectReference Include="..\CodeProject.SalesOrderManagement.Data.Models\CodeProject.SalesOrderManagement.Data.Models.csproj" />
     <ProjectReference Include="..\CodeProject.SalesOrderManagement.Interfaces\CodeProject.SalesOrderManagement.Interfaces.csproj" />
-    <ProjectReference Include="..\CodeProject.SalesOrderManagement.MessageQueueing\CodeProject.SalesOrderManagement.MessageQueueing.csproj" />
   </ItemGroup>
 
 </Project>

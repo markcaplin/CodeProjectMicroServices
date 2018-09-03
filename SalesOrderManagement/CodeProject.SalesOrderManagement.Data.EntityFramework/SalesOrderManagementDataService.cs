@@ -45,16 +45,42 @@ namespace CodeProject.SalesOrderManagement.Data.EntityFramework
 		}
 
 		/// <summary>
-		/// Create Transaction Queue
+		/// Create Inbound Transaction Queue
 		/// </summary>
 		/// <param name="transactionQueue"></param>
 		/// <returns></returns>
-		public async Task CreateTransactionQueue(TransactionQueue transactionQueue)
+		public async Task CreateInboundTransactionQueue(TransactionQueueInbound transactionQueue)
 		{
 			DateTime dateCreated = DateTime.UtcNow;
 			transactionQueue.DateCreated = dateCreated;
 
-			await dbConnection.TransactionQueue.AddAsync(transactionQueue);
+			await dbConnection.TransactionQueueInbound.AddAsync(transactionQueue);
+		}
+
+		/// <summary>
+		///  Create Inbound Transaction Queue History
+		/// </summary>
+		/// <param name="transactionQueue"></param>
+		/// <returns></returns>
+		public async Task CreateInboundTransactionQueueHistory(TransactionQueueInboundHistory transactionQueue)
+		{
+			DateTime dateCreated = DateTime.UtcNow;
+			transactionQueue.DateCreated = dateCreated;
+
+			await dbConnection.TransactionQueueInboundHistory.AddAsync(transactionQueue);
+		}
+
+		/// <summary>
+		/// Create Inbound Transaction Queue
+		/// </summary>
+		/// <param name="transactionQueue"></param>
+		/// <returns></returns>
+		public async Task CreateOutboundTransactionQueue(TransactionQueueOutbound transactionQueue)
+		{
+			DateTime dateCreated = DateTime.UtcNow;
+			transactionQueue.DateCreated = dateCreated;
+
+			await dbConnection.TransactionQueueOutbound.AddAsync(transactionQueue);
 		}
 
 		/// <summary>
@@ -101,6 +127,20 @@ namespace CodeProject.SalesOrderManagement.Data.EntityFramework
 			return product;
 		}
 		/// <summary>
+		/// Get Product Information B yProduct Master For Update
+		/// </summary>
+		/// <param name="productMasterId"></param>
+		/// <returns></returns>
+		public async Task<Product> GetProductInformationByProductMasterForUpdate(int productMasterId)
+		{
+			string sqlStatement = "SELECT * FROM Products WITH (UPDLOCK) WHERE ProductMasterId = @ProductMasterId";
+
+			DbParameter productIdParameter = new SqlParameter("ProductMasterId", productMasterId);
+
+			Product product = await dbConnection.Products.FromSql(sqlStatement, productIdParameter).FirstOrDefaultAsync();
+			return product;
+		}
+		/// <summary>
 		/// Update Product
 		/// </summary>
 		/// <param name="product"></param>
@@ -111,6 +151,77 @@ namespace CodeProject.SalesOrderManagement.Data.EntityFramework
 			DateTime dateUpdated = DateTime.UtcNow;
 			product.DateUpdated = dateUpdated;
 
+		}
+
+		/// <summary>
+		/// Get Outbound Transaction Queue
+		/// </summary>
+		/// <returns></returns>
+		public async Task<List<TransactionQueueOutbound>> GetOutboundTransactionQueue()
+		{
+			StringBuilder sqlBuilder = new StringBuilder();
+
+			sqlBuilder.AppendLine(" SELECT * FROM TransactionQueueOutbound WITH (UPDLOCK) WHERE ");
+			sqlBuilder.AppendLine(" SentToExchange = @SentToExchange ");
+
+			string sqlStatement = sqlBuilder.ToString();
+
+			SqlParameter sentToExchangeParameter = new SqlParameter("SentToExchange", false);
+
+			List<TransactionQueueOutbound> transactionQueue = await dbConnection.TransactionQueueOutbound.FromSql(
+				sqlStatement, sentToExchangeParameter).ToListAsync();
+
+			return transactionQueue;
+
+		}
+
+		/// <summary>
+		/// Get Inbound Transaction Queue History By Sender
+		/// </summary>
+		/// <param name="senderTransactionQueueId"></param>
+		/// <returns></returns>
+		public async Task<TransactionQueueInboundHistory> GetInboundTransactionQueueHistoryBySender(int senderTransactionQueueId, string exchangeName)
+		{
+			TransactionQueueInboundHistory transactionQueue = await dbConnection.TransactionQueueInboundHistory.Where(x => x.ExchangeName == exchangeName && x.SenderTransactionQueueId == senderTransactionQueueId).FirstOrDefaultAsync();
+			return transactionQueue;
+		}
+
+		/// <summary>
+		/// Get Inbound Transaction Queue
+		/// </summary>
+		/// <returns></returns>
+		public async Task<List<TransactionQueueInbound>> GetInboundTransactionQueue()
+		{
+			StringBuilder sqlBuilder = new StringBuilder();
+
+			sqlBuilder.AppendLine(" SELECT * FROM TransactionQueueInbound WITH (UPDLOCK) ORDER BY TransactionQueueInboundId ");
+		
+			string sqlStatement = sqlBuilder.ToString();
+
+			List<TransactionQueueInbound> transactionQueue = await dbConnection.TransactionQueueInbound.FromSql(sqlStatement).ToListAsync();
+
+			return transactionQueue;
+
+		}
+		/// <summary>
+		/// Delete Inbound Transaction Queue Entry
+		/// </summary>
+		/// <param name="transactionQueueId"></param>
+		/// <returns></returns>
+		public async Task DeleteInboundTransactionQueueEntry(int transactionQueueId)
+		{
+			TransactionQueueInbound transactionQueue = await dbConnection.TransactionQueueInbound.Where(x => x.TransactionQueueInboundId == transactionQueueId).FirstOrDefaultAsync();
+			dbConnection.TransactionQueueInbound.Remove(transactionQueue);
+		}
+
+		/// <summary>
+		/// Update Transaction Queue
+		/// </summary>
+		/// <param name="transactionQueue"></param>
+		/// <returns></returns>
+		public async Task UpdateOutboundTransactionQueue(TransactionQueueOutbound transactionQueue)
+		{
+			await Task.Delay(0);
 		}
 	}
 }

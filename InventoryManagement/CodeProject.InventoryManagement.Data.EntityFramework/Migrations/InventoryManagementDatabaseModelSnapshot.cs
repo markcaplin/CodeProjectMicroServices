@@ -54,9 +54,30 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("CodeProject.InventoryManagement.Data.Entities.TransactionQueue", b =>
+            modelBuilder.Entity("CodeProject.InventoryManagement.Data.Entities.TransactionQueueInbound", b =>
                 {
-                    b.Property<int>("TransactionQueueId")
+                    b.Property<int>("TransactionQueueInboundId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<string>("ExchangeName");
+
+                    b.Property<string>("Payload");
+
+                    b.Property<int>("SenderTransactionQueueId");
+
+                    b.Property<string>("TransactionCode");
+
+                    b.HasKey("TransactionQueueInboundId");
+
+                    b.ToTable("TransactionQueueInbound");
+                });
+
+            modelBuilder.Entity("CodeProject.InventoryManagement.Data.Entities.TransactionQueueOutbound", b =>
+                {
+                    b.Property<int>("TransactionQueueOutboundId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -74,9 +95,9 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework.Migrations
 
                     b.Property<string>("TransactionCode");
 
-                    b.HasKey("TransactionQueueId");
+                    b.HasKey("TransactionQueueOutboundId");
 
-                    b.ToTable("TransactionQueue");
+                    b.ToTable("TransactionQueueOutbound");
                 });
 #pragma warning restore 612, 618
         }

@@ -16,5 +16,6 @@ namespace CodeProject.InventoryManagement.Data.Transformations
 		public int OnHandQuantity { get; set; }
 		public int OnOrderQuantity { get; set; }
 		public int CommittedQuantity { get; set; }
+		public DateTime DateCreated { get; set; }
 	}
 }

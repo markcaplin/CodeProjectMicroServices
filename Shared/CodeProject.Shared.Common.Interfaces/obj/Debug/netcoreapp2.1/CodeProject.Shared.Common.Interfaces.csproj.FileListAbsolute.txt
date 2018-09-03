@@ -6,4 +6,7 @@ C:\MyFiles\_CodeProjectMicroServices\Shared\CodeProject.Shared.Common.Interfaces
 C:\MyFiles\_CodeProjectMicroServices\Shared\CodeProject.Shared.Common.Interfaces\obj\Debug\netcoreapp2.1\CodeProject.Shared.Common.Interfaces.AssemblyInfo.cs
 C:\MyFiles\_CodeProjectMicroServices\Shared\CodeProject.Shared.Common.Interfaces\obj\Debug\netcoreapp2.1\CodeProject.Shared.Common.Interfaces.dll
 C:\MyFiles\_CodeProjectMicroServices\Shared\CodeProject.Shared.Common.Interfaces\obj\Debug\netcoreapp2.1\CodeProject.Shared.Common.Interfaces.pdb
+C:\MyFiles\_CodeProjectMicroServices\Shared\CodeProject.Shared.Common.Interfaces\bin\Debug\netcoreapp2.1\CodeProject.Shared.Common.Models.dll
+C:\MyFiles\_CodeProjectMicroServices\Shared\CodeProject.Shared.Common.Interfaces\bin\Debug\netcoreapp2.1\CodeProject.Shared.Common.Models.pdb
 C:\MyFiles\_CodeProjectMicroServices\Shared\CodeProject.Shared.Common.Interfaces\obj\Debug\netcoreapp2.1\CodeProject.Shared.Common.Interfaces.csprojAssemblyReference.cache
+C:\MyFiles\_CodeProjectMicroServices\Shared\CodeProject.Shared.Common.Interfaces\obj\Debug\netcoreapp2.1\CodeProject.Shared.Common.Interfaces.csproj.CopyComplete

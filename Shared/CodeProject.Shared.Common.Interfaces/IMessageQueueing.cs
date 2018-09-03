@@ -1,13 +1,19 @@
-﻿using System;
+﻿using CodeProject.Shared.Common.Models;
+using System;
 using System.Collections.Generic;
+using System.Reactive.Subjects;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace CodeProject.Shared.Common.Interfaces
 {
-    public interface IMessageQueueing<T>
+    public interface IMessageQueueing
     {
-		void SendMessage(string exchangeName, string routingKey, T entity);
-		List<T> ReceiveMessages(string queueName);
-		void SendAcknowledgement();
+		ResponseModel<MessageQueue> SendMessage(object entity);
+		Task ReceiveMessages(string queueName, Subject<MessageQueue> subject);
+		void SendAcknowledgement(Guid messageGuid);
+		void InitializeExchange(string exchangeName, string routingKey);
+		void InitializeQueue(string queueName);
+		void InitializeQueue(string queueName, string routingKey);
 	}
 }

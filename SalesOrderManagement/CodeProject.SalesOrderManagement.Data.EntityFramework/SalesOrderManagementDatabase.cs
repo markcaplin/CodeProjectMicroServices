@@ -12,7 +12,9 @@ namespace CodeProject.SalesOrderManagement.Data.EntityFramework
 	{
 		public DbSet<Customer> Customers { get; set; }
 		public DbSet<Product> Products { get; set; }
-		public DbSet<TransactionQueue> TransactionQueue { get; set; }
+		public DbSet<TransactionQueueInbound> TransactionQueueInbound { get; set; }
+		public DbSet<TransactionQueueInboundHistory> TransactionQueueInboundHistory { get; set; }
+		public DbSet<TransactionQueueOutbound> TransactionQueueOutbound { get; set; }
 		public DbSet<SalesOrder> SalesOrders { get; set; }
 		public DbSet<SalesOrderStatus> SalesOrderStatuses { get; set; }
 		public DbSet<SalesOrderDetail> SalesOrderDetails { get; set; }

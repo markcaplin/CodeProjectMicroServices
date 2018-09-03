@@ -1718,7 +1718,8 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v2.1",
         "dependencies": {
-          "C:\\MyFiles\\_CodeProjectMicroServices\\Shared\\CodeProject.Shared.Interfaces\\CodeProject.Shared.Interfaces.csproj": "1.0.0",
+          "C:\\MyFiles\\_CodeProjectMicroServices\\Shared\\CodeProject.Shared.Common.Interfaces\\CodeProject.Shared.Common.Interfaces.csproj": "1.0.0",
+          "C:\\MyFiles\\_CodeProjectMicroServices\\Shared\\CodeProject.Shared.Common.Models\\CodeProject.Shared.Common.Models.csproj": "1.0.0",
           "Newtonsoft.Json": "11.0.2",
           "RabbitMQ.Client": "5.1.0"
         },
@@ -5933,8 +5934,17 @@
     {
       "code": "NU1105",
       "level": "Error",
-      "message": "Unable to find project information for 'C:\\MyFiles\\_CodeProjectMicroServices\\Shared\\CodeProject.Shared.Interfaces\\CodeProject.Shared.Interfaces.csproj'. The project file may be invalid or missing targets required for restore.",
-      "libraryId": "C:\\MyFiles\\_CodeProjectMicroServices\\Shared\\CodeProject.Shared.Interfaces\\CodeProject.Shared.Interfaces.csproj",
+      "message": "Unable to find project information for 'C:\\MyFiles\\_CodeProjectMicroServices\\Shared\\CodeProject.Shared.Common.Interfaces\\CodeProject.Shared.Common.Interfaces.csproj'. The project file may be invalid or missing targets required for restore.",
+      "libraryId": "C:\\MyFiles\\_CodeProjectMicroServices\\Shared\\CodeProject.Shared.Common.Interfaces\\CodeProject.Shared.Common.Interfaces.csproj",
+      "targetGraphs": [
+        ".NETCoreApp,Version=v2.1"
+      ]
+    },
+    {
+      "code": "NU1105",
+      "level": "Error",
+      "message": "Unable to find project information for 'C:\\MyFiles\\_CodeProjectMicroServices\\Shared\\CodeProject.Shared.Common.Models\\CodeProject.Shared.Common.Models.csproj'. The project file may be invalid or missing targets required for restore.",
+      "libraryId": "C:\\MyFiles\\_CodeProjectMicroServices\\Shared\\CodeProject.Shared.Common.Models\\CodeProject.Shared.Common.Models.csproj",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.1"
       ]

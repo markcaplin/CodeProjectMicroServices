@@ -9,7 +9,6 @@ C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrder
 C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.Data.EntityFramework\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.Data.EntityFramework.pdb
 C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.Data.EntityFramework\bin\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.Data.Models.dll
 C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.Data.EntityFramework\bin\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.Interfaces.dll
-C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.Data.EntityFramework\bin\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.MessageQueueing.dll
 C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.Data.EntityFramework\bin\Debug\netcoreapp2.1\CodeProject.Shared.Common.Interfaces.dll
 C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.Data.EntityFramework\bin\Debug\netcoreapp2.1\CodeProject.Shared.Common.Models.dll
 C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.Data.EntityFramework\bin\Debug\netcoreapp2.1\CodeProject.Shared.Common.Utilities.dll
@@ -18,5 +17,4 @@ C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrder
 C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.Data.EntityFramework\bin\Debug\netcoreapp2.1\CodeProject.Shared.Common.Utilities.pdb
 C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.Data.EntityFramework\bin\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.Data.Models.pdb
 C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.Data.EntityFramework\bin\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.Interfaces.pdb
-C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.Data.EntityFramework\bin\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.MessageQueueing.pdb
 C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.Data.EntityFramework\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.Data.EntityFramework.csproj.CopyComplete

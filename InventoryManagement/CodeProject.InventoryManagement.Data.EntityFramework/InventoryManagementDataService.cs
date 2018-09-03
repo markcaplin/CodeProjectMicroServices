@@ -30,17 +30,32 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 			await dbConnection.Products.AddAsync(product);
 
 		}
+
 		/// <summary>
 		/// Create Transaction Queue
 		/// </summary>
 		/// <param name="transactionQueue"></param>
 		/// <returns></returns>
-		public async Task CreateTransactionQueue(TransactionQueue transactionQueue)
+		public async Task CreateOutboundTransactionQueue(TransactionQueueOutbound transactionQueue)
 		{
 			DateTime dateCreated = DateTime.UtcNow;
 			transactionQueue.DateCreated = dateCreated;
 
-			await dbConnection.TransactionQueue.AddAsync(transactionQueue);
+			await dbConnection.TransactionQueueOutbound.AddAsync(transactionQueue);
+
+		}
+
+		/// <summary>
+		/// Create Inbound Transaction Queue
+		/// </summary>
+		/// <param name="transactionQueue"></param>
+		/// <returns></returns>
+		public async Task CreateInboundTransactionQueue(TransactionQueueInbound transactionQueue)
+		{
+			DateTime dateCreated = DateTime.UtcNow;
+			transactionQueue.DateCreated = dateCreated;
+
+			await dbConnection.TransactionQueueInbound.AddAsync(transactionQueue);
 
 		}
 		/// <summary>
@@ -80,6 +95,29 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 			Product product = await dbConnection.Products.FromSql(sqlStatement, productIdParameter).FirstOrDefaultAsync();
 			return product;
 		}
+
+		/// <summary>
+		/// Get Outbound Transaction Queue
+		/// </summary>
+		/// <returns></returns>
+		public async Task<List<TransactionQueueOutbound>> GetOutboundTransactionQueue()
+		{
+			StringBuilder sqlBuilder = new StringBuilder();
+
+			sqlBuilder.AppendLine(" SELECT * FROM TransactionQueueOutbound WITH (UPDLOCK) WHERE ");
+			sqlBuilder.AppendLine(" SentToExchange = @SentToExchange ");
+
+			string sqlStatement = sqlBuilder.ToString();
+
+			SqlParameter sentToExchangeParameter = new SqlParameter("SentToExchange", false);
+	
+			List<TransactionQueueOutbound> transactionQueue = await dbConnection.TransactionQueueOutbound.FromSql(
+				sqlStatement, sentToExchangeParameter).OrderBy(x=>x.TransactionQueueOutboundId).ToListAsync();
+
+			return transactionQueue;
+
+		}
+
 		/// <summary>
 		/// Update Product
 		/// </summary>
@@ -91,6 +129,15 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 			DateTime dateUpdated = DateTime.UtcNow;
 			product.DateUpdated = dateUpdated;
 
+		}
+		/// <summary>
+		/// Update Transaction Queue
+		/// </summary>
+		/// <param name="transactionQueue"></param>
+		/// <returns></returns>
+		public async Task UpdateOutboundTransactionQueue(TransactionQueueOutbound transactionQueue)
+		{
+			await Task.Delay(0);
 		}
 	}
 }

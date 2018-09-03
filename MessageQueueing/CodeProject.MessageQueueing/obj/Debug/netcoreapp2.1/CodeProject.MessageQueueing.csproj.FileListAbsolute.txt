@@ -1,8 +1,6 @@
 C:\MyFiles\_CodeProjectMicroServices\MessageQueueing\CodeProject.MessageQueueing\bin\Debug\netcoreapp2.1\CodeProject.MessageQueueing.deps.json
 C:\MyFiles\_CodeProjectMicroServices\MessageQueueing\CodeProject.MessageQueueing\bin\Debug\netcoreapp2.1\CodeProject.MessageQueueing.dll
 C:\MyFiles\_CodeProjectMicroServices\MessageQueueing\CodeProject.MessageQueueing\bin\Debug\netcoreapp2.1\CodeProject.MessageQueueing.pdb
-C:\MyFiles\_CodeProjectMicroServices\MessageQueueing\CodeProject.MessageQueueing\bin\Debug\netcoreapp2.1\CodeProject.Shared.Interfaces.dll
-C:\MyFiles\_CodeProjectMicroServices\MessageQueueing\CodeProject.MessageQueueing\bin\Debug\netcoreapp2.1\CodeProject.Shared.Interfaces.pdb
 C:\MyFiles\_CodeProjectMicroServices\MessageQueueing\CodeProject.MessageQueueing\obj\Debug\netcoreapp2.1\CodeProject.MessageQueueing.csprojAssemblyReference.cache
 C:\MyFiles\_CodeProjectMicroServices\MessageQueueing\CodeProject.MessageQueueing\obj\Debug\netcoreapp2.1\CodeProject.MessageQueueing.csproj.CoreCompileInputs.cache
 C:\MyFiles\_CodeProjectMicroServices\MessageQueueing\CodeProject.MessageQueueing\obj\Debug\netcoreapp2.1\CodeProject.MessageQueueing.AssemblyInfoInputs.cache
@@ -10,3 +8,9 @@ C:\MyFiles\_CodeProjectMicroServices\MessageQueueing\CodeProject.MessageQueueing
 C:\MyFiles\_CodeProjectMicroServices\MessageQueueing\CodeProject.MessageQueueing\obj\Debug\netcoreapp2.1\CodeProject.MessageQueueing.csproj.CopyComplete
 C:\MyFiles\_CodeProjectMicroServices\MessageQueueing\CodeProject.MessageQueueing\obj\Debug\netcoreapp2.1\CodeProject.MessageQueueing.dll
 C:\MyFiles\_CodeProjectMicroServices\MessageQueueing\CodeProject.MessageQueueing\obj\Debug\netcoreapp2.1\CodeProject.MessageQueueing.pdb
+C:\MyFiles\_CodeProjectMicroServices\MessageQueueing\CodeProject.MessageQueueing\bin\Debug\netcoreapp2.1\CodeProject.Shared.Common.Interfaces.dll
+C:\MyFiles\_CodeProjectMicroServices\MessageQueueing\CodeProject.MessageQueueing\bin\Debug\netcoreapp2.1\CodeProject.Shared.Common.Interfaces.pdb
+C:\MyFiles\_CodeProjectMicroServices\MessageQueueing\CodeProject.MessageQueueing\bin\Debug\netcoreapp2.1\CodeProject.Shared.Common.Models.dll
+C:\MyFiles\_CodeProjectMicroServices\MessageQueueing\CodeProject.MessageQueueing\bin\Debug\netcoreapp2.1\CodeProject.Shared.Common.Models.pdb
+C:\MyFiles\_CodeProjectMicroServices\MessageQueueing\CodeProject.MessageQueueing\bin\Debug\netcoreapp2.1\CodeProject.Shared.Common.Utilities.dll
+C:\MyFiles\_CodeProjectMicroServices\MessageQueueing\CodeProject.MessageQueueing\bin\Debug\netcoreapp2.1\CodeProject.Shared.Common.Utilities.pdb

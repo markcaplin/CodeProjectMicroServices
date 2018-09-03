@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 using System.Data;
 using CodeProject.Shared.Common.Utilities;
 using CodeProject.Shared.Common.Models.MessageQueuePayloads;
+using CodeProject.Shared.Common.Utilties;
+using CodeProject.Shared.Common.Interfaces;
+using Newtonsoft.Json;
 
 namespace CodeProject.InventoryManagement.BusinessServices
 {
@@ -42,7 +45,6 @@ namespace CodeProject.InventoryManagement.BusinessServices
 
 			Product product = new Product();
 			
-
 			try
 			{
 				_inventoryManagementDataService.OpenConnection();
@@ -70,13 +72,12 @@ namespace CodeProject.InventoryManagement.BusinessServices
 
 				await _inventoryManagementDataService.UpdateDatabase();
 
-				TransactionQueue transactionQueue = new TransactionQueue();
-				transactionQueue.MessageQueueDirection = MessageQueueDirection.Outbound;
+				TransactionQueueOutbound transactionQueue = new TransactionQueueOutbound();
 				transactionQueue.Payload = GenerateProductUpdatePayload(product);
 				transactionQueue.TransactionCode = TransactionQueueTypes.ProductUpdated;
-				transactionQueue.ExchangeName = MessageQueueExchanges.ProductUpdated;
+				transactionQueue.ExchangeName = MessageQueueExchanges.InventoryManagement;
 
-				await _inventoryManagementDataService.CreateTransactionQueue(transactionQueue);
+				await _inventoryManagementDataService.CreateOutboundTransactionQueue(transactionQueue);
 
 				await _inventoryManagementDataService.UpdateDatabase();
 
@@ -144,13 +145,12 @@ namespace CodeProject.InventoryManagement.BusinessServices
 
 				await _inventoryManagementDataService.UpdateProduct(product);
 
-				TransactionQueue transactionQueue = new TransactionQueue();
-				transactionQueue.MessageQueueDirection = MessageQueueDirection.Outbound;
+				TransactionQueueOutbound transactionQueue = new TransactionQueueOutbound();
 				transactionQueue.Payload = GenerateProductUpdatePayload(product);
 				transactionQueue.TransactionCode = TransactionQueueTypes.ProductUpdated;
-				transactionQueue.ExchangeName = MessageQueueExchanges.ProductUpdated;
+				transactionQueue.ExchangeName = MessageQueueExchanges.InventoryManagement;
 
-				await _inventoryManagementDataService.CreateTransactionQueue(transactionQueue);
+				await _inventoryManagementDataService.CreateOutboundTransactionQueue(transactionQueue);
 
 				await _inventoryManagementDataService.UpdateDatabase();
 

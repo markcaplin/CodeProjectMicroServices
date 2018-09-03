@@ -5,17 +5,25 @@ using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.MessagePatterns;
-using CodeProject.Shared.Interfaces;
+using CodeProject.Shared.Common.Interfaces;
+using CodeProject.Shared.Common.Models;
+using CodeProject.Shared.Common.Utilities;
+using System.Reactive.Subjects;
+using System.Collections;
+using System.Threading.Tasks;
 
 namespace CodeProject.MessageQueueing
 {
-	public class MessageQueueing<T> : IDisposable, IMessageQueueing<T>
+	public class MessageQueueing : IMessageQueueing, IDisposable
 	{
-		private List<T> _items;
+		private List<object> _items;
 
 		private string _hostName = "localhost";
 		private string _userName = "guest";
 		private string _password = "guest";
+
+		private string _exchangeName { get; set; }
+		private string _routingKey { get; set; }
 
 		private IConnection _connection;
 		private ConnectionFactory _connectionFactory;
@@ -24,16 +32,19 @@ namespace CodeProject.MessageQueueing
 
 		private Subscription _subscription;
 
-		private List<BasicDeliverEventArgs> _receivedMessages;
+		private Hashtable _receivedMessages;
+
+		private bool _running;
 
 		/// <summary>
 		/// Message Queueing
 		/// </summary>
 		public MessageQueueing()
 		{
-			_items = new List<T>();
+			_items = new List<object>();
 
 			_connectionFactory = new ConnectionFactory();
+
 			_connectionFactory.HostName = _hostName;
 			_connectionFactory.UserName = _userName;
 			_connectionFactory.Password = _password;
@@ -44,26 +55,73 @@ namespace CodeProject.MessageQueueing
 			_basicProperties = _channel.CreateBasicProperties();
 			_basicProperties.Persistent = true;
 
-			_receivedMessages = new List<BasicDeliverEventArgs>();
+			_receivedMessages = new Hashtable();
 
+			_running = false;
+
+		}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="exchangeName"></param>
+		public void InitializeExchange(string exchangeName, string routingKey)
+		{
+			_channel.ExchangeDeclare(exchangeName, "fanout", true, false);
+			_exchangeName = exchangeName;
+			_routingKey = routingKey;
+		}
+
+		/// <summary>
+		/// Initialize Queue
+		/// </summary>
+		/// <param name="queueName"></param>
+		public void InitializeQueue(string queueName)
+		{
+			_channel.QueueDeclare(queueName, true, false, false);
+			_channel.QueueBind(queueName, _exchangeName, _routingKey);
+		}
+
+		/// <summary>
+		/// Initialize Queue
+		/// </summary>
+		/// <param name="queueName"></param>
+		/// <param name="routingKey"></param>
+		public void InitializeQueue(string queueName, string routingKey)
+		{
+			_channel.QueueDeclare(queueName, true, false, false);
+			_routingKey = routingKey;
 		}
 
 		/// <summary>
 		/// Send Message
 		/// </summary>
-		/// <param name="exchangeName"></param>
-		/// <param name="routingKey"></param>
 		/// <param name="entity"></param>
-		public void SendMessage(string exchangeName, string routingKey, T entity)
+		public ResponseModel<MessageQueue> SendMessage(object entity)
 		{
+			ResponseModel<MessageQueue> response = new ResponseModel<MessageQueue>();
+			response.Entity = new MessageQueue();
 
-			string output = JsonConvert.SerializeObject(entity);
+			try
+			{
+				string output = JsonConvert.SerializeObject(entity);
 
-			byte[] payload = Encoding.UTF8.GetBytes(output);
+				byte[] payload = Encoding.UTF8.GetBytes(output);
 
-			PublicationAddress address = new PublicationAddress(ExchangeType.Fanout, exchangeName, routingKey);
+				PublicationAddress address = new PublicationAddress(ExchangeType.Fanout, _exchangeName, _routingKey);
 
-			_channel.BasicPublish(address, _basicProperties, payload);
+				_channel.BasicPublish(address, _basicProperties, payload);
+
+				response.Entity.Payload = output;
+
+				response.ReturnStatus = true;
+			}
+			catch (Exception ex)
+			{
+				response.ReturnStatus = false;
+				response.ReturnMessage.Add(ex.Message);
+			}
+
+			return response;
 
 		}
 
@@ -71,19 +129,21 @@ namespace CodeProject.MessageQueueing
 		/// Receive Messages
 		/// </summary>
 		/// <param name="queueName"></param>
-		public List<T> ReceiveMessages(string queueName)
+		/// <param name="subject"></param>
+		public async Task ReceiveMessages(string queueName, Subject<MessageQueue> subject)
 		{
 
-			var response = _channel.QueueDeclarePassive(queueName);
+			await Task.Delay(0);
 
-			Console.WriteLine("message count = " + response.MessageCount);
+			Console.WriteLine("Receiving Messages at " + DateTime.Now);
 
-			if (response.MessageCount == 0)
-			{
-				return _items;
+			if (_running == true) {
+				return;
 			}
 
-			int messagesProcessed = 0;
+			_running = true;
+
+			var response = _channel.QueueDeclarePassive(queueName);
 
 			_channel.QueueDeclare(queue: queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
 
@@ -93,39 +153,35 @@ namespace CodeProject.MessageQueueing
 			{
 				string message = Encoding.UTF8.GetString(e.Body);
 
-				T deserializedEntity = JsonConvert.DeserializeObject<T>(message);
+				MessageQueue messageQueue = JsonConvert.DeserializeObject<MessageQueue>(message);
+				messageQueue.MessageGuid = Guid.NewGuid();
 
-				_items.Add(deserializedEntity);
+				Console.WriteLine("Receiving Message id " + messageQueue.TransactionQueueId);
 
-				Console.WriteLine(message);
+				_receivedMessages.Add(messageQueue.MessageGuid, e);
 
-				_receivedMessages.Add(e);
+				subject.OnNext(messageQueue);
 
-				messagesProcessed++;
-
-				if (messagesProcessed == response.MessageCount)
-				{
-					break;
-				}
+				//break;
 
 			}
-			Console.WriteLine("Subscription Done");
-
-			return _items;
 
 		}
 
 		/// <summary>
-		/// Commit Messages
+		/// Send Acknowledgement
 		/// </summary>
-		/// <param name="queueName"></param>
-		public void SendAcknowledgement()
+		/// <param name="messageGuid"></param>
+		public void SendAcknowledgement(Guid messageGuid)
 		{
-			//_channel.BasicConsume(queueName, true, _consumer);
-			foreach (BasicDeliverEventArgs e in _receivedMessages)
+
+			if (_receivedMessages.ContainsKey(messageGuid))
 			{
-				_subscription.Ack(e);
+				BasicDeliverEventArgs eventArgs = (BasicDeliverEventArgs) _receivedMessages[messageGuid];
+				_subscription.Ack(eventArgs);
+				Console.WriteLine($"Message acknowledged: {messageGuid}");
 			}
+
 		}
 
 		#region IDisposable Support

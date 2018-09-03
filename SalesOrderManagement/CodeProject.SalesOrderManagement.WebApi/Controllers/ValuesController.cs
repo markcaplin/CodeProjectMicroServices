@@ -4,6 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
+using CodeProject.Shared.Common.Models;
+using CodeProject.Shared.Common.Utilties;
+
 namespace CodeProject.SalesOrderManagement.WebApi.Controllers
 {
     [Route("api/[controller]")]
@@ -14,8 +17,11 @@ namespace CodeProject.SalesOrderManagement.WebApi.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            return new string[] { "value1", "value2" };
-        }
+          
+			ConnectionStrings connectionStrings = ConfigurationUtility.GetConnectionStrings();
+			string databaseConnectionString = connectionStrings.PrimaryDatabaseConnectionString;
+			return new string[] { databaseConnectionString };
+		}
 
         // GET api/values/5
         [HttpGet("{id}")]

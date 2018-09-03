@@ -12,8 +12,6 @@
     <ProjectReference Include="..\CodeProject.SalesOrderManagement.Data.EntityFramework\CodeProject.SalesOrderManagement.Data.EntityFramework.csproj" />
     <ProjectReference Include="..\CodeProject.SalesOrderManagement.Data.Models\CodeProject.SalesOrderManagement.Data.Models.csproj" />
     <ProjectReference Include="..\CodeProject.SalesOrderManagement.Interfaces\CodeProject.SalesOrderManagement.Interfaces.csproj" />
-    <ProjectReference Include="..\CodeProject.SalesOrderManagement.MessageQueueing\CodeProject.SalesOrderManagement.MessageQueueing.csproj" />
-    <ProjectReference Include="..\CodeProject.SalesOrderManagement.WebApi\CodeProject.SalesOrderManagement.WebApi.csproj" />
   </ItemGroup>
 
 </Project>

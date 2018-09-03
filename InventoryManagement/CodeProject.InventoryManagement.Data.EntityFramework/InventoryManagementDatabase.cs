@@ -11,8 +11,10 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
     public class InventoryManagementDatabase : DbContext
 	{
 		public DbSet<Product> Products { get; set; }
-		public DbSet<TransactionQueue> TransactionQueue { get; set; }
-	
+		public DbSet<TransactionQueueInbound> TransactionQueueInbound { get; set; }
+		public DbSet<TransactionQueueOutbound> TransactionQueueOutbound { get; set; }
+
+
 		/// <summary>
 		/// On Configuring
 		/// </summary>

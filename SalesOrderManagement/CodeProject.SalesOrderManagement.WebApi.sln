@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeProject.SalesOrderManag
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeProject.SalesOrderManagement.Data.Models", "CodeProject.SalesOrderManagement.Data.Models\CodeProject.SalesOrderManagement.Data.Models.csproj", "{79CA17F0-4088-4691-8956-8FF1669062DE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeProject.SalesOrderManagement.MessageQueueing", "CodeProject.SalesOrderManagement.MessageQueueing\CodeProject.SalesOrderManagement.MessageQueueing.csproj", "{7A510C5A-9304-4B9F-BEC7-E2F9FA51AF07}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeProject.SalesOrderManagement.Interfaces", "CodeProject.SalesOrderManagement.Interfaces\CodeProject.SalesOrderManagement.Interfaces.csproj", "{346133C8-E355-40FB-9C1E-835E761E96D5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeProject.Shared.Common.Utilities", "..\Shared\CodeProject.Shared.Common.Utilites\CodeProject.Shared.Common.Utilities.csproj", "{29868650-FA10-44BF-9FE5-8C0A737F322A}"
@@ -49,10 +47,6 @@ Global
 		{79CA17F0-4088-4691-8956-8FF1669062DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79CA17F0-4088-4691-8956-8FF1669062DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79CA17F0-4088-4691-8956-8FF1669062DE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7A510C5A-9304-4B9F-BEC7-E2F9FA51AF07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7A510C5A-9304-4B9F-BEC7-E2F9FA51AF07}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7A510C5A-9304-4B9F-BEC7-E2F9FA51AF07}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7A510C5A-9304-4B9F-BEC7-E2F9FA51AF07}.Release|Any CPU.Build.0 = Release|Any CPU
 		{346133C8-E355-40FB-9C1E-835E761E96D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{346133C8-E355-40FB-9C1E-835E761E96D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{346133C8-E355-40FB-9C1E-835E761E96D5}.Release|Any CPU.ActiveCfg = Release|Any CPU

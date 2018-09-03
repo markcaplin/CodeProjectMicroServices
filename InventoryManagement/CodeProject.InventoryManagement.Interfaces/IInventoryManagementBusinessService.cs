@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CodeProject.Shared.Common.Models;
 using CodeProject.InventoryManagement.Data.Entities;
 using CodeProject.InventoryManagement.Data.Transformations;
+using CodeProject.Shared.Common.Interfaces;
 
 namespace CodeProject.InventoryManagement.Interfaces
 {
@@ -12,11 +13,5 @@ namespace CodeProject.InventoryManagement.Interfaces
 	{ 
 		Task<ResponseModel<ProductDataTransformation>> CreateProduct(ProductDataTransformation productDataTransformation);
 		Task<ResponseModel<ProductDataTransformation>> UpdateProduct(ProductDataTransformation productDataTransformation);
-
-		//Task<ResponseModel<AccountDataTransformation>> Login(AccountDataTransformation accountDataTransformation);
-		//Task<ResponseModel<AccountDataTransformation>> UpdateUser(AccountDataTransformation accountDataTransformation);
-		//Task<ResponseModel<User>> UpdateUser(int userId);
-
-
 	}
 }
