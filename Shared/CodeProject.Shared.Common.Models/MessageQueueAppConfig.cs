@@ -10,5 +10,9 @@ namespace CodeProject.Shared.Common.Models
 		public string RoutingKey { get; set; }
 		public string InboundMessageQueue { get; set; }
 		public string OutboundMessageQueues { get; set; }
+		public string LoggingExchangeName { get; set; }
+		public string LoggingMessageQueue { get; set; }
+		public string OriginatingQueueName { get; set; }
+		public Boolean SendToLoggingQueue { get; set; }
 	}
 }

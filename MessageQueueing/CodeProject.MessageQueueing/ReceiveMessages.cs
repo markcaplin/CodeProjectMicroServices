@@ -41,6 +41,8 @@ namespace CodeProject.MessageQueueing
 			_messageProcessor = messageProcessor;
 			_messageQueueing = messageQueueing;
 
+			_messageQueueing.InitializeLogging(appConfig.Value.OriginatingQueueName, appConfig.Value.LoggingMessageQueue, appConfig.Value.SendToLoggingQueue);
+			_messageQueueing.InitializeLoggingExchange(appConfig.Value.LoggingExchangeName, appConfig.Value.RoutingKey);
 			_messageQueueing.InitializeQueue(appConfig.Value.InboundMessageQueue, appConfig.Value.RoutingKey);
 
 			_logger.LogInformation("Receive Messages Constructor ");

@@ -23,10 +23,7 @@ namespace CodeProject.MessageQueueing
 		private Timer _timer;
 		private int _counter;
 
-		//private Subject<MessageQueue> _subject;
-
-		public SendMessages(ILogger<SendMessages> logger, IOptions<MessageQueueAppConfig> appConfig,
-			IMessageQueueing messageQueueing, IMessageQueueProcessing messageProcessor)
+		public SendMessages(ILogger<SendMessages> logger, IOptions<MessageQueueAppConfig> appConfig, IMessageQueueing messageQueueing, IMessageQueueProcessing messageProcessor)
 		{
 			_logger = logger;
 			_appConfig = appConfig;
@@ -45,14 +42,16 @@ namespace CodeProject.MessageQueueing
 			_logger.LogInformation("Send Messages Constructor " + appConfig.Value.ExchangeName);
 		}
 
+		/// <summary>
+		/// Start Process Interval
+		/// </summary>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
 		public Task StartAsync(CancellationToken cancellationToken)
 		{
 			_logger.LogInformation("Starting Send Messages");
 
 			_counter = 0;
-
-			//_subject = new Subject<MessageQueue>();
-			//_subject.Subscribe(ReceiveMessage1);
 
 			_timer = new Timer(GetMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(60));
 
@@ -64,15 +63,8 @@ namespace CodeProject.MessageQueueing
 		/// <param name="state"></param>
 		private async void GetMessagesInQueue(object state)
 		{
-		
-			_counter++;
-
 			ResponseModel<List<MessageQueue>> messages = await _messageProcessor.SendQueueMessages(_messageQueueing);
-
 			_logger.LogInformation("total messages " + messages.Entity.Count.ToString() + " sent at " + DateTime.Now);
-
-			//MessageQueue messageQueue = new MessageQueue();
-			//_subject.OnNext(messageQueue);
 
 		}
 

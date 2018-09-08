@@ -10,6 +10,7 @@ namespace CodeProject.Shared.Common.Models
 		public int TransactionQueueId { get; set; }
 		public string Payload { get; set; }
 		public string ExchangeName { get; set; }
+		public string QueueName { get; set; }
 		public Guid MessageGuid { get; set; }
 	}
 }

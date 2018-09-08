@@ -6,4 +6,3 @@ C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrder
 C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.BusinessRules\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.BusinessRules.AssemblyInfo.cs
 C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.BusinessRules\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.BusinessRules.dll
 C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.BusinessRules\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.BusinessRules.pdb
-C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.BusinessRules\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.BusinessRules.csprojAssemblyReference.cache

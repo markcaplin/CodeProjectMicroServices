@@ -136,7 +136,6 @@ namespace CodeProject.SalesOrderManagement.Business.MessageService
 
 		}
 
-
 		/// <summary>
 		/// Process Messages
 		/// </summary>
@@ -169,7 +168,6 @@ namespace CodeProject.SalesOrderManagement.Business.MessageService
 					{
 						await ProductUpdated(transactionQueueItem);
 						await _salesOrderManagementDataService.DeleteInboundTransactionQueueEntry(transactionQueueItem.TransactionQueueInboundId);
-
 					}
 
 					await _salesOrderManagementDataService.UpdateDatabase();

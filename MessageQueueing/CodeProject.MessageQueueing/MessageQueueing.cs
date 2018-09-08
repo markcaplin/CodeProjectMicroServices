@@ -23,12 +23,23 @@ namespace CodeProject.MessageQueueing
 		private string _password = "guest";
 
 		private string _exchangeName { get; set; }
+		private string _loggingExchangeName { get; set; }
 		private string _routingKey { get; set; }
+		private string _loggingRoutingKey { get; set; }
+		private string _loggingQueueName { get; set; }
+		private string _originatingQueueName { get; set; }
+
+		private Boolean _sendToLoggingQueue { get; set; }
 
 		private IConnection _connection;
 		private ConnectionFactory _connectionFactory;
 		private IBasicProperties _basicProperties;
 		private IModel _channel;
+
+		private IConnection _loggingConnection;
+		private ConnectionFactory _loggingConnectionFactory;
+		private IBasicProperties _loggingBasicProperties;
+		private IModel _loggingChannel;
 
 		private Subscription _subscription;
 
@@ -42,7 +53,9 @@ namespace CodeProject.MessageQueueing
 		public MessageQueueing()
 		{
 			_items = new List<object>();
-
+			//
+			//	connection to main exchange
+			//
 			_connectionFactory = new ConnectionFactory();
 
 			_connectionFactory.HostName = _hostName;
@@ -54,6 +67,20 @@ namespace CodeProject.MessageQueueing
 
 			_basicProperties = _channel.CreateBasicProperties();
 			_basicProperties.Persistent = true;
+			//
+			// connection to logging exchange
+			//
+			_loggingConnectionFactory = new ConnectionFactory();
+
+			_loggingConnectionFactory.HostName = _hostName;
+			_loggingConnectionFactory.UserName = _userName;
+			_loggingConnectionFactory.Password = _password;
+
+			_loggingConnection = _loggingConnectionFactory.CreateConnection();
+			_loggingChannel = _connection.CreateModel();
+
+			_loggingBasicProperties = _loggingChannel.CreateBasicProperties();
+			_loggingBasicProperties.Persistent = true;
 
 			_receivedMessages = new Hashtable();
 
@@ -80,7 +107,35 @@ namespace CodeProject.MessageQueueing
 			_channel.QueueDeclare(queueName, true, false, false);
 			_channel.QueueBind(queueName, _exchangeName, _routingKey);
 		}
+		/// <summary>
+		/// Initialize Logging Exchange
+		/// </summary>
+		/// <param name="exchangeName"></param>
+		/// <param name="routingKey"></param>
+		public void InitializeLoggingExchange(string exchangeName, string routingKey)
+		{
+			_loggingChannel.ExchangeDeclare(exchangeName, "fanout", true, false);
+			_loggingExchangeName = exchangeName;
+			_loggingRoutingKey = routingKey;
 
+			_loggingChannel.QueueDeclare(_loggingQueueName, true, false, false);
+			_loggingChannel.QueueBind(_loggingQueueName, _loggingExchangeName, _loggingRoutingKey);
+
+			_loggingRoutingKey = routingKey;
+
+		}
+		/// <summary>
+		/// Initialize Logging
+		/// </summary>
+		/// <param name="originatingQueueName"></param>
+		/// <param name="loggingQueueName"></param>
+		/// <param name="sendToLoggingQueue"></param>
+		public void InitializeLogging(string originatingQueueName, string loggingQueueName, Boolean sendToLoggingQueue)
+		{
+			_loggingQueueName = loggingQueueName;
+			_originatingQueueName = originatingQueueName;
+			_sendToLoggingQueue = sendToLoggingQueue;
+		}
 		/// <summary>
 		/// Initialize Queue
 		/// </summary>
@@ -110,6 +165,40 @@ namespace CodeProject.MessageQueueing
 				PublicationAddress address = new PublicationAddress(ExchangeType.Fanout, _exchangeName, _routingKey);
 
 				_channel.BasicPublish(address, _basicProperties, payload);
+
+				response.Entity.Payload = output;
+
+				response.ReturnStatus = true;
+			}
+			catch (Exception ex)
+			{
+				response.ReturnStatus = false;
+				response.ReturnMessage.Add(ex.Message);
+			}
+
+			return response;
+
+		}
+
+		/// <summary>
+		/// Send Received Message To Logging Queue
+		/// </summary>
+		/// <param name="messageQueue"></param>
+		/// <returns></returns>
+		public ResponseModel<MessageQueue> SendReceivedMessageToLoggingQueue(MessageQueue messageQueue)
+		{
+			ResponseModel<MessageQueue> response = new ResponseModel<MessageQueue>();
+			response.Entity = new MessageQueue();
+
+			try
+			{
+				string output = JsonConvert.SerializeObject(messageQueue);
+
+				byte[] payload = Encoding.UTF8.GetBytes(output);
+
+				PublicationAddress address = new PublicationAddress(ExchangeType.Fanout, _loggingExchangeName, _loggingRoutingKey);
+
+				_loggingChannel.BasicPublish(address, _loggingBasicProperties, payload);
 
 				response.Entity.Payload = output;
 
@@ -156,13 +245,26 @@ namespace CodeProject.MessageQueueing
 				MessageQueue messageQueue = JsonConvert.DeserializeObject<MessageQueue>(message);
 				messageQueue.MessageGuid = Guid.NewGuid();
 
+				if (messageQueue.QueueName == string.Empty || messageQueue.QueueName == null)
+				{
+					messageQueue.QueueName = _originatingQueueName;
+				}
+
 				Console.WriteLine("Receiving Message id " + messageQueue.TransactionQueueId);
 
 				ResponseModel<MessageQueue> responseMessage = await _messageProcessor.CommitInboundMessage(messageQueue);
 				if (responseMessage.ReturnStatus == true)
 				{
-					Console.WriteLine($"Message Committed: {messageQueue.TransactionQueueId}");
-					_subscription.Ack(e);
+					if (_sendToLoggingQueue == true)
+					{
+						responseMessage = SendReceivedMessageToLoggingQueue(messageQueue);
+					}
+					
+					if (responseMessage.ReturnStatus == true)
+					{
+						Console.WriteLine($"Message Committed: {messageQueue.TransactionQueueId}");
+						_subscription.Ack(e);
+					}
 				}
 
 				//_receivedMessages.Add(messageQueue.MessageGuid, e);
