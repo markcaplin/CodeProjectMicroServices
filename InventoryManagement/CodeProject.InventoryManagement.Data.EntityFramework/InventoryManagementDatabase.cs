@@ -13,6 +13,8 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 		public DbSet<Product> Products { get; set; }
 		public DbSet<TransactionQueueInbound> TransactionQueueInbound { get; set; }
 		public DbSet<TransactionQueueOutbound> TransactionQueueOutbound { get; set; }
+		public DbSet<TransactionQueueInboundHistory> TransactionQueueInboundHistory { get; set; }
+		public DbSet<TransactionQueueOutboundHistory> TransactionQueueOutboundHistory { get; set; }
 
 
 		/// <summary>

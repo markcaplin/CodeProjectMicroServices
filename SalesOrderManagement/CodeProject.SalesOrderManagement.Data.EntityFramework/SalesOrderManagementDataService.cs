@@ -195,6 +195,7 @@ namespace CodeProject.SalesOrderManagement.Data.EntityFramework
 			List<TransactionQueueInbound> transactionQueue = await dbConnection.TransactionQueueInbound.OrderBy(x=>x.TransactionQueueInboundId).ToListAsync();
 			return transactionQueue;
 		}
+
 		/// <summary>
 		/// Delete Inbound Transaction Queue Entry
 		/// </summary>

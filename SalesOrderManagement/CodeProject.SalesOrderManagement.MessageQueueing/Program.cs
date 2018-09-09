@@ -4,11 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
 using CodeProject.SalesOrderManagement.Data.EntityFramework;
 using CodeProject.Shared.Common.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Text;
 using CodeProject.SalesOrderManagement.Interfaces;
 using CodeProject.Shared.Common.Interfaces;
 using CodeProject.SalesOrderManagement.Business.MessageService;

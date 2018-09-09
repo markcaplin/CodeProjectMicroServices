@@ -18,5 +18,9 @@ namespace CodeProject.Shared.Common.Interfaces
 		void InitializeQueue(string queueName, string routingKey);
 		void InitializeLogging(string originatingQueueName, string loggingQueueName, Boolean sendToLoggingQueue);
 		ResponseModel<MessageQueue> SendReceivedMessageToLoggingQueue(MessageQueue messageQueue);
+		ResponseModel<MessageQueue> SendAcknowledgementMessage(MessageQueue messageQueue);
+		void InitializeAcknowledgementConfiguration(string acknowledgementMessageExchangeSuffix, string acknowledgementMessageQueueSuffix);
+
+
 	}
 }

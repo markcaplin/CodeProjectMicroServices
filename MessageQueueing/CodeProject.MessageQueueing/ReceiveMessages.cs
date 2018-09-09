@@ -22,7 +22,6 @@ namespace CodeProject.MessageQueueing
 		private readonly ILogger _logger;
 		private readonly IOptions<MessageQueueAppConfig> _appConfig;
 
-		private int _counter;
 		private Timer _timer;
 
 		private Subject<MessageQueue> _subject;
@@ -56,8 +55,6 @@ namespace CodeProject.MessageQueueing
 		public Task StartAsync(CancellationToken cancellationToken)
 		{
 			_logger.LogInformation("Starting Receiving Messages");
-
-			_counter = 0;
 
 			_subject = new Subject<MessageQueue>();
 			_subject.Subscribe(MessageReceived);

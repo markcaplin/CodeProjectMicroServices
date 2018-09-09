@@ -76,9 +76,7 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 		/// <returns></returns>
 		public async Task<Product> GetProductInformationByProductNumber(string productNumber, int accountId)
 		{
-			Product product = await dbConnection.Products.Where(x =>
-			x.ProductNumber == productNumber && x.AccountId == accountId)
-			.FirstOrDefaultAsync();
+			Product product = await dbConnection.Products.Where(x => x.ProductNumber == productNumber && x.AccountId == accountId).FirstOrDefaultAsync();
 			return product;
 		}
 		/// <summary>
@@ -139,5 +137,72 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 		{
 			await Task.Delay(0);
 		}
+
+		/// <summary>
+		/// Get Inbound Transaction Queue
+		/// </summary>
+		/// <returns></returns>
+		public async Task<List<TransactionQueueInbound>> GetInboundTransactionQueue()
+		{
+			List<TransactionQueueInbound> transactionQueue = await dbConnection.TransactionQueueInbound.OrderBy(x => x.TransactionQueueInboundId).ToListAsync();
+			return transactionQueue;
+		}
+
+		/// <summary>
+		/// Delete Inbound Transaction Queue Entry
+		/// </summary>
+		/// <param name="transactionQueueId"></param>
+		/// <returns></returns>
+		public async Task DeleteInboundTransactionQueueEntry(int transactionQueueId)
+		{
+			TransactionQueueInbound transactionQueue = await dbConnection.TransactionQueueInbound.Where(x => x.TransactionQueueInboundId == transactionQueueId).FirstOrDefaultAsync();
+			dbConnection.TransactionQueueInbound.Remove(transactionQueue);
+		}
+
+		/// <summary>
+		/// Get Inbound Transaction Queue History By Sender
+		/// </summary>
+		/// <param name="senderTransactionQueueId"></param>
+		/// <returns></returns>
+		public async Task<TransactionQueueInboundHistory> GetInboundTransactionQueueHistoryBySender(int senderTransactionQueueId, string exchangeName)
+		{
+			TransactionQueueInboundHistory transactionQueue = await dbConnection.TransactionQueueInboundHistory.Where(x => x.ExchangeName == exchangeName && x.SenderTransactionQueueId == senderTransactionQueueId).FirstOrDefaultAsync();
+			return transactionQueue;
+		}
+
+		/// <summary>
+		/// Get Outbound Transaction Queue Item By Id
+		/// </summary>
+		/// <param name="transactionQueueId"></param>
+		/// <returns></returns>
+		public async Task<TransactionQueueOutbound> GetOutboundTransactionQueueItemById(int transactionQueueId)
+		{
+			TransactionQueueOutbound transactionQueueItem = await dbConnection.TransactionQueueOutbound.Where(x=>x.TransactionQueueOutboundId == transactionQueueId).FirstOrDefaultAsync();
+			return transactionQueueItem;
+		}
+		/// <summary>
+		/// Create Outbound Transaction Queue History
+		/// </summary>
+		/// <param name="transactionQueueItem"></param>
+		/// <returns></returns>
+		public async Task CreateOutboundTransactionQueueHistory(TransactionQueueOutboundHistory transactionQueueItem)
+		{
+			DateTime dateCreated = DateTime.UtcNow;
+			transactionQueueItem.DateCreated = dateCreated;
+
+			await dbConnection.TransactionQueueOutboundHistory.AddAsync(transactionQueueItem);
+		}
+
+		/// <summary>
+		/// Delete Outbound Transaction Queue Entry
+		/// </summary>
+		/// <param name="transactionQueueId"></param>
+		/// <returns></returns>
+		public async Task DeleteOutboundTransactionQueueEntry(int transactionQueueId)
+		{
+			TransactionQueueOutbound transactionQueue = await dbConnection.TransactionQueueOutbound.Where(x => x.TransactionQueueOutboundId == transactionQueueId).FirstOrDefaultAsync();
+			dbConnection.TransactionQueueOutbound.Remove(transactionQueue);
+		}
+
 	}
 }

@@ -28,6 +28,8 @@ namespace CodeProject.MessageQueueing
 		private string _loggingRoutingKey { get; set; }
 		private string _loggingQueueName { get; set; }
 		private string _originatingQueueName { get; set; }
+		private string _acknowledgementMessageExchangeSuffix { get; set; }	
+		private string _acknowledgementMessageQueueSuffix { get; set; }
 
 		private Boolean _sendToLoggingQueue { get; set; }
 
@@ -96,6 +98,17 @@ namespace CodeProject.MessageQueueing
 			_channel.ExchangeDeclare(exchangeName, "fanout", true, false);
 			_exchangeName = exchangeName;
 			_routingKey = routingKey;
+		}
+
+		/// <summary>
+		/// Initialize Acknowledgement Configuration
+		/// </summary>
+		/// <param name="acknowledgementMessageExchangeSuffix"></param>
+		/// <param name="acknowledgementMessageQueueSuffix"></param>
+		public void InitializeAcknowledgementConfiguration( string acknowledgementMessageExchangeSuffix, string acknowledgementMessageQueueSuffix)
+		{
+			_acknowledgementMessageExchangeSuffix = acknowledgementMessageExchangeSuffix;
+			_acknowledgementMessageQueueSuffix = acknowledgementMessageQueueSuffix;
 		}
 
 		/// <summary>
@@ -176,6 +189,58 @@ namespace CodeProject.MessageQueueing
 				response.ReturnMessage.Add(ex.Message);
 			}
 
+			return response;
+
+		}
+		/// <summary>
+		/// Send Acknowledgement Message
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <returns></returns>
+		public ResponseModel<MessageQueue> SendAcknowledgementMessage(MessageQueue messageQueue)
+		{
+			ResponseModel<MessageQueue> response = new ResponseModel<MessageQueue>();
+			response.Entity = new MessageQueue();
+
+			IModel channel = null;
+
+			try
+			{
+				channel = _connection.CreateModel();
+
+				string exchangeName = messageQueue.ExchangeName + _acknowledgementMessageExchangeSuffix;
+				string queueName = messageQueue.ExchangeName + _acknowledgementMessageQueueSuffix;
+
+				channel.ExchangeDeclare(exchangeName, "fanout", true, false);
+				channel.QueueDeclare(queueName, true, false, false);
+				channel.QueueBind(queueName, exchangeName, _routingKey);
+
+				string output = JsonConvert.SerializeObject(messageQueue);
+
+				byte[] payload = Encoding.UTF8.GetBytes(output);
+
+				PublicationAddress address = new PublicationAddress(ExchangeType.Fanout, exchangeName, _routingKey);
+
+				channel.BasicPublish(address, _basicProperties, payload);
+
+				response.Entity.Payload = output;
+
+				response.ReturnStatus = true;
+			}
+			catch (Exception ex)
+			{
+				response.ReturnStatus = false;
+				response.ReturnMessage.Add(ex.Message);
+			}
+			finally
+			{
+				if (channel != null)
+				{
+					channel.Dispose();
+				}
+				
+			}
+			
 			return response;
 
 		}

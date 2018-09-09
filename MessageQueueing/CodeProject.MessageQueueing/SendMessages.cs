@@ -31,7 +31,8 @@ namespace CodeProject.MessageQueueing
 			_messageQueueing = messageQueueing;
 
 			_messageQueueing.InitializeExchange(appConfig.Value.ExchangeName, appConfig.Value.RoutingKey);
-			
+			_messageQueueing.InitializeAcknowledgementConfiguration(appConfig.Value.AcknowledgementMessageExchangeSuffix, appConfig.Value.AcknowledgementMessageQueueSuffix);
+
 			string[] outboundQueues = appConfig.Value.OutboundMessageQueues.Split(",");
 
 			foreach(string outboundQueue in outboundQueues)

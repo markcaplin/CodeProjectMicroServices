@@ -54,7 +54,7 @@ namespace CodeProject.LoggingManagement.Business.MessageService
 					message.TransactionQueueId = transactionQueueItem.SenderTransactionQueueId;
 					message.TransactionCode = TransactionQueueTypes.Acknowledgement;
 
-					ResponseModel<MessageQueue> messageQueueResponse = messageQueueing.SendMessage(message);
+					ResponseModel<MessageQueue> messageQueueResponse = messageQueueing.SendAcknowledgementMessage(message);
 					if (messageQueueResponse.ReturnStatus == true)
 					{
 						await _loggingManagementDataService.DeleteAcknowledgementsQueue(transactionQueueItem.AcknowledgementsQueueId);

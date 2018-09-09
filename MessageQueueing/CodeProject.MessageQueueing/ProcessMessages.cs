@@ -25,8 +25,7 @@ namespace CodeProject.MessageQueueing
 
 		//private Subject<MessageQueue> _subject;
 
-		public ProcessMessages(ILogger<SendMessages> logger, IOptions<MessageQueueAppConfig> appConfig,
-			IMessageQueueing messageQueueing, IMessageQueueProcessing messageProcessor)
+		public ProcessMessages(ILogger<SendMessages> logger, IOptions<MessageQueueAppConfig> appConfig, IMessageQueueing messageQueueing, IMessageQueueProcessing messageProcessor)
 		{
 			_logger = logger;
 			_appConfig = appConfig;
