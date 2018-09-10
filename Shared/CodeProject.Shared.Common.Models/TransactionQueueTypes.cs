@@ -8,5 +8,6 @@ namespace CodeProject.Shared.Common.Models
     {
 		public static string ProductUpdated = "ProductUpdated";
 		public static string Acknowledgement = "Acknowledgement";
+		public static string TriggerImmediately = "TriggerImmediately";
 	}
 }

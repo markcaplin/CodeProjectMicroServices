@@ -13,5 +13,6 @@ namespace CodeProject.InventoryManagement.Interfaces
 	{ 
 		Task<ResponseModel<ProductDataTransformation>> CreateProduct(ProductDataTransformation productDataTransformation);
 		Task<ResponseModel<ProductDataTransformation>> UpdateProduct(ProductDataTransformation productDataTransformation);
+		void SetConfigurationInformation(MessageQueueAppConfig messageQueueAppConfig);
 	}
 }

@@ -21,17 +21,32 @@ namespace CodeProject.InventoryManagement.BusinessServices
 {
 	public class InventoryManagementBusinessService : IInventoryManagementBusinessService
 	{
-		IInventoryManagementDataService _inventoryManagementDataService;
+		private readonly IInventoryManagementDataService _inventoryManagementDataService;
+		private readonly IMessageQueueing _messageQueueing;
+
+		private MessageQueueAppConfig _messageQueueAppConfig;	
 
 		public IConfiguration configuration { get; }
+
+		/// <summary>
+		/// Set Configuration Information
+		/// </summary>
+		/// <param name="messageQueueAppConfig"></param>
+		public void SetConfigurationInformation(MessageQueueAppConfig messageQueueAppConfig)
+		{
+			_messageQueueAppConfig = messageQueueAppConfig;
+		}
 
 		/// <summary>
 		/// Acount Business Service
 		/// </summary>
 		/// <param name="accountDataService"></param>
-		public InventoryManagementBusinessService(IInventoryManagementDataService inventoryManagementDataService)
+		public InventoryManagementBusinessService(IInventoryManagementDataService inventoryManagementDataService, IMessageQueueing messageQueueing)
 		{
 			_inventoryManagementDataService = inventoryManagementDataService;
+			_messageQueueing = messageQueueing;
+			_messageQueueAppConfig = new MessageQueueAppConfig();
+			_messageQueueAppConfig.QueueImmediately = false;
 		}
 		/// <summary>
 		/// Create Product
@@ -82,6 +97,11 @@ namespace CodeProject.InventoryManagement.BusinessServices
 				await _inventoryManagementDataService.UpdateDatabase();
 
 				_inventoryManagementDataService.CommitTransaction();
+
+				if (_messageQueueAppConfig.QueueImmediately == true)
+				{
+					_messageQueueing.TriggerQueueing(_messageQueueAppConfig);
+				}
 
 				returnResponse.ReturnStatus = true;
 
@@ -155,6 +175,11 @@ namespace CodeProject.InventoryManagement.BusinessServices
 				await _inventoryManagementDataService.UpdateDatabase();
 
 				_inventoryManagementDataService.CommitTransaction();
+
+				if (_messageQueueAppConfig.QueueImmediately == true)
+				{
+					_messageQueueing.TriggerQueueing(_messageQueueAppConfig);
+				}
 
 				returnResponse.ReturnStatus = true;
 

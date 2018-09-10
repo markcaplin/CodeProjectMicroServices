@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CodeProject.Shared.Common.Models;
 using CodeProject.Shared.Common.Utilties;
+using Microsoft.Extensions.Options;
 
 namespace CodeProject.InventoryManagement.WebApi.Controllers
 {
@@ -12,8 +13,15 @@ namespace CodeProject.InventoryManagement.WebApi.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        // GET api/values
-        [HttpGet]
+		private MessageQueueAppConfig _messageQueueAppConfig;
+
+		public ValuesController(IOptions<MessageQueueAppConfig> messageQueueAppConfig)
+		{
+			_messageQueueAppConfig = messageQueueAppConfig.Value;
+		}
+
+		// GET api/values
+		[HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
             

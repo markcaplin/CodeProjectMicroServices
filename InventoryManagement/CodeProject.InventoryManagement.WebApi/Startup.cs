@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using CodeProject.InventoryManagement.WebApi.ActionFilters;
 using CodeProject.InventoryManagement.Interfaces;
 using CodeProject.InventoryManagement.BusinessServices;
+using CodeProject.Shared.Common.Interfaces;
 
 namespace CodeProject.InventoryManagement.WebApi
 {
@@ -28,8 +29,14 @@ namespace CodeProject.InventoryManagement.WebApi
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
-        }
+            //Configuration = configuration;
+
+			string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+			string jsonFile = $"appsettings.{environment}.json";
+
+			var builder = new ConfigurationBuilder().AddJsonFile(jsonFile, optional: true).AddEnvironmentVariables();
+			Configuration = builder.Build();
+		}
 
         public IConfiguration Configuration { get; }
 
@@ -39,6 +46,9 @@ namespace CodeProject.InventoryManagement.WebApi
 		/// <param name="services"></param>
 		public void ConfigureServices(IServiceCollection services)
         {
+
+			services.Configure<MessageQueueAppConfig>(Configuration.GetSection("MessageQueueAppConfig"));
+
 			CorsPolicyBuilder corsBuilder = new CorsPolicyBuilder();
 
 			corsBuilder.AllowAnyHeader();
@@ -57,9 +67,12 @@ namespace CodeProject.InventoryManagement.WebApi
 			services.AddDbContext<InventoryManagementDatabase>(options => options.UseSqlServer(Configuration.GetConnectionString("PrimaryDatabaseConnectionString")));
 
 			services.AddTransient<IInventoryManagementDataService, InventoryManagementDataService>();
+			services.AddTransient<IMessageQueueing, CodeProject.MessageQueueing.MessageQueueing>();
+
 
 			services.AddTransient<IInventoryManagementBusinessService>(provider =>
-			new InventoryManagementBusinessService(provider.GetRequiredService<IInventoryManagementDataService>()));
+			new InventoryManagementBusinessService(provider.GetRequiredService<IInventoryManagementDataService>(),
+			                                       provider.GetRequiredService<IMessageQueueing>()));
 
 			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 			{

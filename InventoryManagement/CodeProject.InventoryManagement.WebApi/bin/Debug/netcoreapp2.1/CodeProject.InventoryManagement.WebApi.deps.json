@@ -29,6 +29,7 @@
           "CodeProject.InventoryManagement.Data.EntityFramework": "1.0.0",
           "CodeProject.InventoryManagement.Data.Models": "1.0.0",
           "CodeProject.InventoryManagement.Interfaces": "1.0.0",
+          "CodeProject.MessageQueueing": "1.0.0",
           "CodeProject.Shared.Common.Interfaces": "1.0.0",
           "CodeProject.Shared.Common.Models": "1.0.0",
           "CodeProject.Shared.Common.Utilities": "1.0.0",
@@ -1114,6 +1115,37 @@
         },
         "compile": {
           "CodeProject.InventoryManagement.Interfaces.dll": {}
+        }
+      },
+      "CodeProject.MessageQueueing/1.0.0": {
+        "dependencies": {
+          "CodeProject.Shared.Common.Interfaces": "1.0.0",
+          "CodeProject.Shared.Common.Models": "1.0.0",
+          "CodeProject.Shared.Common.Utilities": "1.0.0",
+          "Microsoft.Extensions.Configuration": "2.1.1",
+          "Microsoft.Extensions.Configuration.CommandLine": "2.1.1",
+          "Microsoft.Extensions.Configuration.EnvironmentVariables": "2.1.1",
+          "Microsoft.Extensions.Configuration.Json": "2.1.1",
+          "Microsoft.Extensions.DependencyInjection": "2.1.1",
+          "Microsoft.Extensions.Hosting": "2.1.1",
+          "Microsoft.Extensions.Logging": "2.1.1",
+          "Microsoft.Extensions.Logging.Configuration": "2.1.1",
+          "Microsoft.Extensions.Logging.Console": "2.1.1",
+          "Microsoft.Extensions.Options": "2.1.1",
+          "Microsoft.Extensions.Options.ConfigurationExtensions": "2.1.1",
+          "Newtonsoft.Json": "11.0.2",
+          "RabbitMQ.Client": "5.1.0",
+          "System.Reactive": "4.1.0",
+          "System.Reactive.Core": "4.1.0",
+          "System.Reactive.Interfaces": "4.1.0",
+          "System.Reactive.Linq": "4.1.0",
+          "System.Reactive.PlatformServices": "4.1.0"
+        },
+        "runtime": {
+          "CodeProject.MessageQueueing.dll": {}
+        },
+        "compile": {
+          "CodeProject.MessageQueueing.dll": {}
         }
       },
       "CodeProject.Shared.Common.Interfaces/1.0.0": {
@@ -4318,6 +4350,11 @@
       "sha512": ""
     },
     "CodeProject.InventoryManagement.Interfaces/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "CodeProject.MessageQueueing/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

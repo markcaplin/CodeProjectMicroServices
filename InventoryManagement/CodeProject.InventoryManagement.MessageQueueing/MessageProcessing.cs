@@ -65,6 +65,11 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 
 						returnResponse.Entity.Add(message);
 					}
+					else
+					{
+						break;
+					}
+					
 				}
 
 				await _inventoryManagementDataService.UpdateDatabase();
@@ -72,7 +77,6 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 				_inventoryManagementDataService.CommitTransaction();
 				_inventoryManagementDataService.CloseConnection();
 
-			
 			}
 			catch (Exception ex)
 			{

@@ -343,6 +343,60 @@ namespace CodeProject.MessageQueueing
 		}
 
 		/// <summary>
+		/// Trigger Queueing
+		/// </summary>
+		/// <param name="messageQueueAppConfig"></param>
+	    public ResponseModel<MessageQueue> TriggerQueueing(MessageQueueAppConfig messageQueueAppConfig)
+		{
+			ResponseModel<MessageQueue> response = new ResponseModel<MessageQueue>();
+			response.Entity = new MessageQueue();
+
+			IModel channel = null;
+
+			try
+			{
+				channel = _connection.CreateModel();
+
+				string exchangeName = messageQueueAppConfig.TriggerExchangeName;
+				string queueName = messageQueueAppConfig.TriggerQueueName;
+
+				channel.ExchangeDeclare(exchangeName, "fanout", true, false);
+				channel.QueueDeclare(queueName, true, false, false);
+				channel.QueueBind(queueName, exchangeName, _routingKey);
+
+				MessageQueue messageQueue = new MessageQueue();
+				messageQueue.TransactionCode = TransactionQueueTypes.TriggerImmediately;
+
+				string output = JsonConvert.SerializeObject(messageQueue);
+
+				byte[] payload = Encoding.UTF8.GetBytes(output);
+
+				PublicationAddress address = new PublicationAddress(ExchangeType.Fanout, exchangeName, _routingKey);
+
+				channel.BasicPublish(address, _basicProperties, payload);
+
+				response.Entity.Payload = output;
+
+				response.ReturnStatus = true;
+			}
+			catch (Exception ex)
+			{
+				response.ReturnStatus = false;
+				response.ReturnMessage.Add(ex.Message);
+			}
+			finally
+			{
+				if (channel != null)
+				{
+					channel.Dispose();
+				}
+
+			}
+
+			return response;
+		}
+
+		/// <summary>
 		/// Send Acknowledgement
 		/// </summary>
 		/// <param name="messageGuid"></param>

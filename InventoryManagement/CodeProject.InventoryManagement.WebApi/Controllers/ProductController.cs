@@ -12,6 +12,8 @@ using CodeProject.InventoryManagement.WebApi.ActionFilters;
 using CodeProject.Shared.Common.Models;
 using CodeProject.Shared.Common;
 using Microsoft.AspNetCore.Authorization;
+using CodeProject.Shared.Common.Interfaces;
+using Microsoft.Extensions.Options;
 
 namespace CodeProject.InventoryManagement.WebApi.Controllers
 {
@@ -24,14 +26,23 @@ namespace CodeProject.InventoryManagement.WebApi.Controllers
 	{
 		private readonly IInventoryManagementBusinessService _inventoryManagementBusinessService;
 
+		private MessageQueueAppConfig _messageQueueAppConfig;
+
+		private readonly IMessageQueueing _messageQueueing;
+
 		public IConfiguration configuration { get; }
 
 		/// <summary>
 		/// Movies Controller
 		/// </summary>
-		public ProductController(IInventoryManagementBusinessService inventoryManagementBusinessService)
+		public ProductController(IOptions<MessageQueueAppConfig> messageQueueAppConfig, IInventoryManagementBusinessService inventoryManagementBusinessService, IMessageQueueing messageQueueing)
 		{
 			_inventoryManagementBusinessService = inventoryManagementBusinessService;
+			_messageQueueAppConfig = messageQueueAppConfig.Value;
+			_messageQueueing = messageQueueing;
+
+			_inventoryManagementBusinessService.SetConfigurationInformation(_messageQueueAppConfig);
+
 		}
 
 		/// <summary>

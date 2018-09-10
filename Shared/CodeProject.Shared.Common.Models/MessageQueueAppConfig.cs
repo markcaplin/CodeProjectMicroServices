@@ -15,6 +15,9 @@ namespace CodeProject.Shared.Common.Models
 		public string OriginatingQueueName { get; set; }
 		public Boolean SendToLoggingQueue { get; set; }
 		public string AcknowledgementMessageExchangeSuffix { get; set; }
-		public string AcknowledgementMessageQueueSuffix { get; set; }
+		public string AcknowledgementMessageQueueSuffix { get; set; } 
+		public string TriggerExchangeName { get; set; }
+		public string TriggerQueueName { get; set; }
+		public Boolean QueueImmediately { get; set; }
 	}
 }
