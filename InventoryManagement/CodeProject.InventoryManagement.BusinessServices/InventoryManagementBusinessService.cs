@@ -100,7 +100,7 @@ namespace CodeProject.InventoryManagement.BusinessServices
 
 				if (_messageQueueAppConfig.QueueImmediately == true)
 				{
-					_messageQueueing.TriggerQueueing(_messageQueueAppConfig);
+					_messageQueueing.BroadcastTransaction(_messageQueueAppConfig);
 				}
 
 				returnResponse.ReturnStatus = true;
@@ -178,7 +178,7 @@ namespace CodeProject.InventoryManagement.BusinessServices
 
 				if (_messageQueueAppConfig.QueueImmediately == true)
 				{
-					_messageQueueing.TriggerQueueing(_messageQueueAppConfig);
+					_messageQueueing.BroadcastTransaction(_messageQueueAppConfig);
 				}
 
 				returnResponse.ReturnStatus = true;

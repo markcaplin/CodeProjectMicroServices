@@ -287,8 +287,6 @@ namespace CodeProject.MessageQueueing
 		public async Task ReceiveMessages(string queueName, Subject<MessageQueue> subject, IMessageQueueProcessing _messageProcessor)
 		{
 
-			await Task.Delay(0);
-
 			Console.WriteLine("Receiving Messages at " + DateTime.Now);
 
 			if (_running == true) {
@@ -315,38 +313,44 @@ namespace CodeProject.MessageQueueing
 					messageQueue.QueueName = _originatingQueueName;
 				}
 
-				Console.WriteLine("Receiving Message id " + messageQueue.TransactionQueueId);
-
-				ResponseModel<MessageQueue> responseMessage = await _messageProcessor.CommitInboundMessage(messageQueue);
-				if (responseMessage.ReturnStatus == true)
+				if (messageQueue.TransactionCode == TransactionQueueTypes.TriggerImmediately)
 				{
-					if (_sendToLoggingQueue == true)
-					{
-						responseMessage = SendReceivedMessageToLoggingQueue(messageQueue);
-					}
+					await _messageProcessor.SendQueueMessages(this);
 					
+					_subscription.Ack(e);
+				}
+				else
+				{
+					Console.WriteLine("Receiving Message id " + messageQueue.TransactionQueueId);
+
+					ResponseModel<MessageQueue> responseMessage = await _messageProcessor.CommitInboundMessage(messageQueue);
 					if (responseMessage.ReturnStatus == true)
 					{
-						Console.WriteLine($"Message Committed: {messageQueue.TransactionQueueId}");
-						_subscription.Ack(e);
+						if (_sendToLoggingQueue == true)
+						{
+							responseMessage = SendReceivedMessageToLoggingQueue(messageQueue);
+						}
+
+						if (responseMessage.ReturnStatus == true)
+						{
+							Console.WriteLine($"Message Committed: {messageQueue.TransactionQueueId}");
+							_subscription.Ack(e);
+						}
+
+						await _messageProcessor.ProcessMessages();
+
 					}
 				}
-
-				//_receivedMessages.Add(messageQueue.MessageGuid, e);
-
-				//subject.OnNext(messageQueue);
-
-				//break;
 
 			}
 
 		}
 
 		/// <summary>
-		/// Trigger Queueing
+		/// Broadcast Transaction
 		/// </summary>
 		/// <param name="messageQueueAppConfig"></param>
-	    public ResponseModel<MessageQueue> TriggerQueueing(MessageQueueAppConfig messageQueueAppConfig)
+		public ResponseModel<MessageQueue> BroadcastTransaction(MessageQueueAppConfig messageQueueAppConfig)
 		{
 			ResponseModel<MessageQueue> response = new ResponseModel<MessageQueue>();
 			response.Entity = new MessageQueue();
@@ -359,10 +363,11 @@ namespace CodeProject.MessageQueueing
 
 				string exchangeName = messageQueueAppConfig.TriggerExchangeName;
 				string queueName = messageQueueAppConfig.TriggerQueueName;
+				string routingKey = messageQueueAppConfig.RoutingKey;
 
 				channel.ExchangeDeclare(exchangeName, "fanout", true, false);
 				channel.QueueDeclare(queueName, true, false, false);
-				channel.QueueBind(queueName, exchangeName, _routingKey);
+				channel.QueueBind(queueName, exchangeName, routingKey);
 
 				MessageQueue messageQueue = new MessageQueue();
 				messageQueue.TransactionCode = TransactionQueueTypes.TriggerImmediately;
@@ -371,7 +376,7 @@ namespace CodeProject.MessageQueueing
 
 				byte[] payload = Encoding.UTF8.GetBytes(output);
 
-				PublicationAddress address = new PublicationAddress(ExchangeType.Fanout, exchangeName, _routingKey);
+				PublicationAddress address = new PublicationAddress(ExchangeType.Fanout, exchangeName, routingKey);
 
 				channel.BasicPublish(address, _basicProperties, payload);
 

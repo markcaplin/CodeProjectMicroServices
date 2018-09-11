@@ -12,7 +12,7 @@ namespace CodeProject.Shared.Common.Interfaces
 		ResponseModel<MessageQueue> SendMessage(object entity);
 		Task ReceiveMessages(string queueName, Subject<MessageQueue> subject, IMessageQueueProcessing _messageProcessor);
 		void SendAcknowledgement(Guid messageGuid);
-		ResponseModel<MessageQueue> TriggerQueueing(MessageQueueAppConfig messageQueueAppConfig);
+		ResponseModel<MessageQueue> BroadcastTransaction(MessageQueueAppConfig messageQueueAppConfig);
 		void InitializeExchange(string exchangeName, string routingKey);
 		void InitializeLoggingExchange(string exchangeName, string routingKey);
 		void InitializeQueue(string queueName);

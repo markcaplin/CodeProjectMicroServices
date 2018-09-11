@@ -40,10 +40,12 @@ namespace CodeProject.MessageQueueing
 			_messageProcessor = messageProcessor;
 			_messageQueueing = messageQueueing;
 
+			_messageQueueing.InitializeExchange(appConfig.Value.ExchangeName, appConfig.Value.RoutingKey);
+
 			_messageQueueing.InitializeLogging(appConfig.Value.OriginatingQueueName, appConfig.Value.LoggingMessageQueue, appConfig.Value.SendToLoggingQueue);
 			_messageQueueing.InitializeLoggingExchange(appConfig.Value.LoggingExchangeName, appConfig.Value.RoutingKey);
 			_messageQueueing.InitializeQueue(appConfig.Value.InboundMessageQueue, appConfig.Value.RoutingKey);
-
+		
 			_logger.LogInformation("Receive Messages Constructor ");
 		}
 
@@ -59,7 +61,7 @@ namespace CodeProject.MessageQueueing
 			_subject = new Subject<MessageQueue>();
 			_subject.Subscribe(MessageReceived);
 
-			_timer = new Timer(GetMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(60));
+			_timer = new Timer(GetMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(600000));
 
 			return Task.CompletedTask;
 		}
@@ -70,16 +72,10 @@ namespace CodeProject.MessageQueueing
 		/// <param name="state"></param>
 		private async void GetMessagesInQueue(object state)
 		{
-			await Task.Delay(0);
 
 			_logger.LogInformation("Receive Messages in Queue at " + DateTime.Now);
 
 			await _messageQueueing.ReceiveMessages(_appConfig.Value.InboundMessageQueue, _subject, _messageProcessor);
-
-			//_logger.LogInformation("total messages " + messages.Entity.Count.ToString() + " sent at " + DateTime.Now);
-
-			//MessageQueue messageQueue = new MessageQueue();
-			//_subject.OnNext(messageQueue);
 
 		}
 		/// <summary>
@@ -89,15 +85,6 @@ namespace CodeProject.MessageQueueing
 		public async void MessageReceived(MessageQueue messageQueue)
 		{
 			await Task.Delay(0);
-
-			//_logger.LogInformation($"Message Receivied: {messageQueue.TransactionQueueId}");
-
-			//ResponseModel<MessageQueue> responseMessage = await _messageProcessor.CommitInboundMessage(messageQueue);
-			//if (responseMessage.ReturnStatus == true)
-			//{
-			//	_logger.LogInformation($"Message Committed: {messageQueue.TransactionQueueId}");
-			//	_messageQueueing.SendAcknowledgement(messageQueue.MessageGuid);
-			//}
 
 		}
 

@@ -6,3 +6,4 @@ C:\MyFiles\_CodeProjectMicroServices\InventoryManagement\CodeProject.InventoryMa
 C:\MyFiles\_CodeProjectMicroServices\InventoryManagement\CodeProject.InventoryManagement.Data.Models\obj\Debug\netcoreapp2.1\CodeProject.InventoryManagement.Data.Models.AssemblyInfo.cs
 C:\MyFiles\_CodeProjectMicroServices\InventoryManagement\CodeProject.InventoryManagement.Data.Models\obj\Debug\netcoreapp2.1\CodeProject.InventoryManagement.Data.Models.dll
 C:\MyFiles\_CodeProjectMicroServices\InventoryManagement\CodeProject.InventoryManagement.Data.Models\obj\Debug\netcoreapp2.1\CodeProject.InventoryManagement.Data.Models.pdb
+C:\MyFiles\_CodeProjectMicroServices\InventoryManagement\CodeProject.InventoryManagement.Data.Models\obj\Debug\netcoreapp2.1\CodeProject.InventoryManagement.Data.Models.csprojAssemblyReference.cache

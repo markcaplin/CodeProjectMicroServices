@@ -32,18 +32,6 @@ namespace CodeProject.MessageQueueing
 			_messageProcessor = messageProcessor;
 			_messageQueueing = messageQueueing;
 
-			//_messageQueueing.InitializeExchange(appConfig.Value.ExchangeName, appConfig.Value.RoutingKey);
-
-			//string[] outboundQueues = appConfig.Value.OutboundMessageQueues.Split(",");
-
-			//foreach (string outboundQueue in outboundQueues)
-			//{
-			//	_messageQueueing.InitializeQueue(outboundQueue);
-			//}
-
-			//_messageQueueing.InitializeExchange("SalesOrderManagement_DEV", "ERP-DEV");
-			//_messageQueueing.InitializeQueue("InventoryManagement_DEV");
-
 			_logger.LogInformation("Process Messages Constructor ");
 		}
 
@@ -53,9 +41,7 @@ namespace CodeProject.MessageQueueing
 
 			_counter = 0;
 
-			_timer = new Timer(ProcessMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(60));
-
-			//_messageProcessor.ProcessMessages();
+			_timer = new Timer(ProcessMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(600000));
 
 			return Task.CompletedTask;
 		}
@@ -71,9 +57,6 @@ namespace CodeProject.MessageQueueing
 			ResponseModel<List<MessageQueue>> messages = await _messageProcessor.ProcessMessages();
 
 			_logger.LogInformation("total messages processed " + messages.Entity.Count.ToString() + " sent at " + DateTime.Now);
-
-			//MessageQueue messageQueue = new MessageQueue();
-			//_subject.OnNext(messageQueue);
 
 		}
 

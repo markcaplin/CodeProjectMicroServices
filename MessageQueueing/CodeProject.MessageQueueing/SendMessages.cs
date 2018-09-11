@@ -21,8 +21,7 @@ namespace CodeProject.MessageQueueing
 		private readonly ILogger _logger;
 		private readonly IOptions<MessageQueueAppConfig> _appConfig;
 		private Timer _timer;
-		private int _counter;
-
+	
 		public SendMessages(ILogger<SendMessages> logger, IOptions<MessageQueueAppConfig> appConfig, IMessageQueueing messageQueueing, IMessageQueueProcessing messageProcessor)
 		{
 			_logger = logger;
@@ -52,9 +51,7 @@ namespace CodeProject.MessageQueueing
 		{
 			_logger.LogInformation("Starting Send Messages");
 
-			_counter = 0;
-
-			_timer = new Timer(GetMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(60));
+			_timer = new Timer(GetMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(600000));
 
 			return Task.CompletedTask;
 		}
