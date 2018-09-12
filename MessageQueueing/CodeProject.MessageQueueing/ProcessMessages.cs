@@ -41,7 +41,7 @@ namespace CodeProject.MessageQueueing
 
 			_counter = 0;
 
-			_timer = new Timer(ProcessMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(600000));
+			_timer = new Timer(ProcessMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(60));
 
 			return Task.CompletedTask;
 		}
@@ -54,7 +54,7 @@ namespace CodeProject.MessageQueueing
 
 			_counter++;
 
-			ResponseModel<List<MessageQueue>> messages = await _messageProcessor.ProcessMessages();
+			ResponseModel<List<MessageQueue>> messages = await _messageProcessor.ProcessMessages(_appConfig.Value.InboundMessageQueue);
 
 			_logger.LogInformation("total messages processed " + messages.Entity.Count.ToString() + " sent at " + DateTime.Now);
 

@@ -29,6 +29,9 @@ namespace CodeProject.MessageQueueing
 			_messageProcessor = messageProcessor;
 			_messageQueueing = messageQueueing;
 
+			_messageQueueing.SetInboundSemaphoreKey(appConfig.Value.InboundSemaphoreKey);
+			_messageQueueing.SetOutboundSemaphoreKey(appConfig.Value.OutboundSemaphoreKey);
+
 			_messageQueueing.InitializeExchange(appConfig.Value.ExchangeName, appConfig.Value.RoutingKey);
 			_messageQueueing.InitializeAcknowledgementConfiguration(appConfig.Value.AcknowledgementMessageExchangeSuffix, appConfig.Value.AcknowledgementMessageQueueSuffix);
 
@@ -51,7 +54,7 @@ namespace CodeProject.MessageQueueing
 		{
 			_logger.LogInformation("Starting Send Messages");
 
-			_timer = new Timer(GetMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(600000));
+			_timer = new Timer(GetMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(60));
 
 			return Task.CompletedTask;
 		}
@@ -61,7 +64,7 @@ namespace CodeProject.MessageQueueing
 		/// <param name="state"></param>
 		private async void GetMessagesInQueue(object state)
 		{
-			ResponseModel<List<MessageQueue>> messages = await _messageProcessor.SendQueueMessages(_messageQueueing);
+			ResponseModel<List<MessageQueue>> messages = await _messageProcessor.SendQueueMessages(_messageQueueing, _appConfig.Value.OutboundSemaphoreKey);
 			_logger.LogInformation("total messages " + messages.Entity.Count.ToString() + " sent at " + DateTime.Now);
 
 		}

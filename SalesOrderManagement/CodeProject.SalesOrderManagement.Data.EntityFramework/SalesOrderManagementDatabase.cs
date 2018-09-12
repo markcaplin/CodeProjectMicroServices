@@ -18,6 +18,8 @@ namespace CodeProject.SalesOrderManagement.Data.EntityFramework
 		public DbSet<SalesOrder> SalesOrders { get; set; }
 		public DbSet<SalesOrderStatus> SalesOrderStatuses { get; set; }
 		public DbSet<SalesOrderDetail> SalesOrderDetails { get; set; }
+		public DbSet<TransactionQueueSemaphore> TransactionQueueSemaphores { get; set; }
+
 
 		/// <summary>
 		/// On Configuring
@@ -38,6 +40,7 @@ namespace CodeProject.SalesOrderManagement.Data.EntityFramework
 		{
 			
 			modelBuilder.Entity<Product>().HasIndex(u=> u.ProductNumber);
+			modelBuilder.Entity<TransactionQueueSemaphore>().HasIndex(u => u.SemaphoreKey).IsUnique();
 
 		}
 

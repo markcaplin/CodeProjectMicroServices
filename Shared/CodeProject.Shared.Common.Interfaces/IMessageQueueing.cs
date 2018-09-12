@@ -13,6 +13,8 @@ namespace CodeProject.Shared.Common.Interfaces
 		Task ReceiveMessages(string queueName, Subject<MessageQueue> subject, IMessageQueueProcessing _messageProcessor);
 		void SendAcknowledgement(Guid messageGuid);
 		ResponseModel<MessageQueue> BroadcastTransaction(MessageQueueAppConfig messageQueueAppConfig);
+		void SetOutboundSemaphoreKey(string outboundSemaphoreKey);
+		void SetInboundSemaphoreKey(string inboundSemaphoreKey);
 		void InitializeExchange(string exchangeName, string routingKey);
 		void InitializeLoggingExchange(string exchangeName, string routingKey);
 		void InitializeQueue(string queueName);

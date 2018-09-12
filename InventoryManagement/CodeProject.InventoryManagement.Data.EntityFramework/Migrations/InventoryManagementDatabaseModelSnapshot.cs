@@ -159,6 +159,27 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework.Migrations
 
                     b.ToTable("TransactionQueueOutboundHistory");
                 });
+
+            modelBuilder.Entity("CodeProject.InventoryManagement.Data.Entities.TransactionQueueSemaphore", b =>
+                {
+                    b.Property<int>("TransactionQueueSemaphoreId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<DateTime>("DateUpdated");
+
+                    b.Property<string>("SemaphoreKey");
+
+                    b.HasKey("TransactionQueueSemaphoreId");
+
+                    b.HasIndex("SemaphoreKey")
+                        .IsUnique()
+                        .HasFilter("[SemaphoreKey] IS NOT NULL");
+
+                    b.ToTable("TransactionQueueSemaphores");
+                });
 #pragma warning restore 612, 618
         }
     }

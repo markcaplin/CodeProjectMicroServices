@@ -25,6 +25,11 @@ namespace CodeProject.SalesOrderManagement.Business.MessageService
 
 		public IConfiguration configuration { get; }
 
+		private Boolean _sending = false;
+		private Boolean _processing = false;
+		private readonly object _processingLock = new object();
+		private readonly object _sendingLock = new object();
+
 		/// <summary>
 		/// SalesOrder Management Message Processing
 		/// </summary>
@@ -33,19 +38,49 @@ namespace CodeProject.SalesOrderManagement.Business.MessageService
 		{
 			_salesOrderManagementDataService = salesOrderManagementDataService;
 		}
+
 		/// <summary>
-		///  Send Queue Messages
+		/// Send Queue Messages
 		/// </summary>
+		/// <param name="messageQueueing"></param>
+		/// <param name="outboundSemaphoreKey"></param>
 		/// <returns></returns>
-		public async Task<ResponseModel<List<MessageQueue>>> SendQueueMessages(IMessageQueueing messageQueueing)
+		public async Task<ResponseModel<List<MessageQueue>>> SendQueueMessages(IMessageQueueing messageQueueing, string outboundSemaphoreKey)
 		{
 
 			ResponseModel<List<MessageQueue>> returnResponse = new ResponseModel<List<MessageQueue>>();
 			returnResponse.Entity = new List<MessageQueue>();
+
+			lock (_sendingLock)
+			{
+				if (_sending)
+				{
+					Console.WriteLine("Aborted iteration still sending");
+					return returnResponse;
+				}
+
+				_sending = true;
+
+			}
+
+			TransactionQueueSemaphore transactionQueueSemaphore = null;
+
 			try
 			{
 				_salesOrderManagementDataService.OpenConnection();
 				_salesOrderManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
+
+				transactionQueueSemaphore = await _salesOrderManagementDataService.GetTransactionQueueSemaphore(outboundSemaphoreKey);
+				if (transactionQueueSemaphore == null)
+				{
+					transactionQueueSemaphore = new TransactionQueueSemaphore();
+					transactionQueueSemaphore.SemaphoreKey = outboundSemaphoreKey;
+					await _salesOrderManagementDataService.CreateTransactionQueueSemaphore(transactionQueueSemaphore);
+				}
+				else
+				{
+					await _salesOrderManagementDataService.UpdateTransactionQueueSemaphore(transactionQueueSemaphore);
+				}
 
 				List<TransactionQueueOutbound> transactionQueue = await _salesOrderManagementDataService.GetOutboundTransactionQueue();
 				foreach (TransactionQueueOutbound transactionQueueItem in transactionQueue)
@@ -140,20 +175,46 @@ namespace CodeProject.SalesOrderManagement.Business.MessageService
 		/// Process Messages
 		/// </summary>
 		/// <returns></returns>
-		public async Task<ResponseModel<List<MessageQueue>>> ProcessMessages()
+		public async Task<ResponseModel<List<MessageQueue>>> ProcessMessages(string inboundSemaphoreKey)
 		{
 
 			ResponseModel<List<MessageQueue>> returnResponse = new ResponseModel<List<MessageQueue>>();
 			returnResponse.Entity = new List<MessageQueue>();
+
+			TransactionQueueSemaphore transactionQueueSemaphore = null;
+
+			lock (_processingLock)
+			{
+				if (_processing == true)
+				{
+					Console.WriteLine("Processing iteration aborted");
+					return returnResponse;
+				}
+
+				_processing = true;
+			}
+
 			try
 			{
 				_salesOrderManagementDataService.OpenConnection();
-		
+				_salesOrderManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
+
+				transactionQueueSemaphore = await _salesOrderManagementDataService.GetTransactionQueueSemaphore(inboundSemaphoreKey);
+				if (transactionQueueSemaphore == null)
+				{
+					transactionQueueSemaphore = new TransactionQueueSemaphore();
+					transactionQueueSemaphore.SemaphoreKey = inboundSemaphoreKey;
+					await _salesOrderManagementDataService.CreateTransactionQueueSemaphore(transactionQueueSemaphore);
+				}
+				else
+				{
+					await _salesOrderManagementDataService.UpdateTransactionQueueSemaphore(transactionQueueSemaphore);
+				}
+
 				List<TransactionQueueInbound> transactionQueue = await _salesOrderManagementDataService.GetInboundTransactionQueue();
 				foreach (TransactionQueueInbound transactionQueueItem in transactionQueue)
 				{
-					_salesOrderManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
-
+	
 					int senderId = transactionQueueItem.SenderTransactionQueueId;
 					string exchangeName = transactionQueueItem.ExchangeName;
 					string transactionCode = transactionQueueItem.TransactionCode;
@@ -170,11 +231,11 @@ namespace CodeProject.SalesOrderManagement.Business.MessageService
 						await _salesOrderManagementDataService.DeleteInboundTransactionQueueEntry(transactionQueueItem.TransactionQueueInboundId);
 					}
 
-					await _salesOrderManagementDataService.UpdateDatabase();
-
-					_salesOrderManagementDataService.CommitTransaction();
-
 				}
+
+				await _salesOrderManagementDataService.UpdateDatabase();
+
+				_salesOrderManagementDataService.CommitTransaction();
 
 				_salesOrderManagementDataService.CloseConnection();
 

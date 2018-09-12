@@ -9,8 +9,8 @@ namespace CodeProject.Shared.Common.Interfaces
     public interface IMessageQueueProcessing
     {
 		Task<ResponseModel<MessageQueue>> CommitInboundMessage(MessageQueue messageQueue);
-		Task<ResponseModel<List<MessageQueue>>> SendQueueMessages(IMessageQueueing messageQueueing);
-		Task<ResponseModel<List<MessageQueue>>> ProcessMessages();
+		Task<ResponseModel<List<MessageQueue>>> SendQueueMessages(IMessageQueueing messageQueueing, string outboundSemaphoreKey);
+		Task<ResponseModel<List<MessageQueue>>> ProcessMessages(string inboundSemaphoreKey);
 
 
 	}

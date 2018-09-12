@@ -24,5 +24,8 @@ namespace CodeProject.SalesOrderManagement.Interfaces
 		Task CreateProduct(Product product);
 		Task<Product> GetProductInformationForUpdate(int productId);
 		Task UpdateProduct(Product product);
+		Task<TransactionQueueSemaphore> GetTransactionQueueSemaphore(string semaphoreKey);
+		Task UpdateTransactionQueueSemaphore(TransactionQueueSemaphore transactionQueueSemaphore);
+		Task CreateTransactionQueueSemaphore(TransactionQueueSemaphore transactionQueueSemaphore);
 	}
 }

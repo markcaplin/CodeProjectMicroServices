@@ -243,6 +243,27 @@ namespace CodeProject.SalesOrderManagement.Data.EntityFramework.Migrations
                     b.ToTable("TransactionQueueOutbound");
                 });
 
+            modelBuilder.Entity("CodeProject.SalesOrderManagement.Data.Entities.TransactionQueueSemaphore", b =>
+                {
+                    b.Property<int>("TransactionQueueSemaphoreId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<DateTime>("DateUpdated");
+
+                    b.Property<string>("SemaphoreKey");
+
+                    b.HasKey("TransactionQueueSemaphoreId");
+
+                    b.HasIndex("SemaphoreKey")
+                        .IsUnique()
+                        .HasFilter("[SemaphoreKey] IS NOT NULL");
+
+                    b.ToTable("TransactionQueueSemaphores");
+                });
+
             modelBuilder.Entity("CodeProject.SalesOrderManagement.Data.Entities.SalesOrder", b =>
                 {
                     b.HasOne("CodeProject.SalesOrderManagement.Data.Entities.Customer", "Customer")

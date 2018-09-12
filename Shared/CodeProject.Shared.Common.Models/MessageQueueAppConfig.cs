@@ -19,5 +19,7 @@ namespace CodeProject.Shared.Common.Models
 		public string TriggerExchangeName { get; set; }
 		public string TriggerQueueName { get; set; }
 		public Boolean QueueImmediately { get; set; }
+		public string InboundSemaphoreKey { get; set; }
+		public string OutboundSemaphoreKey { get; set; }
 	}
 }

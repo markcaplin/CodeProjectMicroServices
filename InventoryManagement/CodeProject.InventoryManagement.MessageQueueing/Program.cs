@@ -16,8 +16,8 @@ using CodeProject.MessageQueueing;
 
 namespace CodeProject.InventoryManagement.MessageQueueing
 {
-    class Program
-    {
+	class Program
+	{
 		public static async Task Main(string[] args)
 		{
 			var builder = new HostBuilder().ConfigureAppConfiguration((hostingContext, config) =>
@@ -67,39 +67,40 @@ namespace CodeProject.InventoryManagement.MessageQueueing
 
 				})
 				.ConfigureServices((hostContext, services) =>
-					{
-						services.AddDbContext<InventoryManagementDatabase>(options => options.UseSqlServer(hostContext.Configuration.GetConnectionString("PrimaryDatabaseConnectionString")));
+				{
+					services.AddDbContext<InventoryManagementDatabase>(options => options.UseSqlServer(hostContext.Configuration.GetConnectionString("PrimaryDatabaseConnectionString")));
 
-						services.AddTransient<IInventoryManagementDataService, InventoryManagementDataService>();
-						services.AddTransient<IMessageQueueing, CodeProject.MessageQueueing.MessageQueueing>();
+					services.AddTransient<IInventoryManagementDataService, InventoryManagementDataService>();
+					services.AddTransient<IMessageQueueing, CodeProject.MessageQueueing.MessageQueueing>();
 
-						services.AddTransient<IMessageQueueProcessing>(provider =>
-						new MessageProcessing(provider.GetRequiredService<IInventoryManagementDataService>()));
+					services.AddTransient<IMessageQueueProcessing>(provider =>
+					new MessageProcessing(provider.GetRequiredService<IInventoryManagementDataService>()));
 
-						services.AddOptions();
-						services.Configure<MessageQueueAppConfig>(hostContext.Configuration.GetSection("MessageQueueAppConfig"));
+					services.AddOptions();
+					services.Configure<MessageQueueAppConfig>(hostContext.Configuration.GetSection("MessageQueueAppConfig"));
 
-						services.AddSingleton<IHostedService, ProcessMessages>();
+					services.AddSingleton<IHostedService, ProcessMessages>();
 
 				})
-				.ConfigureLogging((hostingContext, logging) => {
-						logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-						logging.AddConsole();
-				}); 
+				.ConfigureLogging((hostingContext, logging) =>
+				{
+					logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+					logging.AddConsole();
+				});
 
-				 /*.ConfigureServices((hostContext, services) =>
-				 {
-					 services.AddOptions();
-					 services.Configure<AppConfig>(hostContext.Configuration.GetSection("AppConfig"));
+			/*.ConfigureServices((hostContext, services) =>
+			{
+				services.AddOptions();
+				services.Configure<AppConfig>(hostContext.Configuration.GetSection("AppConfig"));
 
-					 services.AddSingleton<IHostedService, PrintTest2>();
-				 })
-				 .ConfigureLogging((hostingContext, logging) => {
-					 logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-					 logging.AddConsole();
-				 });*/
+				services.AddSingleton<IHostedService, PrintTest2>();
+			})
+			.ConfigureLogging((hostingContext, logging) => {
+				logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+				logging.AddConsole();
+			});*/
 
-				 await builder.RunConsoleAsync();
+			await builder.RunConsoleAsync();
 		}
 	}
 }

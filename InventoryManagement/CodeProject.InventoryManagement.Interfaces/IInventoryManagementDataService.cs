@@ -24,5 +24,8 @@ namespace CodeProject.InventoryManagement.Interfaces
 		Task<TransactionQueueInboundHistory> GetInboundTransactionQueueHistoryBySender(int senderTransactionQueueId, string exchangeName);
 		Task DeleteInboundTransactionQueueEntry(int transactionQueueId);
 		Task DeleteOutboundTransactionQueueEntry(int transactionQueueId);
+		Task<TransactionQueueSemaphore> GetTransactionQueueSemaphore(string semaphoreKey);
+		Task UpdateTransactionQueueSemaphore(TransactionQueueSemaphore transactionQueueSemaphore);
+		Task CreateTransactionQueueSemaphore(TransactionQueueSemaphore transactionQueueSemaphore);
 	}
 }

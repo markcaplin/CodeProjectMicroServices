@@ -30,6 +30,8 @@ namespace CodeProject.MessageQueueing
 		private string _originatingQueueName { get; set; }
 		private string _acknowledgementMessageExchangeSuffix { get; set; }	
 		private string _acknowledgementMessageQueueSuffix { get; set; }
+		private string _outboundSemaphoreKey { get; set; }
+		private string _inboundSemaphoreKey { get; set; }
 
 		private Boolean _sendToLoggingQueue { get; set; }
 
@@ -101,6 +103,21 @@ namespace CodeProject.MessageQueueing
 		}
 
 		/// <summary>
+		/// Set Outbound Semaphore Key
+		/// </summary>
+		/// <param name="outboundSemaphoreKey"></param>
+		public void SetOutboundSemaphoreKey(string outboundSemaphoreKey)
+		{
+			_outboundSemaphoreKey = outboundSemaphoreKey;
+		}
+
+		public void SetInboundSemaphoreKey(string inboundSemaphoreKey)
+		{
+			_inboundSemaphoreKey = inboundSemaphoreKey;
+		}
+
+
+		/// <summary>
 		/// Initialize Acknowledgement Configuration
 		/// </summary>
 		/// <param name="acknowledgementMessageExchangeSuffix"></param>
@@ -149,6 +166,7 @@ namespace CodeProject.MessageQueueing
 			_originatingQueueName = originatingQueueName;
 			_sendToLoggingQueue = sendToLoggingQueue;
 		}
+
 		/// <summary>
 		/// Initialize Queue
 		/// </summary>
@@ -234,8 +252,10 @@ namespace CodeProject.MessageQueueing
 			}
 			finally
 			{
+				
 				if (channel != null)
 				{
+					channel.Close();
 					channel.Dispose();
 				}
 				
@@ -315,7 +335,7 @@ namespace CodeProject.MessageQueueing
 
 				if (messageQueue.TransactionCode == TransactionQueueTypes.TriggerImmediately)
 				{
-					await _messageProcessor.SendQueueMessages(this);
+					await _messageProcessor.SendQueueMessages(this, _outboundSemaphoreKey);
 					
 					_subscription.Ack(e);
 				}
@@ -337,7 +357,7 @@ namespace CodeProject.MessageQueueing
 							_subscription.Ack(e);
 						}
 
-						await _messageProcessor.ProcessMessages();
+						await _messageProcessor.ProcessMessages(_inboundSemaphoreKey);
 
 					}
 				}
@@ -393,6 +413,7 @@ namespace CodeProject.MessageQueueing
 			{
 				if (channel != null)
 				{
+					channel.Close();
 					channel.Dispose();
 				}
 
@@ -433,6 +454,24 @@ namespace CodeProject.MessageQueueing
 				// TODO: set large fields to null.
 
 				disposedValue = true;
+
+				if (_connection != null)
+				{
+					_connection.Close();
+					_connection.Dispose();
+				}
+
+				if (_subscription != null)
+				{
+					_subscription.Close();
+					_subscription = null;
+				}
+
+				if (_channel != null)
+				{
+					_channel.Close();
+					_channel.Dispose();
+				}
 
 				_connection = null;
 				_connectionFactory = null;

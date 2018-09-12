@@ -16,14 +16,21 @@ using CodeProject.Shared.Common.Models.MessageQueuePayloads;
 using CodeProject.Shared.Common.Utilties;
 using CodeProject.Shared.Common.Interfaces;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Options;
 
 namespace CodeProject.InventoryManagement.Business.MessageService
 {
 	public class MessageProcessing : IMessageQueueProcessing
 	{
-		IInventoryManagementDataService _inventoryManagementDataService;
+		private readonly IInventoryManagementDataService _inventoryManagementDataService;
 
 		public IConfiguration configuration { get; }
+
+		private Boolean _sending = false;
+		private Boolean _processing = false;
+		private readonly object _processingLock = new object();
+		private readonly object _sendingLock = new object();
+
 
 		/// <summary>
 		/// Inventory Management Message Processing
@@ -37,17 +44,51 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 		///  Send Queue Messages
 		/// </summary>
 		/// <returns></returns>
-		public async Task<ResponseModel<List<MessageQueue>>> SendQueueMessages(IMessageQueueing messageQueueing)
+		public async Task<ResponseModel<List<MessageQueue>>> SendQueueMessages(IMessageQueueing messageQueueing, string outboundSemaphoreKey)
 		{
-			
 			ResponseModel<List<MessageQueue>> returnResponse = new ResponseModel<List<MessageQueue>>();
 			returnResponse.Entity = new List<MessageQueue>();
+
+			Console.WriteLine("sending = " + _sending);
+
+			lock (_sendingLock)
+			{
+				if (_sending)
+				{
+					Console.WriteLine("Aborted iteration still sending");
+					return returnResponse;
+				}
+
+				_sending = true;
+
+			}
+
+			Console.WriteLine("Start sending");
+
+			TransactionQueueSemaphore transactionQueueSemaphore = null;
+
 			try
 			{
 				_inventoryManagementDataService.OpenConnection();
 				_inventoryManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
 
+				Console.WriteLine("Get Lock at " + DateTime.Now.ToString());
+				transactionQueueSemaphore = await _inventoryManagementDataService.GetTransactionQueueSemaphore(outboundSemaphoreKey);
+				if (transactionQueueSemaphore == null)
+				{
+					transactionQueueSemaphore = new TransactionQueueSemaphore();
+					transactionQueueSemaphore.SemaphoreKey = outboundSemaphoreKey;
+					await _inventoryManagementDataService.CreateTransactionQueueSemaphore(transactionQueueSemaphore);
+				}
+				else
+				{
+					await _inventoryManagementDataService.UpdateTransactionQueueSemaphore(transactionQueueSemaphore);
+				}
+
+				Console.WriteLine("Acquired Lock");
+			
 				List<TransactionQueueOutbound> transactionQueue = await _inventoryManagementDataService.GetOutboundTransactionQueue();
+
 				foreach (TransactionQueueOutbound transactionQueueItem in transactionQueue)
 				{
 					MessageQueue message = new MessageQueue();
@@ -74,6 +115,8 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 
 				await _inventoryManagementDataService.UpdateDatabase();
 
+				Console.WriteLine("Get Lock Done at " + DateTime.Now.ToString());
+
 				_inventoryManagementDataService.CommitTransaction();
 				_inventoryManagementDataService.CloseConnection();
 
@@ -87,6 +130,7 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 			finally
 			{
 				_inventoryManagementDataService.CloseConnection();
+				_sending = false;
 			}
 		
 			return returnResponse;
@@ -144,20 +188,48 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 		/// Process Messages
 		/// </summary>
 		/// <returns></returns>
-		public async Task<ResponseModel<List<MessageQueue>>> ProcessMessages()
+		public async Task<ResponseModel<List<MessageQueue>>> ProcessMessages(string inboundSemaphoreKey)
 		{
 
 			ResponseModel<List<MessageQueue>> returnResponse = new ResponseModel<List<MessageQueue>>();
 			returnResponse.Entity = new List<MessageQueue>();
+
+			TransactionQueueSemaphore transactionQueueSemaphore = null;
+
+			lock (_processingLock)
+			{
+				if (_processing == true)
+				{
+					Console.WriteLine("Processing iteration aborted");
+					return returnResponse;
+				}
+
+				_processing = true;
+			}
+
 			try
 			{
 				_inventoryManagementDataService.OpenConnection();
 
+				_inventoryManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
+
+				Console.WriteLine("Get Lock at " + DateTime.Now.ToString());
+				transactionQueueSemaphore = await _inventoryManagementDataService.GetTransactionQueueSemaphore(inboundSemaphoreKey);
+				if (transactionQueueSemaphore == null)
+				{
+					transactionQueueSemaphore = new TransactionQueueSemaphore();
+					transactionQueueSemaphore.SemaphoreKey = inboundSemaphoreKey;
+					await _inventoryManagementDataService.CreateTransactionQueueSemaphore(transactionQueueSemaphore);
+				}
+				else
+				{
+					await _inventoryManagementDataService.UpdateTransactionQueueSemaphore(transactionQueueSemaphore);
+				}
+
 				List<TransactionQueueInbound> transactionQueue = await _inventoryManagementDataService.GetInboundTransactionQueue();
 				foreach (TransactionQueueInbound transactionQueueItem in transactionQueue)
 				{
-					_inventoryManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
-
+		
 					int senderId = transactionQueueItem.SenderTransactionQueueId;
 					string exchangeName = transactionQueueItem.ExchangeName;
 					string transactionCode = transactionQueueItem.TransactionCode;
@@ -177,11 +249,13 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 						//}
 					}
 
-					await _inventoryManagementDataService.UpdateDatabase();
 
-					_inventoryManagementDataService.CommitTransaction();
-
+	
 				}
+
+				await _inventoryManagementDataService.UpdateDatabase();
+
+				_inventoryManagementDataService.CommitTransaction();
 
 				_inventoryManagementDataService.CloseConnection();
 
@@ -195,6 +269,7 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 			finally
 			{
 				_inventoryManagementDataService.CloseConnection();
+				_processing = false;
 			}
 
 			return returnResponse;

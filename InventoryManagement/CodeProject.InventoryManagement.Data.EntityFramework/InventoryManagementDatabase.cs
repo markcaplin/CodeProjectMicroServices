@@ -15,7 +15,7 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 		public DbSet<TransactionQueueOutbound> TransactionQueueOutbound { get; set; }
 		public DbSet<TransactionQueueInboundHistory> TransactionQueueInboundHistory { get; set; }
 		public DbSet<TransactionQueueOutboundHistory> TransactionQueueOutboundHistory { get; set; }
-
+		public DbSet<TransactionQueueSemaphore> TransactionQueueSemaphores { get; set; }
 
 		/// <summary>
 		/// On Configuring
@@ -36,6 +36,7 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 		{
 			
 			modelBuilder.Entity<Product>().HasIndex(u=> u.ProductNumber);
+			modelBuilder.Entity<TransactionQueueSemaphore>().HasIndex(u => u.SemaphoreKey).IsUnique();
 
 		}
 

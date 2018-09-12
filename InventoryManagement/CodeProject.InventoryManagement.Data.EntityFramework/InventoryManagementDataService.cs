@@ -22,13 +22,11 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 		/// <returns></returns>
 		public async Task CreateProduct(Product product)
 		{
-
 			DateTime dateCreated = DateTime.UtcNow;
 			product.DateCreated = dateCreated;
 			product.DateUpdated = dateCreated;
 
 			await dbConnection.Products.AddAsync(product);
-
 		}
 
 		/// <summary>
@@ -111,6 +109,28 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 	
 			List<TransactionQueueOutbound> transactionQueue = await dbConnection.TransactionQueueOutbound.FromSql(
 				sqlStatement, sentToExchangeParameter).OrderBy(x=>x.TransactionQueueOutboundId).ToListAsync();
+
+			return transactionQueue;
+
+		}
+
+		/// <summary>
+		/// Get Transaction Queue Semaphore
+		/// </summary>
+		/// <param name="semaphoreKey"></param>
+		/// <returns></returns>
+		public async Task<TransactionQueueSemaphore> GetTransactionQueueSemaphore(string semaphoreKey)
+		{
+			StringBuilder sqlBuilder = new StringBuilder();
+
+			sqlBuilder.AppendLine(" SELECT * FROM TransactionQueueSemaphores WITH (UPDLOCK) WHERE ");
+			sqlBuilder.AppendLine(" SemaphoreKey = @SemaphoreKey ");
+
+			string sqlStatement = sqlBuilder.ToString();
+			
+			SqlParameter semaphoreKeyParameter = new SqlParameter("SemaphoreKey", semaphoreKey);
+
+			TransactionQueueSemaphore transactionQueue = await dbConnection.TransactionQueueSemaphores.FromSql(sqlStatement, semaphoreKeyParameter).FirstOrDefaultAsync();
 
 			return transactionQueue;
 
@@ -202,6 +222,32 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 		{
 			TransactionQueueOutbound transactionQueue = await dbConnection.TransactionQueueOutbound.Where(x => x.TransactionQueueOutboundId == transactionQueueId).FirstOrDefaultAsync();
 			dbConnection.TransactionQueueOutbound.Remove(transactionQueue);
+		}
+
+		/// <summary>
+		/// Update Transaction Queue Semaphore
+		/// </summary>
+		/// <param name="transactionQueueSemaphore"></param>
+		/// <returns></returns>
+		public async Task UpdateTransactionQueueSemaphore(TransactionQueueSemaphore transactionQueueSemaphore)
+		{
+			await Task.Delay(0);
+			DateTime dateUpdated = DateTime.UtcNow;
+			transactionQueueSemaphore.DateUpdated = dateUpdated;
+		}
+
+		/// <summary>
+		/// Create Transaction Queue Semaphore
+		/// </summary>
+		/// <param name="transactionQueueSemaphore"></param>
+		/// <returns></returns>
+		public async Task CreateTransactionQueueSemaphore(TransactionQueueSemaphore transactionQueueSemaphore)
+		{
+			DateTime dateCreated = DateTime.UtcNow;
+			transactionQueueSemaphore.DateCreated = dateCreated;
+			transactionQueueSemaphore.DateUpdated = dateCreated;
+
+			await dbConnection.TransactionQueueSemaphores.AddAsync(transactionQueueSemaphore);
 		}
 
 	}
