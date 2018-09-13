@@ -17,5 +17,8 @@ namespace CodeProject.LoggingManagement.Interfaces
 		Task UpdateMessagesSent(MessagesSent messagesSent);
 		Task<List<AcknowledgementsQueue>> ProcessAcknowledgementsQueue();
 		Task DeleteAcknowledgementsQueue(int acknowledgementsQueueId);
+		Task<TransactionQueueSemaphore> GetTransactionQueueSemaphore(string semaphoreKey);
+		Task UpdateTransactionQueueSemaphore(TransactionQueueSemaphore transactionQueueSemaphore);
+		Task CreateTransactionQueueSemaphore(TransactionQueueSemaphore transactionQueueSemaphore);
 	}
 }

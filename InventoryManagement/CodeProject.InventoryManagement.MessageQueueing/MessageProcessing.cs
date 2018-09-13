@@ -40,6 +40,7 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 		{
 			_inventoryManagementDataService = inventoryManagementDataService;
 		}
+
 		/// <summary>
 		///  Send Queue Messages
 		/// </summary>

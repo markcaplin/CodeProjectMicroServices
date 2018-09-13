@@ -11,6 +11,10 @@ var map = {
 	"../app/account-management/account-management.module": [
 		"./src/app/account-management/account-management.module.ts",
 		"app-account-management-account-management-module"
+	],
+	"../app/inventory-management/inventory-management.module": [
+		"./src/app/inventory-management/inventory-management.module.ts",
+		"app-inventory-management-inventory-management-module"
 	]
 };
 function webpackAsyncContext(req) {
@@ -42,7 +46,7 @@ module.exports = webpackAsyncContext;
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".spacer {\r\n  flex: 1 1 auto;\r\n}\r\n\r\n.icon {\r\n  display: inline-block;\r\n  height: 30px;\r\n  margin: 0 auto;\r\n  padding-right: 5px;\r\n  text-align: center;\r\n  vertical-align: middle;\r\n  width: 15%;\r\n}\r\n\r\n.label {\r\n  display: inline-block;\r\n  line-height: 30px;\r\n  margin: 0;\r\n  width: 85%;\r\n  padding-left:8px;\r\n  padding-right:10px;\r\n}\r\n\r\na {\r\n  text-decoration: none;\r\n  color: white;\r\n}\r\n\r\na:hover,\r\n  a:active {\r\n    color: lightgray;\r\n  }\r\n"
+module.exports = ""
 
 /***/ }),
 
@@ -53,7 +57,7 @@ module.exports = ".spacer {\r\n  flex: 1 1 auto;\r\n}\r\n\r\n.icon {\r\n  displa
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<mat-toolbar color=\"primary\">\r\n  <mat-toolbar-row>\r\n    <span>Micro Services, Inc.</span>\r\n    <span class=\"spacer\"></span>\r\n\r\n    <a mat-list-item [routerLink]=\"['/home/home']\">\r\n      <mat-icon class=\"icon\">home</mat-icon>\r\n      <span class=\"label\">Home</span>\r\n    </a>\r\n\r\n    <a mat-list-item [routerLink]=\"['home/contact']\">\r\n      <mat-icon class=\"icon\">dashboard</mat-icon>\r\n      <span class=\"label\">Contact</span>\r\n    </a>\r\n\r\n    <a mat-list-item [routerLink]=\"['home/about']\">\r\n      <mat-icon class=\"icon\">home</mat-icon>\r\n      <span class=\"label\">About</span>\r\n    </a>\r\n\r\n    <span class=\"spacer\"></span>\r\n\r\n    <div [hidden]=\"isAuthenicated\">\r\n      <a mat-list-item [routerLink]=\"['/accountmanagement/account-register']\">\r\n        <mat-icon class=\"icon\">input</mat-icon>\r\n        <span class=\"label\">Register</span>\r\n      </a>\r\n\r\n      <a mat-list-item [routerLink]=\"['/accountmanagement/account-login']\">\r\n        <mat-icon class=\"icon\">input</mat-icon>\r\n        <span class=\"label\">Login</span>\r\n      </a>\r\n\r\n    </div>\r\n\r\n    <div [hidden]=\"!isAuthenicated\">\r\n\r\n      <a mat-list-item [routerLink]=\"['/accountmanagement/user-profilw']\">\r\n        {{firstName}}&nbsp;{{lastName}}&nbsp;\r\n      </a>\r\n\r\n      <a mat-list-item style=\"cursor:pointer\" (click)=\"logout()\">Logout</a>\r\n\r\n    </div>\r\n\r\n  </mat-toolbar-row>\r\n</mat-toolbar>\r\n\r\n<app-main-nav></app-main-nav>\r\n\r\n<div>\r\n  Token Expiration Date: {{tokenExpirationDate | date:'medium' }} - {{iterations}} {{isAuthenicated}} {{sessionId}}\r\n</div>\r\n\r\n<div [hidden]=\"!showProgressBar\" style=\"height:25px; padding-top:10px; width:300px;position: fixed; bottom: 0;right:0;margin:25px;\">\r\n  <mat-progress-bar mode=\"buffer\"></mat-progress-bar>\r\n</div>\r\n\r\n<div style=\"margin:5px;margin-top:1px;\">\r\n  <router-outlet></router-outlet>\r\n</div>"
+module.exports = "<mat-toolbar color=\"primary\">\r\n  <mat-toolbar-row>\r\n\r\n    <mat-toolbar color=\"primary\" class=\"example-toolbar\">\r\n      <div [hidden]=\"!isAuthenicated\">\r\n          <button mat-icon-button (click)=\"toggleNavBar()\">\r\n              <mat-icon>apps</mat-icon>\r\n            </button>\r\n      </div>\r\n      <h1 class=\"example-app-name\">Micro Services, Inc.</h1>\r\n    </mat-toolbar>\r\n\r\n    <span class=\"spacer\"></span>\r\n\r\n    <a mat-list-item [routerLink]=\"['/home/home']\">\r\n      <mat-icon class=\"icon\">home</mat-icon>\r\n      <span class=\"label\">Home</span>\r\n    </a>\r\n\r\n    <a mat-list-item [routerLink]=\"['home/contact']\">\r\n      <mat-icon class=\"icon\">dashboard</mat-icon>\r\n      <span class=\"label\">Contact</span>\r\n    </a>\r\n\r\n    <a mat-list-item [routerLink]=\"['home/about']\">\r\n      <mat-icon class=\"icon\">home</mat-icon>\r\n      <span class=\"label\">About</span>\r\n    </a>\r\n\r\n    <span class=\"spacer\"></span>\r\n\r\n    <div [hidden]=\"isAuthenicated\">\r\n      <a mat-list-item [routerLink]=\"['/accountmanagement/account-register']\">\r\n        <mat-icon class=\"icon\">input</mat-icon>\r\n        <span class=\"label\">Register</span>\r\n      </a>\r\n\r\n      <a mat-list-item [routerLink]=\"['/accountmanagement/account-login']\">\r\n        <mat-icon class=\"icon\">input</mat-icon>\r\n        <span class=\"label\">Login</span>\r\n      </a>\r\n\r\n    </div>\r\n\r\n    <div [hidden]=\"!isAuthenicated\">\r\n\r\n      <a mat-list-item [routerLink]=\"['/accountmanagement/user-profile']\">\r\n        {{firstName}}&nbsp;{{lastName}}&nbsp;\r\n      </a>\r\n\r\n      <a mat-list-item style=\"cursor:pointer\" (click)=\"logout()\">Logout</a>\r\n\r\n    </div>\r\n\r\n  </mat-toolbar-row>\r\n</mat-toolbar>\r\n\r\n<div  [hidden]=\"hideMenuBar || !isAuthenicated\">\r\n    <mat-toolbar color=\"accent\">\r\n\r\n        <div style=\"margin-right:20px;\">\r\n          <a mat-list-item  [routerLink]=\"['/inventorymanagement/product-inquiry']\">\r\n            <mat-icon class=\"icon\">dashboard</mat-icon>\r\n            <span class=\"label\">Inventory Management</span>\r\n          </a>\r\n        </div>\r\n      \r\n        <div style=\"margin-right:20px;\">\r\n          <a mat-list-item [routerLink]=\"['home/contact']\">\r\n            <mat-icon class=\"icon\">dashboard</mat-icon>\r\n            <span class=\"label\">Sales Order Management</span>\r\n          </a>\r\n        </div>\r\n      \r\n        <div style=\"margin-right:20px;\">\r\n          <a mat-list-item [routerLink]=\"['home/contact']\">\r\n            <mat-icon class=\"icon\">dashboard</mat-icon>\r\n            <span class=\"label\">Purchase Order Management</span>\r\n          </a>\r\n        </div>\r\n      \r\n      </mat-toolbar>\r\n</div>\r\n\r\n\r\n\r\n<div [hidden]=\"!showProgressBar\" style=\"height:25px; padding-top:10px; width:300px;position: fixed; bottom: 0;right:0;margin:25px;\">\r\n  <mat-progress-bar mode=\"buffer\"></mat-progress-bar>\r\n</div>\r\n\r\n<div [hidden]=\"!hideMenuBar\" style=\"margin:0px;margin-top:0px;\">\r\n  <router-outlet></router-outlet>\r\n</div>\r\n\r\n\r\n<div>\r\n  {{hideMenuBar}}  Token Expiration Date: {{tokenExpirationDate | date:'medium' }} - {{iterations}} {{isAuthenicated}} {{sessionId}}\r\n  </div>"
 
 /***/ }),
 
@@ -98,8 +102,10 @@ var AppComponent = /** @class */ (function () {
         this.showProgressBar = false;
         this.sessionId = 0;
         this.runningMonitor = false;
+        this.hideMenuBar = true;
         this.alertService.progressBarUIEvent.subscribe(function (event) { return _this.updateProgressBar(event); });
         this.sessionService.authenicationEvent.subscribe(function (event) { return _this.authenicationEvent(event); });
+        this.sessionService.moduleLoadedEvent.subscribe(function (event) { return _this.moduleLoadedEvent(event); });
         // const native = this.elementRef.nativeElement;
         // const settings = native.getAttribute('settings');
         var appSettings = new _shared_models_appsettings_model__WEBPACK_IMPORTED_MODULE_2__["AppSettings"]();
@@ -108,6 +114,9 @@ var AppComponent = /** @class */ (function () {
         this.isAuthenicated = sessionService.isAuthenicated;
         sessionService.startSession();
     }
+    AppComponent.prototype.moduleLoadedEvent = function (event) {
+        this.hideMenuBar = true;
+    };
     AppComponent.prototype.updateProgressBar = function (event) {
         this.showProgressBar = event;
     };
@@ -120,6 +129,7 @@ var AppComponent = /** @class */ (function () {
         console.log('session id = ' + this.sessionId + ' ' + this.isAuthenicated + ' ' + this.runningMonitor);
         if (this.isAuthenicated === true && this.runningMonitor === false) {
             this.runningMonitor = true;
+            this.monitorSession();
             this.sessionId = setInterval(function () {
                 _this.monitorSession();
             }, 5000);
@@ -128,6 +138,14 @@ var AppComponent = /** @class */ (function () {
             if (this.isAuthenicated === false && this.runningMonitor === true) {
                 this.clearSessionInterval();
             }
+        }
+    };
+    AppComponent.prototype.toggleNavBar = function () {
+        if (this.hideMenuBar === false) {
+            this.hideMenuBar = true;
+        }
+        else {
+            this.hideMenuBar = false;
         }
     };
     AppComponent.prototype.monitorSession = function () {
@@ -178,26 +196,24 @@ var AppComponent = /** @class */ (function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AppModule", function() { return AppModule; });
-/* harmony import */ var _angular_material_progress_bar__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/material/progress-bar */ "./node_modules/@angular/material/esm5/progress-bar.es5.js");
-/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/platform-browser */ "./node_modules/@angular/platform-browser/fesm5/platform-browser.js");
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
-/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
-/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm5/forms.js");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
-/* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./app.component */ "./src/app/app.component.ts");
-/* harmony import */ var _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/platform-browser/animations */ "./node_modules/@angular/platform-browser/fesm5/animations.js");
-/* harmony import */ var _material_design_material_module__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./material-design/material.module */ "./src/app/material-design/material.module.ts");
-/* harmony import */ var _home_directory_about_about_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./home-directory/about/about.component */ "./src/app/home-directory/about/about.component.ts");
-/* harmony import */ var _home_directory_contact_contact_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./home-directory/contact/contact.component */ "./src/app/home-directory/contact/contact.component.ts");
-/* harmony import */ var _home_directory_home_home_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./home-directory/home/home.component */ "./src/app/home-directory/home/home.component.ts");
-/* harmony import */ var _application_routing__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./application-routing */ "./src/app/application-routing.ts");
-/* harmony import */ var _shared_components_services_session_service__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./shared-components-services/session.service */ "./src/app/shared-components-services/session.service.ts");
-/* harmony import */ var _shared_components_services_http_service__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./shared-components-services/http.service */ "./src/app/shared-components-services/http.service.ts");
-/* harmony import */ var _shared_components_services_alert_service__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./shared-components-services/alert.service */ "./src/app/shared-components-services/alert.service.ts");
-/* harmony import */ var _shared_components_services_http_interceptor_service__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./shared-components-services/http-interceptor.service */ "./src/app/shared-components-services/http-interceptor.service.ts");
-/* harmony import */ var _angular_material__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @angular/material */ "./node_modules/@angular/material/esm5/material.es5.js");
-/* harmony import */ var _main_nav_main_nav_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./main-nav/main-nav.component */ "./src/app/main-nav/main-nav.component.ts");
-/* harmony import */ var _angular_cdk_layout__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! @angular/cdk/layout */ "./node_modules/@angular/cdk/esm5/layout.es5.js");
+/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/platform-browser */ "./node_modules/@angular/platform-browser/fesm5/platform-browser.js");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm5/forms.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./app.component */ "./src/app/app.component.ts");
+/* harmony import */ var _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/platform-browser/animations */ "./node_modules/@angular/platform-browser/fesm5/animations.js");
+/* harmony import */ var _home_directory_about_about_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./home-directory/about/about.component */ "./src/app/home-directory/about/about.component.ts");
+/* harmony import */ var _home_directory_contact_contact_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./home-directory/contact/contact.component */ "./src/app/home-directory/contact/contact.component.ts");
+/* harmony import */ var _home_directory_home_home_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./home-directory/home/home.component */ "./src/app/home-directory/home/home.component.ts");
+/* harmony import */ var _application_routing__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./application-routing */ "./src/app/application-routing.ts");
+/* harmony import */ var _shared_components_services_session_service__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./shared-components-services/session.service */ "./src/app/shared-components-services/session.service.ts");
+/* harmony import */ var _shared_components_services_http_service__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./shared-components-services/http.service */ "./src/app/shared-components-services/http.service.ts");
+/* harmony import */ var _shared_components_services_alert_service__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./shared-components-services/alert.service */ "./src/app/shared-components-services/alert.service.ts");
+/* harmony import */ var _shared_components_services_http_interceptor_service__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./shared-components-services/http-interceptor.service */ "./src/app/shared-components-services/http-interceptor.service.ts");
+/* harmony import */ var _main_nav_main_nav_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./main-nav/main-nav.component */ "./src/app/main-nav/main-nav.component.ts");
+/* harmony import */ var _angular_cdk_layout__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @angular/cdk/layout */ "./node_modules/@angular/cdk/esm5/layout.es5.js");
+/* harmony import */ var _material_module__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./material.module */ "./src/app/material.module.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -223,47 +239,46 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
-
-
+/*import {
+  MatSidenavModule,
+  MatToolbarModule,
+  MatIconModule,
+  MatListModule,
+  MatSnackBarModule,
+  MatProgressBar, MatButtonModule,
+} from '@angular/material';*/
 var AppModule = /** @class */ (function () {
     function AppModule() {
     }
     AppModule = __decorate([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_5__["NgModule"])({
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_4__["NgModule"])({
             declarations: [
-                _app_component__WEBPACK_IMPORTED_MODULE_6__["AppComponent"],
-                _home_directory_home_home_component__WEBPACK_IMPORTED_MODULE_11__["HomeComponent"],
-                _home_directory_about_about_component__WEBPACK_IMPORTED_MODULE_9__["AboutComponent"],
-                _home_directory_contact_contact_component__WEBPACK_IMPORTED_MODULE_10__["ContactComponent"],
-                _main_nav_main_nav_component__WEBPACK_IMPORTED_MODULE_18__["MainNavComponent"]
+                _app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"],
+                _home_directory_home_home_component__WEBPACK_IMPORTED_MODULE_9__["HomeComponent"],
+                _home_directory_about_about_component__WEBPACK_IMPORTED_MODULE_7__["AboutComponent"],
+                _home_directory_contact_contact_component__WEBPACK_IMPORTED_MODULE_8__["ContactComponent"],
+                _main_nav_main_nav_component__WEBPACK_IMPORTED_MODULE_15__["MainNavComponent"]
             ],
             imports: [
-                _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"],
-                _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_7__["BrowserAnimationsModule"],
-                _material_design_material_module__WEBPACK_IMPORTED_MODULE_8__["MaterialModule"],
-                _angular_material__WEBPACK_IMPORTED_MODULE_17__["MatSidenavModule"],
-                _angular_material__WEBPACK_IMPORTED_MODULE_17__["MatToolbarModule"],
-                _angular_material__WEBPACK_IMPORTED_MODULE_17__["MatSnackBarModule"],
-                _angular_material_progress_bar__WEBPACK_IMPORTED_MODULE_0__["MatProgressBarModule"],
-                _angular_material__WEBPACK_IMPORTED_MODULE_17__["MatIconModule"],
-                _angular_material__WEBPACK_IMPORTED_MODULE_17__["MatListModule"],
-                _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"],
-                _angular_router__WEBPACK_IMPORTED_MODULE_2__["RouterModule"].forRoot(_application_routing__WEBPACK_IMPORTED_MODULE_12__["ApplicationRoutes"]),
-                _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_7__["BrowserAnimationsModule"],
-                _angular_forms__WEBPACK_IMPORTED_MODULE_4__["FormsModule"],
-                _angular_cdk_layout__WEBPACK_IMPORTED_MODULE_19__["LayoutModule"],
-                _angular_material__WEBPACK_IMPORTED_MODULE_17__["MatButtonModule"]
+                _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__["BrowserModule"],
+                _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_6__["BrowserAnimationsModule"],
+                _material_module__WEBPACK_IMPORTED_MODULE_17__["MaterialModule"],
+                _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__["BrowserModule"],
+                _angular_router__WEBPACK_IMPORTED_MODULE_1__["RouterModule"].forRoot(_application_routing__WEBPACK_IMPORTED_MODULE_10__["ApplicationRoutes"]),
+                _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_6__["BrowserAnimationsModule"],
+                _angular_forms__WEBPACK_IMPORTED_MODULE_3__["FormsModule"],
+                _angular_cdk_layout__WEBPACK_IMPORTED_MODULE_16__["LayoutModule"]
             ],
-            exports: [_angular_router__WEBPACK_IMPORTED_MODULE_2__["RouterModule"], _angular_common_http__WEBPACK_IMPORTED_MODULE_3__["HttpClientModule"], _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_7__["BrowserAnimationsModule"]],
-            providers: [_shared_components_services_session_service__WEBPACK_IMPORTED_MODULE_13__["SessionService"], _shared_components_services_http_service__WEBPACK_IMPORTED_MODULE_14__["HttpService"], _shared_components_services_alert_service__WEBPACK_IMPORTED_MODULE_15__["AlertService"],
-                _shared_components_services_http_interceptor_service__WEBPACK_IMPORTED_MODULE_16__["HttpInterceptorService"],
+            exports: [_angular_router__WEBPACK_IMPORTED_MODULE_1__["RouterModule"], _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClientModule"], _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_6__["BrowserAnimationsModule"]],
+            providers: [_shared_components_services_session_service__WEBPACK_IMPORTED_MODULE_11__["SessionService"], _shared_components_services_http_service__WEBPACK_IMPORTED_MODULE_12__["HttpService"], _shared_components_services_alert_service__WEBPACK_IMPORTED_MODULE_13__["AlertService"],
+                _shared_components_services_http_interceptor_service__WEBPACK_IMPORTED_MODULE_14__["HttpInterceptorService"],
                 {
-                    provide: _angular_common_http__WEBPACK_IMPORTED_MODULE_3__["HTTP_INTERCEPTORS"],
-                    useClass: _shared_components_services_http_interceptor_service__WEBPACK_IMPORTED_MODULE_16__["HttpInterceptorService"],
+                    provide: _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HTTP_INTERCEPTORS"],
+                    useClass: _shared_components_services_http_interceptor_service__WEBPACK_IMPORTED_MODULE_14__["HttpInterceptorService"],
                     multi: true
                 }
             ],
-            bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_6__["AppComponent"]]
+            bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"]]
         })
     ], AppModule);
     return AppModule;
@@ -294,7 +309,12 @@ var ApplicationRoutes = [
     { path: 'home/home', component: _home_directory_home_home_component__WEBPACK_IMPORTED_MODULE_2__["HomeComponent"] },
     { path: 'home/contact', component: _home_directory_contact_contact_component__WEBPACK_IMPORTED_MODULE_1__["ContactComponent"] },
     { path: 'home/about', component: _home_directory_about_about_component__WEBPACK_IMPORTED_MODULE_0__["AboutComponent"] },
-    { path: 'accountmanagement', loadChildren: '../app/account-management/account-management.module#AccountManagementModule' }
+    {
+        path: 'accountmanagement', loadChildren: '../app/account-management/account-management.module#AccountManagementModule'
+    },
+    {
+        path: 'inventorymanagement', loadChildren: '../app/inventory-management/inventory-management.module#InventoryManagementModule'
+    }
 ];
 
 
@@ -557,10 +577,10 @@ var MainNavComponent = /** @class */ (function () {
 
 /***/ }),
 
-/***/ "./src/app/material-design/material.module.ts":
-/*!****************************************************!*\
-  !*** ./src/app/material-design/material.module.ts ***!
-  \****************************************************/
+/***/ "./src/app/material.module.ts":
+/*!************************************!*\
+  !*** ./src/app/material.module.ts ***!
+  \************************************/
 /*! exports provided: MaterialModule */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -583,16 +603,36 @@ var MaterialModule = /** @class */ (function () {
     MaterialModule = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["NgModule"])({
             imports: [
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatButtonModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatIconModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatFormFieldModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatInputModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatDatepickerModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatNativeDateModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatCheckboxModule"],
                 _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatSidenavModule"],
                 _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatToolbarModule"],
-                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatIconModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatSidenavModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatToolbarModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatSnackBarModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatProgressBarModule"],
                 _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatListModule"]
             ],
             exports: [
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatButtonModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatIconModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatFormFieldModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatInputModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatDatepickerModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatNativeDateModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatCheckboxModule"],
                 _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatSidenavModule"],
                 _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatToolbarModule"],
-                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatIconModule"],
-                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatListModule"]
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatSidenavModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatToolbarModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatSnackBarModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatProgressBarModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatListModule"],
             ]
         })
     ], MaterialModule);
@@ -928,6 +968,7 @@ var SessionService = /** @class */ (function () {
         this.userViewModel = new _shared_view_models_user_viewmodel__WEBPACK_IMPORTED_MODULE_2__["UserViewModel"]();
         this.isAuthenicated = false;
         this.authenicationEvent = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"]();
+        this.moduleLoadedEvent = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"]();
         this.jwtHelperService = new _auth0_angular_jwt__WEBPACK_IMPORTED_MODULE_3__["JwtHelperService"]();
     }
     SessionService.prototype.setAppSettings = function (appSettings) {

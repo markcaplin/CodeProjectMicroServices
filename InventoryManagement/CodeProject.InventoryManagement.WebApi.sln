@@ -21,8 +21,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeProject.Shared.Common.M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeProject.Shared.Common.Utilities", "..\Shared\CodeProject.Shared.Common.Utilites\CodeProject.Shared.Common.Utilities.csproj", "{A11DEACC-13A1-463A-9CA7-3DAD67B3575B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeProject.MessageQueueing", "..\MessageQueueing\CodeProject.MessageQueueing\CodeProject.MessageQueueing.csproj", "{4F543F0D-59DD-4C81-8C57-291CFF21B042}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,10 +63,6 @@ Global
 		{A11DEACC-13A1-463A-9CA7-3DAD67B3575B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A11DEACC-13A1-463A-9CA7-3DAD67B3575B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A11DEACC-13A1-463A-9CA7-3DAD67B3575B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4F543F0D-59DD-4C81-8C57-291CFF21B042}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4F543F0D-59DD-4C81-8C57-291CFF21B042}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4F543F0D-59DD-4C81-8C57-291CFF21B042}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4F543F0D-59DD-4C81-8C57-291CFF21B042}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

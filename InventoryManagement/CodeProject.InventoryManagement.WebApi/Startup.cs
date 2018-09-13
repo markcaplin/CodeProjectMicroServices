@@ -67,12 +67,9 @@ namespace CodeProject.InventoryManagement.WebApi
 			services.AddDbContext<InventoryManagementDatabase>(options => options.UseSqlServer(Configuration.GetConnectionString("PrimaryDatabaseConnectionString")));
 
 			services.AddTransient<IInventoryManagementDataService, InventoryManagementDataService>();
-			services.AddTransient<IMessageQueueing, CodeProject.MessageQueueing.MessageQueueing>();
-
-
+			
 			services.AddTransient<IInventoryManagementBusinessService>(provider =>
-			new InventoryManagementBusinessService(provider.GetRequiredService<IInventoryManagementDataService>(),
-			                                       provider.GetRequiredService<IMessageQueueing>()));
+			new InventoryManagementBusinessService(provider.GetRequiredService<IInventoryManagementDataService>()));
 
 			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 			{

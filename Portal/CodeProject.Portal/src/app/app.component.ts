@@ -6,7 +6,6 @@ import { AppSettings } from './shared-models/appsettings.model';
 import { SessionService } from './shared-components-services/session.service';
 import { AlertService } from './shared-components-services/alert.service';
 import { UserViewModel } from './shared-view-models/user.viewmodel';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
     selector: 'app-root',

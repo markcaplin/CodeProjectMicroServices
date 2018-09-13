@@ -87,6 +87,27 @@ namespace CodeProject.LoggingManagement.Data.EntityFramework.Migrations
 
                     b.ToTable("MessagesSent");
                 });
+
+            modelBuilder.Entity("CodeProject.LoggingManagement.Data.Entities.TransactionQueueSemaphore", b =>
+                {
+                    b.Property<int>("TransactionQueueSemaphoreId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<DateTime>("DateUpdated");
+
+                    b.Property<string>("SemaphoreKey");
+
+                    b.HasKey("TransactionQueueSemaphoreId");
+
+                    b.HasIndex("SemaphoreKey")
+                        .IsUnique()
+                        .HasFilter("[SemaphoreKey] IS NOT NULL");
+
+                    b.ToTable("TransactionQueueSemaphores");
+                });
 #pragma warning restore 612, 618
         }
     }

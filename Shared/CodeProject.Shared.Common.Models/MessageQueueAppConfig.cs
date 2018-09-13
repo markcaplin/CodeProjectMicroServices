@@ -21,5 +21,11 @@ namespace CodeProject.Shared.Common.Models
 		public Boolean QueueImmediately { get; set; }
 		public string InboundSemaphoreKey { get; set; }
 		public string OutboundSemaphoreKey { get; set; }
+	    public string MessageQueueHostName { get; set; }
+		public string MessageQueueUserName { get; set; }
+		public string MessageQueuePassword { get; set; }
+		public int ProcessingIntervalSeconds { get; set; }
+		public int SendingIntervalSeconds { get; set; }
+		public int ReceivingIntervalSeconds { get; set; }
 	}
 }

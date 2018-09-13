@@ -26,23 +26,14 @@ namespace CodeProject.InventoryManagement.WebApi.Controllers
 	{
 		private readonly IInventoryManagementBusinessService _inventoryManagementBusinessService;
 
-		private MessageQueueAppConfig _messageQueueAppConfig;
-
-		private readonly IMessageQueueing _messageQueueing;
-
 		public IConfiguration configuration { get; }
 
 		/// <summary>
 		/// Movies Controller
 		/// </summary>
-		public ProductController(IOptions<MessageQueueAppConfig> messageQueueAppConfig, IInventoryManagementBusinessService inventoryManagementBusinessService, IMessageQueueing messageQueueing)
+		public ProductController(IInventoryManagementBusinessService inventoryManagementBusinessService)
 		{
 			_inventoryManagementBusinessService = inventoryManagementBusinessService;
-			_messageQueueAppConfig = messageQueueAppConfig.Value;
-			_messageQueueing = messageQueueing;
-
-			_inventoryManagementBusinessService.SetConfigurationInformation(_messageQueueAppConfig);
-
 		}
 
 		/// <summary>

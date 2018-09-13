@@ -107,7 +107,6 @@ namespace CodeProject.SalesOrderManagement.Business.MessageService
 				_salesOrderManagementDataService.CommitTransaction();
 				_salesOrderManagementDataService.CloseConnection();
 
-
 			}
 			catch (Exception ex)
 			{
@@ -118,6 +117,7 @@ namespace CodeProject.SalesOrderManagement.Business.MessageService
 			finally
 			{
 				_salesOrderManagementDataService.CloseConnection();
+				_sending = false;
 			}
 
 			return returnResponse;
@@ -248,6 +248,7 @@ namespace CodeProject.SalesOrderManagement.Business.MessageService
 			}
 			finally
 			{
+				_processing = false;
 				_salesOrderManagementDataService.CloseConnection();
 			}
 

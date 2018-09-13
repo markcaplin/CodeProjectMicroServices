@@ -1,4 +1,4 @@
-import { MatProgressBarModule } from '@angular/material/progress-bar';
+
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
@@ -7,7 +7,6 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MaterialModule } from './material-design/material.module';
 
 import { AboutComponent } from './home-directory/about/about.component';
 import { ContactComponent } from './home-directory/contact/contact.component';
@@ -25,14 +24,18 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { MainNavComponent } from './main-nav/main-nav.component';
 import { LayoutModule } from '@angular/cdk/layout';
 
-import {
+import { MaterialModule } from './material.module';
+
+
+
+/*import {
   MatSidenavModule,
   MatToolbarModule,
   MatIconModule,
   MatListModule,
   MatSnackBarModule,
   MatProgressBar, MatButtonModule,
-} from '@angular/material';
+} from '@angular/material';*/
 
 
 @NgModule({
@@ -47,18 +50,11 @@ import {
     BrowserModule,
     BrowserAnimationsModule,
     MaterialModule,
-    MatSidenavModule,
-    MatToolbarModule,
-    MatSnackBarModule,
-    MatProgressBarModule,
-    MatIconModule,
-    MatListModule,
     BrowserModule,
     RouterModule.forRoot(ApplicationRoutes),
     BrowserAnimationsModule,
     FormsModule,
-    LayoutModule,
-    MatButtonModule
+    LayoutModule
   ],
   exports: [RouterModule, HttpClientModule, BrowserAnimationsModule],
   providers: [SessionService, HttpService, AlertService,

@@ -40,8 +40,7 @@ namespace CodeProject.InventoryManagement.MessageQueueing
 					services.AddTransient<IInventoryManagementDataService, InventoryManagementDataService>();
 					services.AddTransient<IMessageQueueing, CodeProject.MessageQueueing.MessageQueueing>();
 
-					services.AddTransient<IMessageQueueProcessing>(provider =>
-					new MessageProcessing(provider.GetRequiredService<IInventoryManagementDataService>()));
+					services.AddTransient<IMessageQueueProcessing>(provider => new MessageProcessing(provider.GetRequiredService<IInventoryManagementDataService>()));
 
 					services.AddOptions();
 					services.Configure<MessageQueueAppConfig>(hostContext.Configuration.GetSection("MessageQueueAppConfig"));
@@ -57,8 +56,7 @@ namespace CodeProject.InventoryManagement.MessageQueueing
 					services.AddTransient<IInventoryManagementDataService, InventoryManagementDataService>();
 					services.AddTransient<IMessageQueueing, CodeProject.MessageQueueing.MessageQueueing>();
 
-					services.AddTransient<IMessageQueueProcessing>(provider =>
-					new MessageProcessing(provider.GetRequiredService<IInventoryManagementDataService>()));
+					services.AddTransient<IMessageQueueProcessing>(provider => new MessageProcessing(provider.GetRequiredService<IInventoryManagementDataService>()));
 
 					services.AddOptions();
 					services.Configure<MessageQueueAppConfig>(hostContext.Configuration.GetSection("MessageQueueAppConfig"));
@@ -73,8 +71,7 @@ namespace CodeProject.InventoryManagement.MessageQueueing
 					services.AddTransient<IInventoryManagementDataService, InventoryManagementDataService>();
 					services.AddTransient<IMessageQueueing, CodeProject.MessageQueueing.MessageQueueing>();
 
-					services.AddTransient<IMessageQueueProcessing>(provider =>
-					new MessageProcessing(provider.GetRequiredService<IInventoryManagementDataService>()));
+					services.AddTransient<IMessageQueueProcessing>(provider => new MessageProcessing(provider.GetRequiredService<IInventoryManagementDataService>()));
 
 					services.AddOptions();
 					services.Configure<MessageQueueAppConfig>(hostContext.Configuration.GetSection("MessageQueueAppConfig"));

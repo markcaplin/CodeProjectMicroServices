@@ -16,11 +16,9 @@ namespace CodeProject.MessageQueueing
 {
 	public class MessageQueueing : IMessageQueueing, IDisposable
 	{
-		private List<object> _items;
-
-		private string _hostName = "localhost";
-		private string _userName = "guest";
-		private string _password = "guest";
+		//private string _hostName = "localhost";
+		//private string _userName = "guest";
+		//private string _password = "guest";
 
 		private string _exchangeName { get; set; }
 		private string _loggingExchangeName { get; set; }
@@ -56,15 +54,26 @@ namespace CodeProject.MessageQueueing
 		/// </summary>
 		public MessageQueueing()
 		{
-			_items = new List<object>();
+			
+
+		}
+
+		/// <summary>
+		/// Initialize Message Queueing
+		/// </summary>
+		/// <param name="hostName"></param>
+		/// <param name="userName"></param>
+		/// <param name="password"></param>
+		public void InitializeMessageQueueing(string hostName, string userName, string password)
+		{
 			//
 			//	connection to main exchange
 			//
 			_connectionFactory = new ConnectionFactory();
 
-			_connectionFactory.HostName = _hostName;
-			_connectionFactory.UserName = _userName;
-			_connectionFactory.Password = _password;
+			_connectionFactory.HostName = hostName;
+			_connectionFactory.UserName = userName;
+			_connectionFactory.Password = password;
 
 			_connection = _connectionFactory.CreateConnection();
 			_channel = _connection.CreateModel();
@@ -76,9 +85,9 @@ namespace CodeProject.MessageQueueing
 			//
 			_loggingConnectionFactory = new ConnectionFactory();
 
-			_loggingConnectionFactory.HostName = _hostName;
-			_loggingConnectionFactory.UserName = _userName;
-			_loggingConnectionFactory.Password = _password;
+			_loggingConnectionFactory.HostName = hostName;
+			_loggingConnectionFactory.UserName = userName;
+			_loggingConnectionFactory.Password = password;
 
 			_loggingConnection = _loggingConnectionFactory.CreateConnection();
 			_loggingChannel = _connection.CreateModel();
@@ -89,7 +98,6 @@ namespace CodeProject.MessageQueueing
 			_receivedMessages = new Hashtable();
 
 			_running = false;
-
 		}
 		/// <summary>
 		/// 

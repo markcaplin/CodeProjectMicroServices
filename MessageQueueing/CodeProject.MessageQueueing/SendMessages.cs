@@ -29,6 +29,7 @@ namespace CodeProject.MessageQueueing
 			_messageProcessor = messageProcessor;
 			_messageQueueing = messageQueueing;
 
+			_messageQueueing.InitializeMessageQueueing(appConfig.Value.MessageQueueHostName, appConfig.Value.MessageQueueUserName, appConfig.Value.MessageQueuePassword);
 			_messageQueueing.SetInboundSemaphoreKey(appConfig.Value.InboundSemaphoreKey);
 			_messageQueueing.SetOutboundSemaphoreKey(appConfig.Value.OutboundSemaphoreKey);
 
@@ -54,7 +55,7 @@ namespace CodeProject.MessageQueueing
 		{
 			_logger.LogInformation("Starting Send Messages");
 
-			_timer = new Timer(GetMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(60));
+			_timer = new Timer(GetMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(_appConfig.Value.SendingIntervalSeconds));
 
 			return Task.CompletedTask;
 		}

@@ -9,6 +9,7 @@ namespace CodeProject.Shared.Common.Interfaces
 {
     public interface IMessageQueueing
     {
+		void InitializeMessageQueueing(string hostName, string userName, string password);
 		ResponseModel<MessageQueue> SendMessage(object entity);
 		Task ReceiveMessages(string queueName, Subject<MessageQueue> subject, IMessageQueueProcessing _messageProcessor);
 		void SendAcknowledgement(Guid messageGuid);

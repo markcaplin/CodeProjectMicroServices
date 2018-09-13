@@ -40,6 +40,7 @@ namespace CodeProject.MessageQueueing
 			_messageProcessor = messageProcessor;
 			_messageQueueing = messageQueueing;
 
+			_messageQueueing.InitializeMessageQueueing(appConfig.Value.MessageQueueHostName, appConfig.Value.MessageQueueUserName, appConfig.Value.MessageQueuePassword);
 			_messageQueueing.SetInboundSemaphoreKey(appConfig.Value.InboundSemaphoreKey);
 			_messageQueueing.SetOutboundSemaphoreKey(appConfig.Value.OutboundSemaphoreKey);
 			_messageQueueing.InitializeExchange(appConfig.Value.ExchangeName, appConfig.Value.RoutingKey);
@@ -62,7 +63,7 @@ namespace CodeProject.MessageQueueing
 			_subject = new Subject<MessageQueue>();
 			_subject.Subscribe(MessageReceived);
 
-			_timer = new Timer(GetMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(60));
+			_timer = new Timer(GetMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(_appConfig.Value.ReceivingIntervalSeconds));
 
 			return Task.CompletedTask;
 		}

@@ -23,6 +23,11 @@ namespace CodeProject.LoggingManagement.Business.MessageService
 
 		public IConfiguration configuration { get; }
 
+		private Boolean _sending = false;
+		private Boolean _processing = false;
+		private readonly object _processingLock = new object();
+		private readonly object _sendingLock = new object();
+
 		/// <summary>
 		/// Inventory Management Message Processing
 		/// </summary>
@@ -35,19 +40,47 @@ namespace CodeProject.LoggingManagement.Business.MessageService
 		///  Send Queue Messages
 		/// </summary>
 		/// <returns></returns>
-		public async Task<ResponseModel<List<MessageQueue>>> SendQueueMessages(IMessageQueueing messageQueueing)
+		public async Task<ResponseModel<List<MessageQueue>>> SendQueueMessages(IMessageQueueing messageQueueing, string outboundSemaphoreKey)
 		{
 			
 			ResponseModel<List<MessageQueue>> returnResponse = new ResponseModel<List<MessageQueue>>();
 			returnResponse.Entity = new List<MessageQueue>();
+
+			lock (_sendingLock)
+			{
+				if (_sending)
+				{
+					Console.WriteLine("Aborted iteration still sending");
+					return returnResponse;
+				}
+
+				_sending = true;
+
+			}
+
+			TransactionQueueSemaphore transactionQueueSemaphore = null;
+
 			try
 			{
 				_loggingManagementDataService.OpenConnection();
-	
+
+				_loggingManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
+
+				transactionQueueSemaphore = await _loggingManagementDataService.GetTransactionQueueSemaphore(outboundSemaphoreKey);
+				if (transactionQueueSemaphore == null)
+				{
+					transactionQueueSemaphore = new TransactionQueueSemaphore();
+					transactionQueueSemaphore.SemaphoreKey = outboundSemaphoreKey;
+					await _loggingManagementDataService.CreateTransactionQueueSemaphore(transactionQueueSemaphore);
+				}
+				else
+				{
+					await _loggingManagementDataService.UpdateTransactionQueueSemaphore(transactionQueueSemaphore);
+				}
+
 				List<AcknowledgementsQueue> acknowledgementsQueue = await _loggingManagementDataService.ProcessAcknowledgementsQueue();
 				foreach (AcknowledgementsQueue transactionQueueItem in acknowledgementsQueue)
 				{
-					_loggingManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
 
 					MessageQueue message = new MessageQueue();
 					message.ExchangeName = transactionQueueItem.ExchangeName;
@@ -61,12 +94,16 @@ namespace CodeProject.LoggingManagement.Business.MessageService
 						returnResponse.Entity.Add(message);
 					}
 
-					await _loggingManagementDataService.UpdateDatabase();
-
-					_loggingManagementDataService.CommitTransaction();
+					
 				}
 
+				await _loggingManagementDataService.UpdateDatabase();
+
+				_loggingManagementDataService.CommitTransaction();
+
 				_loggingManagementDataService.CloseConnection();
+
+			
 
 			}
 			catch (Exception ex)
@@ -78,6 +115,7 @@ namespace CodeProject.LoggingManagement.Business.MessageService
 			finally
 			{
 				_loggingManagementDataService.CloseConnection();
+				_sending = false;
 			}
 
 			return returnResponse;
@@ -191,7 +229,7 @@ namespace CodeProject.LoggingManagement.Business.MessageService
 		/// Process Messages
 		/// </summary>
 		/// <returns></returns>
-		public async Task<ResponseModel<List<MessageQueue>>> ProcessMessages()
+		public async Task<ResponseModel<List<MessageQueue>>> ProcessMessages(string inboundSemaphoreKey)
 		{
 			await Task.Delay(0);
 			ResponseModel<List<MessageQueue>> returnResponse = new ResponseModel<List<MessageQueue>>();

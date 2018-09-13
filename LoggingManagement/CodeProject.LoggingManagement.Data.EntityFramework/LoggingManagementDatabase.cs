@@ -13,6 +13,7 @@ namespace CodeProject.LoggingManagement.Data.EntityFramework
 		public DbSet<MessagesSent> MessagesSent { get; set; }
 		public DbSet<MessagesReceived> MessagesReceived { get; set; }
 		public DbSet<AcknowledgementsQueue> AcknowledgementsQueue { get; set; }
+		public DbSet<TransactionQueueSemaphore> TransactionQueueSemaphores { get; set; }
 
 
 		/// <summary>
@@ -32,7 +33,7 @@ namespace CodeProject.LoggingManagement.Data.EntityFramework
 		/// <param name="modelBuilder"></param>
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-			
+			modelBuilder.Entity<TransactionQueueSemaphore>().HasIndex(u => u.SemaphoreKey).IsUnique();
 		}
 
 		public LoggingManagementDatabase(DbContextOptions<LoggingManagementDatabase> options) : base(options)

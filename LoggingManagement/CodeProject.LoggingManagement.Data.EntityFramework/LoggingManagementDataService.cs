@@ -125,5 +125,53 @@ namespace CodeProject.LoggingManagement.Data.EntityFramework
 			dbConnection.AcknowledgementsQueue.Remove(acknowledgementsQueue);
 		}
 
+		/// <summary>
+		/// Update Transaction Queue Semaphore
+		/// </summary>
+		/// <param name="transactionQueueSemaphore"></param>
+		/// <returns></returns>
+		public async Task UpdateTransactionQueueSemaphore(TransactionQueueSemaphore transactionQueueSemaphore)
+		{
+			await Task.Delay(0);
+			DateTime dateUpdated = DateTime.UtcNow;
+			transactionQueueSemaphore.DateUpdated = dateUpdated;
+		}
+
+		/// <summary>
+		/// Create Transaction Queue Semaphore
+		/// </summary>
+		/// <param name="transactionQueueSemaphore"></param>
+		/// <returns></returns>
+		public async Task CreateTransactionQueueSemaphore(TransactionQueueSemaphore transactionQueueSemaphore)
+		{
+			DateTime dateCreated = DateTime.UtcNow;
+			transactionQueueSemaphore.DateCreated = dateCreated;
+			transactionQueueSemaphore.DateUpdated = dateCreated;
+
+			await dbConnection.TransactionQueueSemaphores.AddAsync(transactionQueueSemaphore);
+		}
+
+		/// <summary>
+		/// Get Transaction Queue Semaphore
+		/// </summary>
+		/// <param name="semaphoreKey"></param>
+		/// <returns></returns>
+		public async Task<TransactionQueueSemaphore> GetTransactionQueueSemaphore(string semaphoreKey)
+		{
+			StringBuilder sqlBuilder = new StringBuilder();
+
+			sqlBuilder.AppendLine(" SELECT * FROM TransactionQueueSemaphores WITH (UPDLOCK) WHERE ");
+			sqlBuilder.AppendLine(" SemaphoreKey = @SemaphoreKey ");
+
+			string sqlStatement = sqlBuilder.ToString();
+
+			SqlParameter semaphoreKeyParameter = new SqlParameter("SemaphoreKey", semaphoreKey);
+
+			TransactionQueueSemaphore transactionQueue = await dbConnection.TransactionQueueSemaphores.FromSql(sqlStatement, semaphoreKeyParameter).FirstOrDefaultAsync();
+
+			return transactionQueue;
+
+		}
+
 	}
 }

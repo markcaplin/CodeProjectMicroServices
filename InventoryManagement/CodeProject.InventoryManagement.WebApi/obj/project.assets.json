@@ -4966,39 +4966,6 @@
           "bin/placeholder/CodeProject.InventoryManagement.Interfaces.dll": {}
         }
       },
-      "CodeProject.MessageQueueing/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v2.1",
-        "dependencies": {
-          "CodeProject.Shared.Common.Interfaces": "1.0.0",
-          "CodeProject.Shared.Common.Models": "1.0.0",
-          "CodeProject.Shared.Common.Utilities": "1.0.0",
-          "Microsoft.Extensions.Configuration": "2.1.1",
-          "Microsoft.Extensions.Configuration.CommandLine": "2.1.1",
-          "Microsoft.Extensions.Configuration.EnvironmentVariables": "2.1.1",
-          "Microsoft.Extensions.Configuration.Json": "2.1.1",
-          "Microsoft.Extensions.DependencyInjection": "2.1.1",
-          "Microsoft.Extensions.Hosting": "2.1.1",
-          "Microsoft.Extensions.Logging": "2.1.1",
-          "Microsoft.Extensions.Logging.Configuration": "2.1.1",
-          "Microsoft.Extensions.Logging.Console": "2.1.1",
-          "Microsoft.Extensions.Options": "2.1.1",
-          "Microsoft.Extensions.Options.ConfigurationExtensions": "2.1.1",
-          "Newtonsoft.Json": "11.0.2",
-          "RabbitMQ.Client": "5.1.0",
-          "System.Reactive": "4.1.0",
-          "System.Reactive.Core": "4.1.0",
-          "System.Reactive.Interfaces": "4.1.0",
-          "System.Reactive.Linq": "4.1.0",
-          "System.Reactive.PlatformServices": "4.1.0"
-        },
-        "compile": {
-          "bin/placeholder/CodeProject.MessageQueueing.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/CodeProject.MessageQueueing.dll": {}
-        }
-      },
       "CodeProject.Shared.Common.Interfaces/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v2.1",
@@ -13133,11 +13100,6 @@
       "path": "../CodeProject.InventoryManagement.Interfaces/CodeProject.InventoryManagement.Interfaces.csproj",
       "msbuildProject": "../CodeProject.InventoryManagement.Interfaces/CodeProject.InventoryManagement.Interfaces.csproj"
     },
-    "CodeProject.MessageQueueing/1.0.0": {
-      "type": "project",
-      "path": "../../MessageQueueing/CodeProject.MessageQueueing/CodeProject.MessageQueueing.csproj",
-      "msbuildProject": "../../MessageQueueing/CodeProject.MessageQueueing/CodeProject.MessageQueueing.csproj"
-    },
     "CodeProject.Shared.Common.Interfaces/1.0.0": {
       "type": "project",
       "path": "../../Shared/CodeProject.Shared.Common.Interfaces/CodeProject.Shared.Common.Interfaces.csproj",
@@ -13161,7 +13123,6 @@
       "CodeProject.InventoryManagement.Data.EntityFramework >= 1.0.0",
       "CodeProject.InventoryManagement.Data.Models >= 1.0.0",
       "CodeProject.InventoryManagement.Interfaces >= 1.0.0",
-      "CodeProject.MessageQueueing >= 1.0.0",
       "CodeProject.Shared.Common.Interfaces >= 1.0.0",
       "CodeProject.Shared.Common.Models >= 1.0.0",
       "CodeProject.Shared.Common.Utilities >= 1.0.0",
@@ -13215,9 +13176,6 @@
             },
             "C:\\MyFiles\\_CodeProjectMicroServices\\InventoryManagement\\CodeProject.InventoryManagement.Interfaces\\CodeProject.InventoryManagement.Interfaces.csproj": {
               "projectPath": "C:\\MyFiles\\_CodeProjectMicroServices\\InventoryManagement\\CodeProject.InventoryManagement.Interfaces\\CodeProject.InventoryManagement.Interfaces.csproj"
-            },
-            "C:\\MyFiles\\_CodeProjectMicroServices\\MessageQueueing\\CodeProject.MessageQueueing\\CodeProject.MessageQueueing.csproj": {
-              "projectPath": "C:\\MyFiles\\_CodeProjectMicroServices\\MessageQueueing\\CodeProject.MessageQueueing\\CodeProject.MessageQueueing.csproj"
             },
             "C:\\MyFiles\\_CodeProjectMicroServices\\Shared\\CodeProject.Shared.Common.Interfaces\\CodeProject.Shared.Common.Interfaces.csproj": {
               "projectPath": "C:\\MyFiles\\_CodeProjectMicroServices\\Shared\\CodeProject.Shared.Common.Interfaces\\CodeProject.Shared.Common.Interfaces.csproj"

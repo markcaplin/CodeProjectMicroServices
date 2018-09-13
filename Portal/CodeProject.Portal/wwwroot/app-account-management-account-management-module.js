@@ -118,7 +118,7 @@ var AccountManagementRoutingModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ""
+module.exports = "mat-form-field {\r\n    width: 300px;\r\n  }"
 
 /***/ }),
 
@@ -129,7 +129,7 @@ module.exports = ""
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "\n<mat-card>\n  <mat-card-header>\n    <mat-card-title>\n      <h2>Login</h2>\n    </mat-card-title>\n  </mat-card-header>\n  <mat-card-content>\n\n    <form>\n\n      <div>\n        <mat-form-field style=\"width:300px\">\n          <input matInput name=\"EmailAddress\" value=\"{{userViewModel.emailAddress}}\" [(ngModel)]=\"userViewModel.emailAddress\" placeholder=\"Email Address\">\n        </mat-form-field>\n      </div>\n\n      <div>\n        <mat-form-field style=\"width:300px\">\n          <input matInput  type=\"password\"  name=\"Password\" placeholder=\"Password\" value=\"{{userViewModel.password}}\" [(ngModel)]=\"userViewModel.password\">\n        </mat-form-field>\n      </div>\n\n    </form>\n  </mat-card-content>\n  <mat-card-actions>\n    <button mat-flat-button color=\"primary\" (click)=\"login()\">Login</button>\n  </mat-card-actions>\n</mat-card>\n"
+module.exports = "<section>\n  \n<mat-card>\n    <mat-card-header>\n      <mat-card-title>\n        <h2>Login</h2>\n      </mat-card-title>\n    </mat-card-header>\n    <mat-card-content>\n  \n      <form>\n  \n        <div>\n          <mat-form-field >\n            <input matInput type=\"email\" name=\"EmailAddress\" value=\"{{userViewModel.emailAddress}}\" [(ngModel)]=\"userViewModel.emailAddress\" placeholder=\"Email Address\">\n          </mat-form-field>\n        </div>\n  \n        <div>\n          <mat-form-field>\n            <input matInput  type=\"password\"  name=\"Password\" placeholder=\"Password\" value=\"{{userViewModel.password}}\" [(ngModel)]=\"userViewModel.password\">\n          </mat-form-field>\n        </div>\n  \n      </form>\n    </mat-card-content>\n    <mat-card-actions>\n      <button mat-flat-button color=\"primary\" (click)=\"login()\">Login</button>\n    </mat-card-actions>\n  </mat-card>\n\n</section>\n\n\n"
 
 /***/ }),
 
