@@ -43,6 +43,7 @@ namespace CodeProject.SalesOrderManagement.MessageQueueing
 
 				services.AddOptions();
 				services.Configure<MessageQueueAppConfig>(hostContext.Configuration.GetSection("MessageQueueAppConfig"));
+				services.Configure<ConnectionStrings>(hostContext.Configuration.GetSection("ConnectionStrings"));
 
 				services.AddSingleton<IHostedService, SendMessages>();
 
@@ -60,6 +61,7 @@ namespace CodeProject.SalesOrderManagement.MessageQueueing
 
 				services.AddOptions();
 				services.Configure<MessageQueueAppConfig>(hostContext.Configuration.GetSection("MessageQueueAppConfig"));
+				services.Configure<ConnectionStrings>(hostContext.Configuration.GetSection("ConnectionStrings"));
 
 				services.AddSingleton<IHostedService, ReceiveMessages>();
 
@@ -76,6 +78,7 @@ namespace CodeProject.SalesOrderManagement.MessageQueueing
 
 				services.AddOptions();
 				services.Configure<MessageQueueAppConfig>(hostContext.Configuration.GetSection("MessageQueueAppConfig"));
+				services.Configure<ConnectionStrings>(hostContext.Configuration.GetSection("ConnectionStrings"));
 
 				services.AddSingleton<IHostedService, ProcessMessages>();
 

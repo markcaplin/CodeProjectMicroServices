@@ -61,15 +61,16 @@ namespace CodeProject.InventoryManagement.WebApi
 				options.AddPolicy("SiteCorsPolicy", corsBuilder.Build());
 			});
 
-			//AppSettings appSettings = new AppSettings();
-			//Configuration.GetSection("AppSettings").Bind(appSettings);
+		
+			ConnectionStrings connectionStrings = new ConnectionStrings();
+			Configuration.GetSection("ConnectionStrings").Bind(connectionStrings);
 
 			services.AddDbContext<InventoryManagementDatabase>(options => options.UseSqlServer(Configuration.GetConnectionString("PrimaryDatabaseConnectionString")));
 
 			services.AddTransient<IInventoryManagementDataService, InventoryManagementDataService>();
 			
 			services.AddTransient<IInventoryManagementBusinessService>(provider =>
-			new InventoryManagementBusinessService(provider.GetRequiredService<IInventoryManagementDataService>()));
+			new InventoryManagementBusinessService(provider.GetRequiredService<IInventoryManagementDataService>(), connectionStrings));
 
 			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 			{

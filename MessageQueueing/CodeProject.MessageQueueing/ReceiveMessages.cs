@@ -21,6 +21,7 @@ namespace CodeProject.MessageQueueing
 		private readonly IMessageQueueing _messageQueueing;
 		private readonly ILogger _logger;
 		private readonly IOptions<MessageQueueAppConfig> _appConfig;
+		private readonly IOptions<ConnectionStrings> _connectionStrings;
 
 		private Timer _timer;
 
@@ -33,13 +34,15 @@ namespace CodeProject.MessageQueueing
 		/// <param name="appConfig"></param>
 		/// <param name="messageQueueing"></param>
 		/// <param name="inventoryManagementBusinessService"></param>
-		public ReceiveMessages(ILogger<ReceiveMessages> logger, IOptions<MessageQueueAppConfig> appConfig, IMessageQueueing messageQueueing, IMessageQueueProcessing messageProcessor)
+		public ReceiveMessages(ILogger<ReceiveMessages> logger, IOptions<ConnectionStrings> connectionStrings, IOptions<MessageQueueAppConfig> appConfig, IMessageQueueing messageQueueing, IMessageQueueProcessing messageProcessor)
 		{
 			_logger = logger;
 			_appConfig = appConfig;
+			_connectionStrings = connectionStrings;
 			_messageProcessor = messageProcessor;
 			_messageQueueing = messageQueueing;
 
+			_messageQueueing.SetConnectionStrings(_connectionStrings.Value);
 			_messageQueueing.InitializeMessageQueueing(appConfig.Value.MessageQueueHostName, appConfig.Value.MessageQueueUserName, appConfig.Value.MessageQueuePassword);
 			_messageQueueing.SetInboundSemaphoreKey(appConfig.Value.InboundSemaphoreKey);
 			_messageQueueing.SetOutboundSemaphoreKey(appConfig.Value.OutboundSemaphoreKey);

@@ -20,6 +20,7 @@ namespace CodeProject.SalesOrderManagement.Data.EntityFramework
 		public DbSet<SalesOrderDetail> SalesOrderDetails { get; set; }
 		public DbSet<TransactionQueueSemaphore> TransactionQueueSemaphores { get; set; }
 
+		private string _connectionString;
 
 		/// <summary>
 		/// On Configuring
@@ -27,10 +28,18 @@ namespace CodeProject.SalesOrderManagement.Data.EntityFramework
 		/// <param name="optionsBuilder"></param>
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
-			ConnectionStrings connectionStrings = ConfigurationUtility.GetConnectionStrings();
-			string databaseConnectionString = connectionStrings.PrimaryDatabaseConnectionString;
-			optionsBuilder.UseSqlServer(databaseConnectionString);
-			
+			if (string.IsNullOrWhiteSpace(_connectionString))
+			{
+				ConnectionStrings connectionStrings = ConfigurationUtility.GetConnectionStrings();
+				string databaseConnectionString = connectionStrings.PrimaryDatabaseConnectionString;
+				optionsBuilder.UseSqlServer(databaseConnectionString);
+			}
+			else
+			{
+				optionsBuilder.UseSqlServer(_connectionString);
+			}
+
+
 		}
 		/// <summary>
 		/// Fluent Api
@@ -52,6 +61,11 @@ namespace CodeProject.SalesOrderManagement.Data.EntityFramework
 		public SalesOrderManagementDatabase()
 		{
 			
+		}
+
+		public SalesOrderManagementDatabase(string connectionString)
+		{
+			_connectionString = connectionString;
 		}
 	}
 }

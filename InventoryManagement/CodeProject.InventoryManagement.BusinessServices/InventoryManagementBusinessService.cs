@@ -22,16 +22,19 @@ namespace CodeProject.InventoryManagement.BusinessServices
 	public class InventoryManagementBusinessService : IInventoryManagementBusinessService
 	{
 		private readonly IInventoryManagementDataService _inventoryManagementDataService;
+		private readonly ConnectionStrings _connectionStrings;
 		
 		public IConfiguration configuration { get; }
 
 		/// <summary>
-		/// Acount Business Service
+		/// Inventory Management
 		/// </summary>
-		/// <param name="accountDataService"></param>
-		public InventoryManagementBusinessService(IInventoryManagementDataService inventoryManagementDataService)
+		/// <param name="inventoryManagementDataService"></param>
+		/// <param name="connectionStrings"></param>
+		public InventoryManagementBusinessService(IInventoryManagementDataService inventoryManagementDataService, ConnectionStrings connectionStrings)
 		{
 			_inventoryManagementDataService = inventoryManagementDataService;
+			_connectionStrings = connectionStrings;
 		}
 		/// <summary>
 		/// Create Product
@@ -47,7 +50,7 @@ namespace CodeProject.InventoryManagement.BusinessServices
 			
 			try
 			{
-				_inventoryManagementDataService.OpenConnection();
+				_inventoryManagementDataService.OpenConnection(_connectionStrings.PrimaryDatabaseConnectionString);
 				_inventoryManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
 
 				ProductBusinessRules<ProductDataTransformation> productBusinessRules = new ProductBusinessRules<ProductDataTransformation>(productDataTransformation, _inventoryManagementDataService);
@@ -119,7 +122,7 @@ namespace CodeProject.InventoryManagement.BusinessServices
 	
 			try
 			{
-				_inventoryManagementDataService.OpenConnection();
+				_inventoryManagementDataService.OpenConnection(_connectionStrings.PrimaryDatabaseConnectionString);
 				_inventoryManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
 
 				ProductBusinessRules<ProductDataTransformation> productBusinessRules = new ProductBusinessRules<ProductDataTransformation>(productDataTransformation, _inventoryManagementDataService);

@@ -45,7 +45,7 @@ namespace CodeProject.SalesOrderManagement.Business.MessageService
 		/// <param name="messageQueueing"></param>
 		/// <param name="outboundSemaphoreKey"></param>
 		/// <returns></returns>
-		public async Task<ResponseModel<List<MessageQueue>>> SendQueueMessages(IMessageQueueing messageQueueing, string outboundSemaphoreKey)
+		public async Task<ResponseModel<List<MessageQueue>>> SendQueueMessages(IMessageQueueing messageQueueing, string outboundSemaphoreKey, ConnectionStrings connectionStrings)
 		{
 
 			ResponseModel<List<MessageQueue>> returnResponse = new ResponseModel<List<MessageQueue>>();
@@ -67,7 +67,7 @@ namespace CodeProject.SalesOrderManagement.Business.MessageService
 
 			try
 			{
-				_salesOrderManagementDataService.OpenConnection();
+				_salesOrderManagementDataService.OpenConnection(connectionStrings.PrimaryDatabaseConnectionString);
 				_salesOrderManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
 
 				transactionQueueSemaphore = await _salesOrderManagementDataService.GetTransactionQueueSemaphore(outboundSemaphoreKey);
@@ -129,14 +129,14 @@ namespace CodeProject.SalesOrderManagement.Business.MessageService
 		/// </summary>
 		/// <param name="messageQueue"></param>
 		/// <returns></returns>
-		public async Task<ResponseModel<MessageQueue>> CommitInboundMessage(MessageQueue messageQueue)
+		public async Task<ResponseModel<MessageQueue>> CommitInboundMessage(MessageQueue messageQueue, ConnectionStrings connectionStrings)
 		{
 
 			ResponseModel<MessageQueue> returnResponse = new ResponseModel<MessageQueue>();
 
 			try
 			{
-				_salesOrderManagementDataService.OpenConnection();
+				_salesOrderManagementDataService.OpenConnection(connectionStrings.PrimaryDatabaseConnectionString);
 				_salesOrderManagementDataService.BeginTransaction((int)IsolationLevel.ReadCommitted);
 
 				TransactionQueueInbound transactionQueue = new TransactionQueueInbound();
@@ -175,7 +175,7 @@ namespace CodeProject.SalesOrderManagement.Business.MessageService
 		/// Process Messages
 		/// </summary>
 		/// <returns></returns>
-		public async Task<ResponseModel<List<MessageQueue>>> ProcessMessages(string inboundSemaphoreKey)
+		public async Task<ResponseModel<List<MessageQueue>>> ProcessMessages(string inboundSemaphoreKey, ConnectionStrings connectionStrings)
 		{
 
 			ResponseModel<List<MessageQueue>> returnResponse = new ResponseModel<List<MessageQueue>>();
@@ -196,7 +196,7 @@ namespace CodeProject.SalesOrderManagement.Business.MessageService
 
 			try
 			{
-				_salesOrderManagementDataService.OpenConnection();
+				_salesOrderManagementDataService.OpenConnection(connectionStrings.PrimaryDatabaseConnectionString);
 				_salesOrderManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
 
 				transactionQueueSemaphore = await _salesOrderManagementDataService.GetTransactionQueueSemaphore(inboundSemaphoreKey);

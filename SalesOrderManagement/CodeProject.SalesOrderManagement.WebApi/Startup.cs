@@ -51,12 +51,15 @@ namespace CodeProject.SalesOrderManagement.WebApi
 			//AppSettings appSettings = new AppSettings();
 			//Configuration.GetSection("AppSettings").Bind(appSettings);
 
+			ConnectionStrings connectionStrings = new ConnectionStrings();
+			Configuration.GetSection("ConnectionStrings").Bind(connectionStrings);
+
 			services.AddDbContext<SalesOrderManagementDatabase>(options => options.UseSqlServer(Configuration.GetConnectionString("PrimaryDatabaseConnectionString")));
 
 			services.AddTransient<ISalesOrderManagementDataService, SalesOrderManagementDataService>();
 
 			services.AddTransient<ISalesOrderManagementBusinessService>(provider =>
-			new SalesOrderManagementBusinessService(provider.GetRequiredService<ISalesOrderManagementDataService>()));
+			new SalesOrderManagementBusinessService(provider.GetRequiredService<ISalesOrderManagementDataService>(),connectionStrings));
 
 			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 			{

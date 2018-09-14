@@ -67,10 +67,24 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 			return _context;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="dbConnection"></param>
 		public void OpenConnection(Object dbConnection)
 		{
 			_context = (InventoryManagementDatabase)dbConnection;
 		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="connectionString"></param>
+		public void OpenConnection(string connectionString)
+		{
+			_context = new InventoryManagementDatabase(connectionString);
+		}
+
 		/// <summary>
 		/// Begin Transaction
 		/// </summary>

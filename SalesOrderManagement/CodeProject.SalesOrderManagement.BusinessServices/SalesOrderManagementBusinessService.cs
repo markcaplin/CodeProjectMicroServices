@@ -18,7 +18,8 @@ namespace CodeProject.SalesOrderManagement.BusinessServices
 {
 	public class SalesOrderManagementBusinessService : ISalesOrderManagementBusinessService
 	{
-		ISalesOrderManagementDataService _salesOrderManagementDataService;
+		private readonly ISalesOrderManagementDataService _salesOrderManagementDataService;
+		private readonly ConnectionStrings _connectionStrings;
 
 		public IConfiguration configuration { get; }
 
@@ -26,9 +27,10 @@ namespace CodeProject.SalesOrderManagement.BusinessServices
 		/// Acount Business Service
 		/// </summary>
 		/// <param name="accountDataService"></param>
-		public SalesOrderManagementBusinessService(ISalesOrderManagementDataService salesOrderManagementDataService)
+		public SalesOrderManagementBusinessService(ISalesOrderManagementDataService salesOrderManagementDataService, ConnectionStrings connectionStrings)
 		{
 			_salesOrderManagementDataService = salesOrderManagementDataService;
+			_connectionStrings = connectionStrings;
 		}
 
 		/// <summary>
@@ -46,7 +48,7 @@ namespace CodeProject.SalesOrderManagement.BusinessServices
 
 			try
 			{
-				_salesOrderManagementDataService.OpenConnection();
+				_salesOrderManagementDataService.OpenConnection(_connectionStrings.PrimaryDatabaseConnectionString);
 				_salesOrderManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
 
 				product.AccountId = productDataTransformation.AccountId;
@@ -96,7 +98,7 @@ namespace CodeProject.SalesOrderManagement.BusinessServices
 	
 			try
 			{
-				_salesOrderManagementDataService.OpenConnection();
+				_salesOrderManagementDataService.OpenConnection(_connectionStrings.PrimaryDatabaseConnectionString);
 				_salesOrderManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
 
 				int productId = productDataTransformation.ProductId;

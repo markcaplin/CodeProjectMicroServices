@@ -67,6 +67,11 @@ namespace CodeProject.SalesOrderManagement.Data.EntityFramework
 			return _context;
 		}
 
+		public void OpenConnection(string connectionString)
+		{
+			_context = new SalesOrderManagementDatabase(connectionString);
+		}
+
 		public void OpenConnection(Object dbConnection)
 		{
 			_context = (SalesOrderManagementDatabase)dbConnection;

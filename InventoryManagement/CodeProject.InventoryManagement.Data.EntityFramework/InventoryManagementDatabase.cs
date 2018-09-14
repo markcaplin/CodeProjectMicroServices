@@ -17,16 +17,26 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 		public DbSet<TransactionQueueOutboundHistory> TransactionQueueOutboundHistory { get; set; }
 		public DbSet<TransactionQueueSemaphore> TransactionQueueSemaphores { get; set; }
 
+		private readonly string _connectionString;
+
 		/// <summary>
 		/// On Configuring
 		/// </summary>
 		/// <param name="optionsBuilder"></param>
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
-			ConnectionStrings connectionStrings = ConfigurationUtility.GetConnectionStrings();
-			string databaseConnectionString = connectionStrings.PrimaryDatabaseConnectionString;
-			optionsBuilder.UseSqlServer(databaseConnectionString);
 			
+			if (string.IsNullOrWhiteSpace(_connectionString))
+			{
+				ConnectionStrings connectionStrings = ConfigurationUtility.GetConnectionStrings();
+				string databaseConnectionString = connectionStrings.PrimaryDatabaseConnectionString;
+				optionsBuilder.UseSqlServer(databaseConnectionString);
+			}
+			else
+			{
+				optionsBuilder.UseSqlServer(_connectionString);
+			}
+
 		}
 		/// <summary>
 		/// Fluent Api
@@ -48,6 +58,15 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 		public InventoryManagementDatabase()
 		{
 			
+		}
+
+		/// <summary>
+		/// Inventory Management Database
+		/// </summary>
+		/// <param name="connectionStrings"></param>
+		public InventoryManagementDatabase(string connectionString)
+		{
+			_connectionString = connectionString;
 		}
 	}
 }

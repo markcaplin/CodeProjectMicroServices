@@ -26,10 +26,11 @@ namespace CodeProject.MessageQueueing
 		private string _loggingRoutingKey { get; set; }
 		private string _loggingQueueName { get; set; }
 		private string _originatingQueueName { get; set; }
-		private string _acknowledgementMessageExchangeSuffix { get; set; }	
+		private string _acknowledgementMessageExchangeSuffix { get; set; }
 		private string _acknowledgementMessageQueueSuffix { get; set; }
 		private string _outboundSemaphoreKey { get; set; }
 		private string _inboundSemaphoreKey { get; set; }
+		private ConnectionStrings _connectionStrings { get; set; }
 
 		private Boolean _sendToLoggingQueue { get; set; }
 
@@ -54,8 +55,17 @@ namespace CodeProject.MessageQueueing
 		/// </summary>
 		public MessageQueueing()
 		{
-			
 
+
+		}
+
+		/// <summary>
+		/// Set Connection Strings
+		/// </summary>
+		/// <param name="connectionStrings"></param>
+		public void SetConnectionStrings(ConnectionStrings connectionStrings)
+		{
+			_connectionStrings = connectionStrings;
 		}
 
 		/// <summary>
@@ -130,7 +140,7 @@ namespace CodeProject.MessageQueueing
 		/// </summary>
 		/// <param name="acknowledgementMessageExchangeSuffix"></param>
 		/// <param name="acknowledgementMessageQueueSuffix"></param>
-		public void InitializeAcknowledgementConfiguration( string acknowledgementMessageExchangeSuffix, string acknowledgementMessageQueueSuffix)
+		public void InitializeAcknowledgementConfiguration(string acknowledgementMessageExchangeSuffix, string acknowledgementMessageQueueSuffix)
 		{
 			_acknowledgementMessageExchangeSuffix = acknowledgementMessageExchangeSuffix;
 			_acknowledgementMessageQueueSuffix = acknowledgementMessageQueueSuffix;
@@ -260,15 +270,15 @@ namespace CodeProject.MessageQueueing
 			}
 			finally
 			{
-				
+
 				if (channel != null)
 				{
 					channel.Close();
 					channel.Dispose();
 				}
-				
+
 			}
-			
+
 			return response;
 
 		}
@@ -317,7 +327,8 @@ namespace CodeProject.MessageQueueing
 
 			Console.WriteLine("Receiving Messages at " + DateTime.Now);
 
-			if (_running == true) {
+			if (_running == true)
+			{
 				return;
 			}
 
@@ -341,34 +352,27 @@ namespace CodeProject.MessageQueueing
 					messageQueue.QueueName = _originatingQueueName;
 				}
 
-				if (messageQueue.TransactionCode == TransactionQueueTypes.TriggerImmediately)
-				{
-					await _messageProcessor.SendQueueMessages(this, _outboundSemaphoreKey);
-					
-					_subscription.Ack(e);
-				}
-				else
-				{
-					Console.WriteLine("Receiving Message id " + messageQueue.TransactionQueueId);
 
-					ResponseModel<MessageQueue> responseMessage = await _messageProcessor.CommitInboundMessage(messageQueue);
+				Console.WriteLine("Receiving Message id " + messageQueue.TransactionQueueId);
+
+				ResponseModel<MessageQueue> responseMessage = await _messageProcessor.CommitInboundMessage(messageQueue, _connectionStrings);
+				if (responseMessage.ReturnStatus == true)
+				{
+					if (_sendToLoggingQueue == true)
+					{
+						responseMessage = SendReceivedMessageToLoggingQueue(messageQueue);
+					}
+
 					if (responseMessage.ReturnStatus == true)
 					{
-						if (_sendToLoggingQueue == true)
-						{
-							responseMessage = SendReceivedMessageToLoggingQueue(messageQueue);
-						}
-
-						if (responseMessage.ReturnStatus == true)
-						{
-							Console.WriteLine($"Message Committed: {messageQueue.TransactionQueueId}");
-							_subscription.Ack(e);
-						}
-
-						await _messageProcessor.ProcessMessages(_inboundSemaphoreKey);
-
+						Console.WriteLine($"Message Committed: {messageQueue.TransactionQueueId}");
+						_subscription.Ack(e);
 					}
+
+					await _messageProcessor.ProcessMessages(_inboundSemaphoreKey, _connectionStrings);
+
 				}
+
 
 			}
 
@@ -439,7 +443,7 @@ namespace CodeProject.MessageQueueing
 
 			if (_receivedMessages.ContainsKey(messageGuid))
 			{
-				BasicDeliverEventArgs eventArgs = (BasicDeliverEventArgs) _receivedMessages[messageGuid];
+				BasicDeliverEventArgs eventArgs = (BasicDeliverEventArgs)_receivedMessages[messageGuid];
 				_subscription.Ack(eventArgs);
 				Console.WriteLine($"Message acknowledged: {messageGuid}");
 			}

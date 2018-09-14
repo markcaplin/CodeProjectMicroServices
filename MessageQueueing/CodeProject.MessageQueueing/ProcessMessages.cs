@@ -20,17 +20,19 @@ namespace CodeProject.MessageQueueing
 		private readonly IMessageQueueing _messageQueueing;
 		private readonly ILogger _logger;
 		private readonly IOptions<MessageQueueAppConfig> _appConfig;
+		private readonly IOptions<ConnectionStrings> _connectionStrings;
 		private Timer _timer;
 		private int _counter;
 
 		//private Subject<MessageQueue> _subject;
 
-		public ProcessMessages(ILogger<SendMessages> logger, IOptions<MessageQueueAppConfig> appConfig, IMessageQueueing messageQueueing, IMessageQueueProcessing messageProcessor)
+		public ProcessMessages(ILogger<SendMessages> logger, IOptions<ConnectionStrings> connectionStrings, IOptions<MessageQueueAppConfig> appConfig, IMessageQueueing messageQueueing, IMessageQueueProcessing messageProcessor)
 		{
 			_logger = logger;
 			_appConfig = appConfig;
 			_messageProcessor = messageProcessor;
 			_messageQueueing = messageQueueing;
+			_connectionStrings = connectionStrings;
 
 			_logger.LogInformation("Process Messages Constructor ");
 		}
@@ -54,7 +56,7 @@ namespace CodeProject.MessageQueueing
 
 			_counter++;
 
-			ResponseModel<List<MessageQueue>> messages = await _messageProcessor.ProcessMessages(_appConfig.Value.InboundSemaphoreKey);
+			ResponseModel<List<MessageQueue>> messages = await _messageProcessor.ProcessMessages(_appConfig.Value.InboundSemaphoreKey, _connectionStrings.Value);
 
 			_logger.LogInformation("total messages processed " + messages.Entity.Count.ToString() + " sent at " + DateTime.Now);
 

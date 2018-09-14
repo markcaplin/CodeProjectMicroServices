@@ -20,6 +20,7 @@ namespace CodeProject.Shared.Common.Interfaces
 		Object OpenConnection();
 		void CloseConnection();
 		void OpenConnection(Object dbConnection);
+		void OpenConnection(string connectionString);
 
 	}
 }

@@ -20,15 +20,19 @@ namespace CodeProject.MessageQueueing
 		private readonly IMessageQueueing _messageQueueing;
 		private readonly ILogger _logger;
 		private readonly IOptions<MessageQueueAppConfig> _appConfig;
+		private readonly IOptions<ConnectionStrings> _connectionStrings;
+
 		private Timer _timer;
 	
-		public SendMessages(ILogger<SendMessages> logger, IOptions<MessageQueueAppConfig> appConfig, IMessageQueueing messageQueueing, IMessageQueueProcessing messageProcessor)
+		public SendMessages(ILogger<SendMessages> logger, IOptions<ConnectionStrings> connectionStrings, IOptions<MessageQueueAppConfig> appConfig, IMessageQueueing messageQueueing, IMessageQueueProcessing messageProcessor)
 		{
 			_logger = logger;
 			_appConfig = appConfig;
 			_messageProcessor = messageProcessor;
 			_messageQueueing = messageQueueing;
+			_connectionStrings = connectionStrings;
 
+			_messageQueueing.SetConnectionStrings(_connectionStrings.Value);
 			_messageQueueing.InitializeMessageQueueing(appConfig.Value.MessageQueueHostName, appConfig.Value.MessageQueueUserName, appConfig.Value.MessageQueuePassword);
 			_messageQueueing.SetInboundSemaphoreKey(appConfig.Value.InboundSemaphoreKey);
 			_messageQueueing.SetOutboundSemaphoreKey(appConfig.Value.OutboundSemaphoreKey);
@@ -65,7 +69,7 @@ namespace CodeProject.MessageQueueing
 		/// <param name="state"></param>
 		private async void GetMessagesInQueue(object state)
 		{
-			ResponseModel<List<MessageQueue>> messages = await _messageProcessor.SendQueueMessages(_messageQueueing, _appConfig.Value.OutboundSemaphoreKey);
+			ResponseModel<List<MessageQueue>> messages = await _messageProcessor.SendQueueMessages(_messageQueueing, _appConfig.Value.OutboundSemaphoreKey, _connectionStrings.Value);
 			_logger.LogInformation("total messages " + messages.Entity.Count.ToString() + " sent at " + DateTime.Now);
 
 		}
