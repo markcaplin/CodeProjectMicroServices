@@ -1,4 +1,0 @@
-cd C:\MyFiles\_CodeProjectMicroServices\Test\SpawnProcessTest
-cd SpawnProcessConsoleApplication\bin\Debug\netcoreapp2.1
-dotnet SpawnProcessConsoleApplication.dll
-pause

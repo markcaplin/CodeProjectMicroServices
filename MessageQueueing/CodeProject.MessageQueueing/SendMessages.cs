@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 using CodeProject.Shared.Common.Models;
 using CodeProject.Shared.Common.Interfaces;
 using CodeProject.MessageQueueing;
+using Microsoft.AspNetCore.SignalR.Client;
 
 namespace CodeProject.MessageQueueing
 {
@@ -21,6 +22,10 @@ namespace CodeProject.MessageQueueing
 		private readonly ILogger _logger;
 		private readonly IOptions<MessageQueueAppConfig> _appConfig;
 		private readonly IOptions<ConnectionStrings> _connectionStrings;
+
+		HubConnection _signalRHubConnection;
+
+		private int _counter = 0;
 
 		private Timer _timer;
 	
@@ -59,9 +64,53 @@ namespace CodeProject.MessageQueueing
 		{
 			_logger.LogInformation("Starting Send Messages");
 
+			StartSignalRConnection();
+
 			_timer = new Timer(GetMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(_appConfig.Value.SendingIntervalSeconds));
 
 			return Task.CompletedTask;
+		}
+
+		/// <summary>
+		/// Start SignalR Connection
+		/// </summary>
+		private async void StartSignalRConnection()
+		{
+			if (string.IsNullOrEmpty(_appConfig.Value.SignalRHubUrl))
+			{
+				return;
+			}
+
+			string url = _appConfig.Value.SignalRHubUrl;
+
+			_signalRHubConnection = new HubConnectionBuilder().WithUrl(url).Build();
+
+			_signalRHubConnection.On<string>("SendMessage", (message) =>
+			{
+				this.GetMessagesInQueue(null);
+
+			});
+
+			_signalRHubConnection.Closed += async (error) =>
+			{
+				Console.WriteLine("SignalR Connection Closed");
+				await Task.Delay(new Random().Next(0, 5) * 1000);
+				await _signalRHubConnection.StartAsync();
+				Console.WriteLine("Restart SignalR");
+			};
+
+			try
+			{
+				Console.WriteLine("Connecting to SignalR");
+				await _signalRHubConnection.StartAsync();
+				Console.WriteLine("Connected");
+
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("Error connecting to SignalR " + ex.Message);
+			}
+
 		}
 		/// <summary>
 		/// Get Messages In Queue

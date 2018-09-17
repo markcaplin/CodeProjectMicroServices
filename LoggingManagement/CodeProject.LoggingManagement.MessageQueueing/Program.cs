@@ -38,11 +38,13 @@ namespace CodeProject.LoggingManagement.MessageQueueing
 					services.AddTransient<ILoggingManagementDataService, LoggingManagementDataService>();
 					services.AddTransient<IMessageQueueing, CodeProject.MessageQueueing.MessageQueueing>();
 
+
 					services.AddTransient<IMessageQueueProcessing>(provider =>
 					new MessageProcessing(provider.GetRequiredService<ILoggingManagementDataService>()));
 
 					services.AddOptions();
 					services.Configure<MessageQueueAppConfig>(hostContext.Configuration.GetSection("MessageQueueAppConfig"));
+					services.Configure<ConnectionStrings>(hostContext.Configuration.GetSection("ConnectionStrings"));
 
 					services.AddSingleton<IHostedService, SendMessages>();
 
@@ -60,6 +62,7 @@ namespace CodeProject.LoggingManagement.MessageQueueing
 
 					services.AddOptions();
 					services.Configure<MessageQueueAppConfig>(hostContext.Configuration.GetSection("MessageQueueAppConfig"));
+					services.Configure<ConnectionStrings>(hostContext.Configuration.GetSection("ConnectionStrings"));
 
 					services.AddSingleton<IHostedService, ReceiveMessages>();
 

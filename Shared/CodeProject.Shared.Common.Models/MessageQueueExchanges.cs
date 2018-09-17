@@ -6,6 +6,7 @@ namespace CodeProject.Shared.Common.Models
 {
     public static class MessageQueueExchanges
     {
+		public static string PurchaseOrderManagement = "PurchaseOrderManagement";
 		public static string InventoryManagement = "InventoryManagement";
 	}
 }

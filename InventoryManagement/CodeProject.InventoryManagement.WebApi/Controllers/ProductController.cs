@@ -14,6 +14,8 @@ using CodeProject.Shared.Common;
 using Microsoft.AspNetCore.Authorization;
 using CodeProject.Shared.Common.Interfaces;
 using Microsoft.Extensions.Options;
+using CodeProject.InventoryManagement.WebApi.SignalRHub;
+using Microsoft.AspNetCore.SignalR;
 
 namespace CodeProject.InventoryManagement.WebApi.Controllers
 {
@@ -26,14 +28,17 @@ namespace CodeProject.InventoryManagement.WebApi.Controllers
 	{
 		private readonly IInventoryManagementBusinessService _inventoryManagementBusinessService;
 
+		private IHubContext<MessageQueueHub> _messageQueueContext;
+
 		public IConfiguration configuration { get; }
 
 		/// <summary>
-		/// Movies Controller
+		/// Product Controller
 		/// </summary>
-		public ProductController(IInventoryManagementBusinessService inventoryManagementBusinessService)
+		public ProductController(IInventoryManagementBusinessService inventoryManagementBusinessService, IHubContext<MessageQueueHub> messageQueueContext)
 		{
 			_inventoryManagementBusinessService = inventoryManagementBusinessService;
+			_messageQueueContext = messageQueueContext;
 		}
 
 		/// <summary>
@@ -61,6 +66,8 @@ namespace CodeProject.InventoryManagement.WebApi.Controllers
 				{
 					return BadRequest(returnResponse);
 				}
+
+				await _messageQueueContext.Clients.All.SendAsync("SendMessage", string.Empty);
 
 				return Ok(returnResponse);
 				
@@ -99,6 +106,8 @@ namespace CodeProject.InventoryManagement.WebApi.Controllers
 				{
 					return BadRequest(returnResponse);
 				}
+
+				await _messageQueueContext.Clients.All.SendAsync("SendMessage", string.Empty);
 
 				return Ok(returnResponse);
 				

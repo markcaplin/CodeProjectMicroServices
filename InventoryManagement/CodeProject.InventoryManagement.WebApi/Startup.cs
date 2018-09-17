@@ -22,6 +22,7 @@ using CodeProject.InventoryManagement.WebApi.ActionFilters;
 using CodeProject.InventoryManagement.Interfaces;
 using CodeProject.InventoryManagement.BusinessServices;
 using CodeProject.Shared.Common.Interfaces;
+using CodeProject.InventoryManagement.WebApi.SignalRHub;
 
 namespace CodeProject.InventoryManagement.WebApi
 {
@@ -90,6 +91,8 @@ namespace CodeProject.InventoryManagement.WebApi
 
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+			services.AddSignalR();
+
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -111,6 +114,11 @@ namespace CodeProject.InventoryManagement.WebApi
 			app.UseHttpsRedirection();
 
 			app.UseMvc();
+
+			app.UseSignalR(routes =>
+			{
+				routes.MapHub<MessageQueueHub>("/messageQueueHub");
+			});
 
 		}
     }

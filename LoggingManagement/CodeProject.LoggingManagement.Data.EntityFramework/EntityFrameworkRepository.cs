@@ -23,7 +23,7 @@ namespace CodeProject.LoggingManagement.Data.EntityFramework
 		/// <param name="connectionString"></param>
 		public EntityFrameworkRepository()
 		{
-			//AppSettings appSettings = ConfigurationUtility.GetAppSettings();
+			
 		}
 		/// <summary>
 		/// Database Context
@@ -47,6 +47,7 @@ namespace CodeProject.LoggingManagement.Data.EntityFramework
 		{
 			await dbConnection.SaveChangesAsync();
 		}
+
 		/// <summary>
 		/// Rollback Transaction
 		/// </summary>
@@ -66,6 +67,16 @@ namespace CodeProject.LoggingManagement.Data.EntityFramework
 			_context = new LoggingManagementDatabase();
 			return _context;
 		}
+
+		/// <summary>
+		/// Open Conection
+		/// </summary>
+		/// <param name="connectionString"></param>
+		public void OpenConnection(string connectionString)
+		{
+			_context = new LoggingManagementDatabase(connectionString);
+		}
+
 
 		public void OpenConnection(Object dbConnection)
 		{

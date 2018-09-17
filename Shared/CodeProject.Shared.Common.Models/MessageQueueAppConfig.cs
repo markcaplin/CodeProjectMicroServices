@@ -27,5 +27,6 @@ namespace CodeProject.Shared.Common.Models
 		public int ProcessingIntervalSeconds { get; set; }
 		public int SendingIntervalSeconds { get; set; }
 		public int ReceivingIntervalSeconds { get; set; }
+		public string SignalRHubUrl { get; set; }
 	}
 }

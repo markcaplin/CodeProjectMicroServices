@@ -24,8 +24,6 @@ namespace CodeProject.MessageQueueing
 		private Timer _timer;
 		private int _counter;
 
-		//private Subject<MessageQueue> _subject;
-
 		public ProcessMessages(ILogger<SendMessages> logger, IOptions<ConnectionStrings> connectionStrings, IOptions<MessageQueueAppConfig> appConfig, IMessageQueueing messageQueueing, IMessageQueueProcessing messageProcessor)
 		{
 			_logger = logger;

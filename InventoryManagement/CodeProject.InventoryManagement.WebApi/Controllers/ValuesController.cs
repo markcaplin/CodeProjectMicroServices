@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using CodeProject.Shared.Common.Models;
 using CodeProject.Shared.Common.Utilties;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.SignalR;
+using CodeProject.InventoryManagement.WebApi.SignalRHub;
 
 namespace CodeProject.InventoryManagement.WebApi.Controllers
 {
@@ -15,9 +17,17 @@ namespace CodeProject.InventoryManagement.WebApi.Controllers
     {
 		private MessageQueueAppConfig _messageQueueAppConfig;
 
-		public ValuesController(IOptions<MessageQueueAppConfig> messageQueueAppConfig)
+		private IHubContext<MessageQueueHub> _messageQueueContext;
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="messageQueueAppConfig"></param>
+		/// <param name="messageQueueContext"></param>
+		public ValuesController(IOptions<MessageQueueAppConfig> messageQueueAppConfig, IHubContext<MessageQueueHub> messageQueueContext)
 		{
 			_messageQueueAppConfig = messageQueueAppConfig.Value;
+			_messageQueueContext = messageQueueContext;
 		}
 
 		// GET api/values
@@ -28,7 +38,9 @@ namespace CodeProject.InventoryManagement.WebApi.Controllers
 			ConnectionStrings connectionStrings = ConfigurationUtility.GetConnectionStrings();
 
 			string databaseConnectionString = connectionStrings.PrimaryDatabaseConnectionString;
-
+		
+			_messageQueueContext.Clients.All.SendAsync("SendMessage", string.Empty);
+		
 			return new string[] { databaseConnectionString };
 		}
 

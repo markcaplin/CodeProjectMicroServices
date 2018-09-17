@@ -17,6 +17,8 @@ using CodeProject.Shared.Common.Utilties;
 using CodeProject.Shared.Common.Interfaces;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.SignalR.Client;
+using System.Threading;
 
 namespace CodeProject.InventoryManagement.Business.MessageService
 {
@@ -31,7 +33,6 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 		private readonly object _processingLock = new object();
 		private readonly object _sendingLock = new object();
 
-
 		/// <summary>
 		/// Inventory Management Message Processing
 		/// </summary>
@@ -45,7 +46,7 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 		///  Send Queue Messages
 		/// </summary>
 		/// <returns></returns>
-		public async Task<ResponseModel<List<MessageQueue>>> SendQueueMessages(IMessageQueueing messageQueueing, string outboundSemaphoreKey)
+		public async Task<ResponseModel<List<MessageQueue>>> SendQueueMessages(IMessageQueueing messageQueueing, string outboundSemaphoreKey, ConnectionStrings connectionStrings)
 		{
 			ResponseModel<List<MessageQueue>> returnResponse = new ResponseModel<List<MessageQueue>>();
 			returnResponse.Entity = new List<MessageQueue>();
@@ -70,10 +71,9 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 
 			try
 			{
-				_inventoryManagementDataService.OpenConnection();
+				_inventoryManagementDataService.OpenConnection(connectionStrings.PrimaryDatabaseConnectionString);
 				_inventoryManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
 
-				Console.WriteLine("Get Lock at " + DateTime.Now.ToString());
 				transactionQueueSemaphore = await _inventoryManagementDataService.GetTransactionQueueSemaphore(outboundSemaphoreKey);
 				if (transactionQueueSemaphore == null)
 				{
@@ -86,8 +86,6 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 					await _inventoryManagementDataService.UpdateTransactionQueueSemaphore(transactionQueueSemaphore);
 				}
 
-				Console.WriteLine("Acquired Lock");
-			
 				List<TransactionQueueOutbound> transactionQueue = await _inventoryManagementDataService.GetOutboundTransactionQueue();
 
 				foreach (TransactionQueueOutbound transactionQueueItem in transactionQueue)
@@ -111,12 +109,10 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 					{
 						break;
 					}
-					
+
 				}
 
 				await _inventoryManagementDataService.UpdateDatabase();
-
-				Console.WriteLine("Get Lock Done at " + DateTime.Now.ToString());
 
 				_inventoryManagementDataService.CommitTransaction();
 				_inventoryManagementDataService.CloseConnection();
@@ -133,24 +129,24 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 				_inventoryManagementDataService.CloseConnection();
 				_sending = false;
 			}
-		
+
 			return returnResponse;
 
 		}
-	
+
 		/// <summary>
 		/// Commit Inbound Message
 		/// </summary>
 		/// <param name="messageQueue"></param>
 		/// <returns></returns>
-		public async Task<ResponseModel<MessageQueue>> CommitInboundMessage(MessageQueue messageQueue)
+		public async Task<ResponseModel<MessageQueue>> CommitInboundMessage(MessageQueue messageQueue, ConnectionStrings connectionStrings)
 		{
 
 			ResponseModel<MessageQueue> returnResponse = new ResponseModel<MessageQueue>();
 
 			try
 			{
-				_inventoryManagementDataService.OpenConnection();
+				_inventoryManagementDataService.OpenConnection(connectionStrings.PrimaryDatabaseConnectionString);
 				_inventoryManagementDataService.BeginTransaction((int)IsolationLevel.ReadCommitted);
 
 				TransactionQueueInbound transactionQueue = new TransactionQueueInbound();
@@ -189,7 +185,7 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 		/// Process Messages
 		/// </summary>
 		/// <returns></returns>
-		public async Task<ResponseModel<List<MessageQueue>>> ProcessMessages(string inboundSemaphoreKey)
+		public async Task<ResponseModel<List<MessageQueue>>> ProcessMessages(string inboundSemaphoreKey, ConnectionStrings connectionStrings)
 		{
 
 			ResponseModel<List<MessageQueue>> returnResponse = new ResponseModel<List<MessageQueue>>();
@@ -210,7 +206,7 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 
 			try
 			{
-				_inventoryManagementDataService.OpenConnection();
+				_inventoryManagementDataService.OpenConnection(connectionStrings.PrimaryDatabaseConnectionString);
 
 				_inventoryManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
 
@@ -230,7 +226,7 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 				List<TransactionQueueInbound> transactionQueue = await _inventoryManagementDataService.GetInboundTransactionQueue();
 				foreach (TransactionQueueInbound transactionQueueItem in transactionQueue)
 				{
-		
+
 					int senderId = transactionQueueItem.SenderTransactionQueueId;
 					string exchangeName = transactionQueueItem.ExchangeName;
 					string transactionCode = transactionQueueItem.TransactionCode;
@@ -251,7 +247,7 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 					}
 
 
-	
+
 				}
 
 				await _inventoryManagementDataService.UpdateDatabase();
@@ -313,7 +309,7 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 
 			await _inventoryManagementDataService.CreateOutboundTransactionQueueHistory(transactionHistory);
 			await _inventoryManagementDataService.DeleteOutboundTransactionQueueEntry(transactionQueueItem.TransactionQueueOutboundId);
-			
+
 		}
 	}
 

@@ -24,10 +24,9 @@ namespace CodeProject.LoggingManagement.Business.MessageService
 		public IConfiguration configuration { get; }
 
 		private Boolean _sending = false;
-		private Boolean _processing = false;
 		private readonly object _processingLock = new object();
 		private readonly object _sendingLock = new object();
-
+	
 		/// <summary>
 		/// Inventory Management Message Processing
 		/// </summary>
@@ -40,7 +39,7 @@ namespace CodeProject.LoggingManagement.Business.MessageService
 		///  Send Queue Messages
 		/// </summary>
 		/// <returns></returns>
-		public async Task<ResponseModel<List<MessageQueue>>> SendQueueMessages(IMessageQueueing messageQueueing, string outboundSemaphoreKey)
+		public async Task<ResponseModel<List<MessageQueue>>> SendQueueMessages(IMessageQueueing messageQueueing, string outboundSemaphoreKey, ConnectionStrings connectionStrings)
 		{
 			
 			ResponseModel<List<MessageQueue>> returnResponse = new ResponseModel<List<MessageQueue>>();
@@ -62,7 +61,7 @@ namespace CodeProject.LoggingManagement.Business.MessageService
 
 			try
 			{
-				_loggingManagementDataService.OpenConnection();
+				_loggingManagementDataService.OpenConnection(connectionStrings.PrimaryDatabaseConnectionString);
 
 				_loggingManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
 
@@ -127,14 +126,14 @@ namespace CodeProject.LoggingManagement.Business.MessageService
 		/// </summary>
 		/// <param name="messageQueue"></param>
 		/// <returns></returns>
-		public async Task<ResponseModel<MessageQueue>> CommitInboundMessage(MessageQueue messageQueue)
+		public async Task<ResponseModel<MessageQueue>> CommitInboundMessage(MessageQueue messageQueue, ConnectionStrings connectionStrings)
 		{
 
 			ResponseModel<MessageQueue> returnResponse = new ResponseModel<MessageQueue>();
 
 			try
 			{
-				_loggingManagementDataService.OpenConnection();
+				_loggingManagementDataService.OpenConnection(connectionStrings.PrimaryDatabaseConnectionString);
 				_loggingManagementDataService.BeginTransaction((int)IsolationLevel.ReadCommitted);
 
 				MessagesSent existingMessageSent = await _loggingManagementDataService.GetMessageSent(messageQueue.TransactionQueueId, messageQueue.ExchangeName, messageQueue.TransactionCode);
@@ -229,7 +228,7 @@ namespace CodeProject.LoggingManagement.Business.MessageService
 		/// Process Messages
 		/// </summary>
 		/// <returns></returns>
-		public async Task<ResponseModel<List<MessageQueue>>> ProcessMessages(string inboundSemaphoreKey)
+		public async Task<ResponseModel<List<MessageQueue>>> ProcessMessages(string inboundSemaphoreKey, ConnectionStrings connectionStrings)
 		{
 			await Task.Delay(0);
 			ResponseModel<List<MessageQueue>> returnResponse = new ResponseModel<List<MessageQueue>>();

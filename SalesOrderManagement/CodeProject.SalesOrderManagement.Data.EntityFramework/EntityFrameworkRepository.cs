@@ -23,7 +23,7 @@ namespace CodeProject.SalesOrderManagement.Data.EntityFramework
 		/// <param name="connectionString"></param>
 		public EntityFrameworkRepository()
 		{
-			//AppSettings appSettings = ConfigurationUtility.GetAppSettings();
+		
 		}
 		/// <summary>
 		/// Database Context
