@@ -118,8 +118,8 @@ namespace CodeProject.MessageQueueing
 		/// <param name="state"></param>
 		private async void GetMessagesInQueue(object state)
 		{
-			ResponseModel<List<MessageQueue>> messages = await _messageProcessor.SendQueueMessages(_messageQueueing, _appConfig.Value.OutboundSemaphoreKey, _connectionStrings.Value);
-			_logger.LogInformation("total messages " + messages.Entity.Count.ToString() + " sent at " + DateTime.Now);
+			//ResponseModel<List<MessageQueue>> messages = await _messageProcessor.SendQueueMessages(_messageQueueing, _appConfig.Value.OutboundSemaphoreKey, _connectionStrings.Value);
+			//_logger.LogInformation("total messages " + messages.Entity.Count.ToString() + " sent at " + DateTime.Now);
 
 		}
 

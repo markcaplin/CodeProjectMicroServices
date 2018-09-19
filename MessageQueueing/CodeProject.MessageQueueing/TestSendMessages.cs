@@ -11,19 +11,39 @@ using Microsoft.Extensions.Options;
 using CodeProject.Shared.Common.Models;
 using CodeProject.MessageQueueing;
 using Microsoft.AspNetCore.SignalR.Client;
+using RabbitMQ.Client;
 
 namespace CodeProject.MessageQueueing
 {
     public class TestSendMessages : IHostedService, IDisposable
 	{
+		private readonly List<IMessageQueueConfiguration> _messageQueueConfigurations;
 		private readonly IMessageQueueConnection _messageQueueConnection;
-		private readonly IMessageQueueConfiguration _messageQueueConfiguration;
+		private readonly IMessageQueueProcessing _messageProcessor;
+		private readonly MessageQueueAppConfig _appConfig;
+		private readonly ConnectionStrings _connectionStrings;
+	
+		private IBasicProperties _basicProperties;
+		private IModel _channel;
+
+		HubConnection _signalRHubConnection;
 		private Timer _timer;
 
-		public TestSendMessages(IMessageQueueConnection messageQueueConnection, IMessageQueueConfiguration messageQueueConfiguration)
+		/// <summary>
+		/// Send Messages
+		/// </summary>
+		/// <param name="messageQueueConnection"></param>
+		/// <param name="messageProcessor"></param>
+		/// <param name="appConfig"></param>
+		/// <param name="connectionStrings"></param>
+		/// <param name="messageQueueConfigurations"></param>
+		public TestSendMessages(IMessageQueueConnection messageQueueConnection, IMessageQueueProcessing messageProcessor, MessageQueueAppConfig appConfig, ConnectionStrings connectionStrings, List<IMessageQueueConfiguration> messageQueueConfigurations)
 		{
 			_messageQueueConnection = messageQueueConnection;
-			_messageQueueConfiguration = messageQueueConfiguration;
+			_messageQueueConfigurations = messageQueueConfigurations;
+			_connectionStrings = connectionStrings;
+			_messageProcessor = messageProcessor;
+			_appConfig = appConfig;
 		}
 
 		/// <summary>
@@ -33,20 +53,66 @@ namespace CodeProject.MessageQueueing
 		/// <returns></returns>
 		public Task StartAsync(CancellationToken cancellationToken)
 		{
-			
-			_timer = new Timer(GetMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(2));
+
+			StartSignalRConnection();
+
+			_timer = new Timer(GetMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(_appConfig.SendingIntervalSeconds));
 
 			return Task.CompletedTask;
 		}
 
 		/// <summary>
+		/// Start SignalR Connection
+		/// </summary>
+		private async void StartSignalRConnection()
+		{
+			if (string.IsNullOrEmpty(_appConfig.SignalRHubUrl))
+			{
+				return;
+			}
+
+			string url = _appConfig.SignalRHubUrl;
+
+			_signalRHubConnection = new HubConnectionBuilder().WithUrl(url).Build();
+
+			_signalRHubConnection.On<string>("SendMessage", (message) =>
+			{
+				this.GetMessagesInQueue(null);
+
+			});
+
+			_signalRHubConnection.Closed += async (error) =>
+			{
+				Console.WriteLine("SignalR Connection Closed");
+				await Task.Delay(new Random().Next(0, 5) * 1000);
+				await _signalRHubConnection.StartAsync();
+				Console.WriteLine("Restart SignalR");
+			};
+
+			try
+			{
+				Console.WriteLine("Connecting to SignalR");
+				await _signalRHubConnection.StartAsync();
+				Console.WriteLine("Connected");
+
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("Error connecting to SignalR " + ex.Message);
+			}
+
+		}
+		/// <summary>
+
+		/// <summary>
 		/// Get Messages In Queue
 		/// </summary>
 		/// <param name="state"></param>
-		private void GetMessagesInQueue(object state)
+		private async void GetMessagesInQueue(object state)
 		{
-			string messageQueueName = _messageQueueConfiguration.GetMessageQueueName();
-			_messageQueueConnection.IncrementCounter(messageQueueName);
+			ResponseModel<List<MessageQueue>> messages = await _messageProcessor.SendQueueMessages(_messageQueueConfigurations, _appConfig.OutboundSemaphoreKey, _connectionStrings);
+			Console.WriteLine("total messages " + messages.Entity.Count.ToString() + " sent at " + DateTime.Now);
+
 		}
 
 		public Task StopAsync(CancellationToken cancellationToken)

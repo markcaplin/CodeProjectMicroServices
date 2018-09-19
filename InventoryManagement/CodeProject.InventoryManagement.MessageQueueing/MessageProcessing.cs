@@ -43,10 +43,13 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 		}
 
 		/// <summary>
-		///  Send Queue Messages
+		/// Send Queue Messages
 		/// </summary>
+		/// <param name="messageQueueConfigurations"></param>
+		/// <param name="outboundSemaphoreKey"></param>
+		/// <param name="connectionStrings"></param>
 		/// <returns></returns>
-		public async Task<ResponseModel<List<MessageQueue>>> SendQueueMessages(IMessageQueueing messageQueueing, string outboundSemaphoreKey, ConnectionStrings connectionStrings)
+		public async Task<ResponseModel<List<MessageQueue>>> SendQueueMessages(List<IMessageQueueConfiguration> messageQueueConfigurations, string outboundSemaphoreKey, ConnectionStrings connectionStrings)
 		{
 			ResponseModel<List<MessageQueue>> returnResponse = new ResponseModel<List<MessageQueue>>();
 			returnResponse.Entity = new List<MessageQueue>();
@@ -67,7 +70,39 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 
 			Console.WriteLine("Start sending");
 
+			Boolean getMessages = true;
+
+			while (getMessages==true)
+			{
+				ResponseModel<List<MessageQueue>> response = await GetMessagesToSend(messageQueueConfigurations, outboundSemaphoreKey, connectionStrings);
+				foreach (MessageQueue message in response.Entity)
+				{
+					returnResponse.Entity.Add(message);
+				}
+
+				if (response.Entity.Count == 0)
+				{
+					_sending = false;
+					getMessages = false;
+				}
+			}
+
+		
+			return returnResponse;
+
+		}
+		/// <summary>
+		/// Get Messages To Send
+		/// </summary>
+		/// <param name="messageQueueConfigurations"></param>
+		/// <param name="outboundSemaphoreKey"></param>
+		/// <param name="connectionStrings"></param>
+		/// <returns></returns>
+		private async Task<ResponseModel<List<MessageQueue>>> GetMessagesToSend(List<IMessageQueueConfiguration> messageQueueConfigurations, string outboundSemaphoreKey, ConnectionStrings connectionStrings)
+		{
 			TransactionQueueSemaphore transactionQueueSemaphore = null;
+
+			ResponseModel<List<MessageQueue>> returnResponse = new ResponseModel<List<MessageQueue>>();
 
 			try
 			{
@@ -96,7 +131,13 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 					message.TransactionCode = transactionQueueItem.TransactionCode;
 					message.Payload = transactionQueueItem.Payload;
 
-					ResponseModel<MessageQueue> messageQueueResponse = messageQueueing.SendMessage(message);
+					IMessageQueueConfiguration messageQueueConfiguration = messageQueueConfigurations.Where(x => x.TransactionCode == message.TransactionCode).FirstOrDefault();
+					if (messageQueueConfiguration == null)
+					{
+						break;
+					}
+
+					ResponseModel<MessageQueue> messageQueueResponse = messageQueueConfiguration.SendMessage(message);
 					if (messageQueueResponse.ReturnStatus == true)
 					{
 						transactionQueueItem.SentToExchange = true;
@@ -127,11 +168,9 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 			finally
 			{
 				_inventoryManagementDataService.CloseConnection();
-				_sending = false;
 			}
 
 			return returnResponse;
-
 		}
 
 		/// <summary>

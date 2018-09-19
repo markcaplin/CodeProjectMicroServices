@@ -6,6 +6,10 @@ namespace CodeProject.Shared.Common.Models
 {
 	public class MessageQueueAppConfig
 	{
+		public string MessageQueueHostName { get; set; }
+		public string MessageQueueUserName { get; set; }
+		public string MessageQueuePassword { get; set; }
+		public string MessageQueueEnvironment { get; set; }
 		public string ExchangeName { get; set; }
 		public string RoutingKey { get; set; }
 		public string InboundMessageQueue { get; set; }
@@ -21,9 +25,7 @@ namespace CodeProject.Shared.Common.Models
 		public Boolean QueueImmediately { get; set; }
 		public string InboundSemaphoreKey { get; set; }
 		public string OutboundSemaphoreKey { get; set; }
-	    public string MessageQueueHostName { get; set; }
-		public string MessageQueueUserName { get; set; }
-		public string MessageQueuePassword { get; set; }
+	   
 		public int ProcessingIntervalSeconds { get; set; }
 		public int SendingIntervalSeconds { get; set; }
 		public int ReceivingIntervalSeconds { get; set; }

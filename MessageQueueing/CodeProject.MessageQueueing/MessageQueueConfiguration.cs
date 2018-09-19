@@ -1,4 +1,7 @@
 ﻿using CodeProject.Shared.Common.Interfaces;
+using CodeProject.Shared.Common.Models;
+using Newtonsoft.Json;
+using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,17 +10,94 @@ namespace CodeProject.MessageQueueing
 {
     public class MessageQueueConfiguration : IMessageQueueConfiguration
     {
-		private readonly string _messageQueueName;
+		
+		private string _exchangeName;
+		private List<string> _boundedQueues;
+		private MessageQueueAppConfig _messageQueueAppConfig;
+		private readonly IMessageQueueConnection _messageQueueConnection;
+		private IBasicProperties _basicProperties;
+		private IModel _channel;
 
-		public MessageQueueConfiguration(string messageQueueName)
+		public string TransactionCode { get; set; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="exchangeName"></param>
+		/// <param name="messageQueueAppConfig"></param>
+		/// <param name="messageQueueConnection"></param>
+		public MessageQueueConfiguration(string exchangeName, MessageQueueAppConfig messageQueueAppConfig, IMessageQueueConnection messageQueueConnection)
 		{
-			_messageQueueName = messageQueueName;
+			TransactionCode = exchangeName;
+			_messageQueueAppConfig = messageQueueAppConfig;
+			_messageQueueConnection = messageQueueConnection;
+			_exchangeName = exchangeName;
+			_boundedQueues = new List<string>();
+		}
+		/// <summary>
+		/// Initialize Message Queueing
+		/// </summary>
+		public void InitializeMessageQueueing()
+		{
+			_channel = _messageQueueConnection.GetConnection().CreateModel();
+
+			_basicProperties = _channel.CreateBasicProperties();
+			_basicProperties.Persistent = true;
+
+			string exchangeName = _exchangeName + "_" + _messageQueueAppConfig.MessageQueueEnvironment;
+
+			_channel.ExchangeDeclare(_exchangeName, "fanout", true, false);
+
+			foreach (string queueName in _boundedQueues)
+			{
+				string queue = queueName + "_" + _messageQueueAppConfig.MessageQueueEnvironment;
+
+				_channel.QueueDeclare(queue, true, false, false);
+				_channel.QueueBind(queue, _exchangeName, _messageQueueAppConfig.RoutingKey);
+			}
 		}
 
-		public string GetMessageQueueName()
+		/// <summary>
+		/// Send Message
+		/// </summary>
+		/// <param name="entity"></param>
+		public ResponseModel<MessageQueue> SendMessage(MessageQueue entity)
 		{
-			return _messageQueueName;
+			ResponseModel<MessageQueue> response = new ResponseModel<MessageQueue>();
+			response.Entity = new MessageQueue();
+
+			try
+			{
+				string output = JsonConvert.SerializeObject(entity);
+
+				byte[] payload = Encoding.UTF8.GetBytes(output);
+
+				PublicationAddress address = new PublicationAddress(ExchangeType.Fanout, _exchangeName, _messageQueueAppConfig.RoutingKey);
+
+				_channel.BasicPublish(address, _basicProperties, payload);
+
+				response.Entity.Payload = output;
+
+				response.ReturnStatus = true;
+			}
+			catch (Exception ex)
+			{
+				response.ReturnStatus = false;
+				response.ReturnMessage.Add(ex.Message);
+			}
+
+			return response;
+
 		}
+		/// <summary>
+		/// Add Queue
+		/// </summary>
+		/// <param name="queueName"></param>
+		public void AddQueue(string queueName)
+		{
+			_boundedQueues.Add(queueName);
+		}
+	
 	}
 
 }

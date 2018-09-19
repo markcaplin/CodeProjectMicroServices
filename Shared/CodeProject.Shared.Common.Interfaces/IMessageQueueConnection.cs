@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RabbitMQ.Client;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,7 +7,8 @@ namespace CodeProject.Shared.Common.Interfaces
 {
 	public interface IMessageQueueConnection
 	{
-		void IncrementCounter(string queueName);
+		void CreateConnection();
+		IConnection GetConnection();
 	}
 
 }
