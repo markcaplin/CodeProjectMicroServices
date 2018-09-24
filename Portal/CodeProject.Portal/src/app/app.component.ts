@@ -40,9 +40,14 @@ export class AppComponent {
         // const native = this.elementRef.nativeElement;
         // const settings = native.getAttribute('settings');
         let appSettings = new AppSettings();
+        
+        appSettings.accountManagementWebApiUrl = 'https://localhost:44303/api/';
+        appSettings.inventoryManagementWebApiUrl = 'https://localhost:44340/api/';
+        appSettings.purchaseOrderManagementWebApiUrl = 'https://localhost:44327/api/';
+
         // appSettings = JSON.parse(settings);
 
-        // sessionService.setAppSettings(appSettings);
+        sessionService.setAppSettings(appSettings);
         this.isAuthenicated = sessionService.isAuthenicated;
 
         sessionService.startSession();

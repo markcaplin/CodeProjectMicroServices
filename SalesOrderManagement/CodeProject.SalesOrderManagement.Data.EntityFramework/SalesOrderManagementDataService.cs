@@ -127,7 +127,7 @@ namespace CodeProject.SalesOrderManagement.Data.EntityFramework
 			return product;
 		}
 		/// <summary>
-		/// Get Product Information B yProduct Master For Update
+		/// Get Product Information By Product Master For Update
 		/// </summary>
 		/// <param name="productMasterId"></param>
 		/// <returns></returns>

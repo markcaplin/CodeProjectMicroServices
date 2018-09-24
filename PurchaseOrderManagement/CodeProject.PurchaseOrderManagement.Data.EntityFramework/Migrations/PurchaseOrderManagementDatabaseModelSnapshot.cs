@@ -37,6 +37,8 @@ namespace CodeProject.PurchaseOrderManagement.Data.EntityFramework.Migrations
 
                     b.Property<int>("OnOrderQuantity");
 
+                    b.Property<int>("ProductMasterId");
+
                     b.Property<string>("ProductNumber");
 
                     b.Property<double>("UnitPrice");

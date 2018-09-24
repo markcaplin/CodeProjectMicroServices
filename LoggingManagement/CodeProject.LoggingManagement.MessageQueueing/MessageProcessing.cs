@@ -35,13 +35,18 @@ namespace CodeProject.LoggingManagement.Business.MessageService
 		{
 			_loggingManagementDataService = loggingManagementDataService;
 		}
+
 		/// <summary>
-		///  Send Queue Messages
+		/// Send Queue Messages
 		/// </summary>
+		/// <param name="messageQueueConfigurations"></param>
+		/// <param name="outboundSemaphoreKey"></param>
+		/// <param name="connectionStrings"></param>
 		/// <returns></returns>
-		public async Task<ResponseModel<List<MessageQueue>>> SendQueueMessages(IMessageQueueing messageQueueing, string outboundSemaphoreKey, ConnectionStrings connectionStrings)
+	    public async Task<ResponseModel<List<MessageQueue>>> SendQueueMessages(List<IMessageQueueConfiguration> messageQueueConfigurations, string outboundSemaphoreKey, ConnectionStrings connectionStrings)
+
 		{
-			
+
 			ResponseModel<List<MessageQueue>> returnResponse = new ResponseModel<List<MessageQueue>>();
 			returnResponse.Entity = new List<MessageQueue>();
 
@@ -85,8 +90,15 @@ namespace CodeProject.LoggingManagement.Business.MessageService
 					message.ExchangeName = transactionQueueItem.ExchangeName;
 					message.TransactionQueueId = transactionQueueItem.SenderTransactionQueueId;
 					message.TransactionCode = TransactionQueueTypes.Acknowledgement;
+					message.QueueName = transactionQueueItem.AcknowledgementQueue;
 
-					ResponseModel<MessageQueue> messageQueueResponse = messageQueueing.SendAcknowledgementMessage(message);
+					IMessageQueueConfiguration messageQueueConfiguration = messageQueueConfigurations.FirstOrDefault();
+					if (messageQueueConfiguration == null)
+					{
+						break;
+					}
+
+					ResponseModel<MessageQueue> messageQueueResponse = messageQueueConfiguration.SendAcknowledgementMessage(message);
 					if (messageQueueResponse.ReturnStatus == true)
 					{
 						await _loggingManagementDataService.DeleteAcknowledgementsQueue(transactionQueueItem.AcknowledgementsQueueId);
@@ -157,7 +169,7 @@ namespace CodeProject.LoggingManagement.Business.MessageService
 					messageSent.TransactionCode = messageQueue.TransactionCode;
 					messageSent.Payload = messageQueue.Payload;
 
-					if (messageSent.TransactionCode == "ProductUpdated")
+					if (messageSent.TransactionCode == MessageQueueExchanges.ProductUpdated)
 					{
 						messageSent.AcknowledgementsRequired = MessageExchangeFanouts.ProductUpdated;
 						messageSent.AcknowledgementsReceived = 0;
@@ -188,12 +200,17 @@ namespace CodeProject.LoggingManagement.Business.MessageService
 
 					await _loggingManagementDataService.CreateMessagesReceived(messageReceived);
 
-					if (existingMessageSent.AcknowledgementsReceived == existingMessageSent.AcknowledgementsReceived)
+					if (existingMessageSent.AcknowledgementsReceived == existingMessageSent.AcknowledgementsRequired)
 					{
 						AcknowledgementsQueue acknowledgementsQueue = new AcknowledgementsQueue();
 						acknowledgementsQueue.ExchangeName = messageQueue.ExchangeName;
 						acknowledgementsQueue.SenderTransactionQueueId = messageQueue.TransactionQueueId;
 						acknowledgementsQueue.TransactionCode = messageQueue.TransactionCode;
+
+						if (acknowledgementsQueue.TransactionCode == MessageQueueExchanges.ProductUpdated)
+						{
+							acknowledgementsQueue.AcknowledgementQueue = MessageQueueEndpoints.InventoryQueue;
+						}
 
 						await _loggingManagementDataService.CreateAcknowledgementsQueue(acknowledgementsQueue);
 

@@ -10,6 +10,7 @@ namespace CodeProject.LoggingManagement.Data.Entities
 		public int SenderTransactionQueueId { get; set; }
 		public string TransactionCode { get; set; }
 		public string ExchangeName { get; set; }
+		public string AcknowledgementQueue { get; set; }
 		public DateTime DateCreated { get; set; }
 	}
 }

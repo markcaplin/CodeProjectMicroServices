@@ -16,6 +16,10 @@ export const ApplicationRoutes: Routes = [
     {
         path: 'inventorymanagement', loadChildren:
             '../app/inventory-management/inventory-management.module#InventoryManagementModule'
+    },
+    {
+        path: 'purchaseordermanagement', loadChildren:
+            '../app/purchase-order-management/purchase-order-management.module#PurchaseOrderManagementModule'
     }
 ];
 

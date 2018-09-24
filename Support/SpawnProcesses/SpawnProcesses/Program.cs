@@ -85,6 +85,18 @@ namespace SpawnProcesses
 				process5.Start();
 			}
 
+			if (startUpProcesses.PurchaseOrderManagementMessageQueue == true)
+			{
+				Console.WriteLine("Starting Purchae Order Management Message Queue");
+
+				Process process5 = new Process();
+				process5.StartInfo.CreateNoWindow = false;
+				process5.StartInfo.UseShellExecute = false;
+				process5.StartInfo.RedirectStandardOutput = false;
+				process5.StartInfo.FileName = @"C:\MyFiles\_CodeProjectMicroServices\Support\StartPurchaseOrderManagementMessageQueue.bat";
+				process5.Start();
+			}
+
 			if (startUpProcesses.LoggingManagementMessageQueue == true)
 			{
 				Console.WriteLine("Starting Logging Management Message Queue");

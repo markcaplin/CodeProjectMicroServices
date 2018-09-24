@@ -9,6 +9,7 @@ namespace CodeProject.PurchaseOrderManagement.Interfaces
 {
     public interface IPurchaseOrderManagementDataService : IDataRepository, IDisposable
 	{
+		Task<Supplier> GetSupplierInformationForUpdate(int supplierId);
 		Task CreatePurchaseOrder(PurchaseOrder purchaseOrder);
 		Task CreatePurchaseOrderDetail(PurchaseOrderDetail purchaseOrderDetail);
 		Task CreateInboundTransactionQueue(TransactionQueueInbound transactionQueue);
@@ -20,10 +21,8 @@ namespace CodeProject.PurchaseOrderManagement.Interfaces
 		Task<List<TransactionQueueInbound>> GetInboundTransactionQueue();
 		Task<List<TransactionQueueOutbound>> GetOutboundTransactionQueue();
 		Task UpdateOutboundTransactionQueue(TransactionQueueOutbound transactionQueue);
-		Task CreateSupplier(Supplier customer);
-		Task CreateProduct(Product product);
-		Task<Product> GetProductInformationForUpdate(int productId);
-		Task UpdateProduct(Product product);
+		Task CreateSupplier(Supplier supplier);
+		Task UpdateSupplier(Supplier supplier);
 		Task<TransactionQueueSemaphore> GetTransactionQueueSemaphore(string semaphoreKey);
 		Task UpdateTransactionQueueSemaphore(TransactionQueueSemaphore transactionQueueSemaphore);
 		Task CreateTransactionQueueSemaphore(TransactionQueueSemaphore transactionQueueSemaphore);

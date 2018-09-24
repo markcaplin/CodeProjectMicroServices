@@ -10,6 +10,7 @@ namespace CodeProject.PurchaseOrderManagement.Interfaces
 {
     public interface IPurchaseOrderManagementBusinessService
 	{ 
-		Task<ResponseModel<ProductDataTransformation>> CreateProduct(ProductDataTransformation productDataTransformation);
+		Task<ResponseModel<SupplierDataTransformation>> CreateSupplier(SupplierDataTransformation supplierDataTransformation);
+		Task<ResponseModel<SupplierDataTransformation>> UpdateSupplier(SupplierDataTransformation supplierDataTransformation);
 	}
 }

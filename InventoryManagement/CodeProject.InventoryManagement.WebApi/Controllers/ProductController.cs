@@ -67,7 +67,7 @@ namespace CodeProject.InventoryManagement.WebApi.Controllers
 					return BadRequest(returnResponse);
 				}
 
-				await _messageQueueContext.Clients.All.SendAsync("SendMessage", string.Empty);
+				await _messageQueueContext.Clients.All.SendAsync(MessageQueueEndpoints.InventoryQueue, string.Empty);
 
 				return Ok(returnResponse);
 				
@@ -107,7 +107,7 @@ namespace CodeProject.InventoryManagement.WebApi.Controllers
 					return BadRequest(returnResponse);
 				}
 
-				await _messageQueueContext.Clients.All.SendAsync("SendMessage", string.Empty);
+				await _messageQueueContext.Clients.All.SendAsync(MessageQueueEndpoints.InventoryQueue, string.Empty);
 
 				return Ok(returnResponse);
 				

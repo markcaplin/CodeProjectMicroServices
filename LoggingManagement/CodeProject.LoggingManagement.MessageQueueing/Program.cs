@@ -11,6 +11,8 @@ using CodeProject.LoggingManagement.Interfaces;
 using CodeProject.Shared.Common.Interfaces;
 using CodeProject.LoggingManagement.Business.MessageService;
 using CodeProject.MessageQueueing;
+using System.IO;
+using System.Collections.Generic;
 
 namespace CodeProject.LoggingManagement.MessageQueueing
 {
@@ -18,54 +20,68 @@ namespace CodeProject.LoggingManagement.MessageQueueing
 	{
 		public static async Task Main(string[] args)
 		{
-			var builder = new HostBuilder().ConfigureAppConfiguration((hostingContext, config) =>
-			{
-				string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-				string jsonFile = $"appsettings.{environment}.json";
-				config.AddJsonFile(jsonFile, optional: true);
-				config.AddEnvironmentVariables();
 
-				if (args != null)
+			//
+			//	get configuration information
+			//
+			MessageQueueAppConfig messageQueueAppConfig = new MessageQueueAppConfig();
+			ConnectionStrings connectionStrings = new ConnectionStrings();
+
+			string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+			string jsonFile = $"appsettings.{environment}.json";
+
+			var configBuilder = new ConfigurationBuilder()
+			  .SetBasePath(Directory.GetCurrentDirectory())
+			  .AddJsonFile(jsonFile, optional: true, reloadOnChange: true);
+
+			IConfigurationRoot configuration = configBuilder.Build();
+
+			configuration.GetSection("MessageQueueAppConfig").Bind(messageQueueAppConfig);
+			configuration.GetSection("ConnectionStrings").Bind(connectionStrings);
+
+			//
+			//	set up sending queue
+			//
+			IMessageQueueConnection sendingQueueConnection = new MessageQueueConnection(messageQueueAppConfig);
+			sendingQueueConnection.CreateConnection();
+
+			List<IMessageQueueConfiguration> messageQueueConfigurations = new List<IMessageQueueConfiguration>();
+
+			IMessageQueueConfiguration loggingConfiguration = new MessageQueueConfiguration(MessageQueueExchanges.Logging, messageQueueAppConfig, sendingQueueConnection);
+
+			loggingConfiguration.InitializeOutboundMessageQueueing();
+			messageQueueConfigurations.Add(loggingConfiguration);
+
+			ILoggingManagementDataService loggingManagementDataService = new LoggingManagementDataService();
+			IMessageQueueProcessing messageProcessing = new MessageProcessing(loggingManagementDataService);
+
+			IHostedService sendLoggingManagementMessages = new SendMessages(sendingQueueConnection, messageProcessing, messageQueueAppConfig, connectionStrings, messageQueueConfigurations);
+
+			//
+			//	set up receiving queue
+			//
+			IMessageQueueConnection receivingConnection = new MessageQueueConnection(messageQueueAppConfig);
+			receivingConnection.CreateConnection();
+
+			List<IMessageQueueConfiguration> inboundMessageQueueConfigurations = new List<IMessageQueueConfiguration>();
+			IMessageQueueConfiguration inboundConfiguration = new MessageQueueConfiguration(messageQueueAppConfig, receivingConnection);
+			inboundMessageQueueConfigurations.Add(inboundConfiguration);
+
+			inboundConfiguration.InitializeInboundMessageQueueing(MessageQueueEndpoints.LoggingQueue);
+			inboundConfiguration.InitializeLoggingExchange(MessageQueueExchanges.Logging, MessageQueueEndpoints.LoggingQueue);
+			ILoggingManagementDataService inboundLoggingManagementDataService = new LoggingManagementDataService();
+			IMessageQueueProcessing inboundMessageProcessing = new MessageProcessing(inboundLoggingManagementDataService);
+
+			IHostedService receiveLoggingManagementMessages = new ReceiveMessages(receivingConnection, inboundMessageProcessing, messageQueueAppConfig, connectionStrings, inboundMessageQueueConfigurations);
+
+			var builder = new HostBuilder()
+				.ConfigureServices((hostContext, services) =>
 				{
-					config.AddCommandLine(args);
-				}
-
-			})
-			.ConfigureServices((hostContext, services) =>
-				{
-					services.AddDbContext<LoggingManagementDatabase>(options => options.UseSqlServer(hostContext.Configuration.GetConnectionString("PrimaryDatabaseConnectionString")));
-
-					services.AddTransient<ILoggingManagementDataService, LoggingManagementDataService>();
-					services.AddTransient<IMessageQueueing, CodeProject.MessageQueueing.MessageQueueing>();
-
-
-					services.AddTransient<IMessageQueueProcessing>(provider =>
-					new MessageProcessing(provider.GetRequiredService<ILoggingManagementDataService>()));
-
-					services.AddOptions();
-					services.Configure<MessageQueueAppConfig>(hostContext.Configuration.GetSection("MessageQueueAppConfig"));
-					services.Configure<ConnectionStrings>(hostContext.Configuration.GetSection("ConnectionStrings"));
-
-					services.AddSingleton<IHostedService, SendMessages>();
-
-
+					services.AddTransient<IHostedService>(provider => sendLoggingManagementMessages);
 				})
 				.ConfigureServices((hostContext, services) =>
 				{
-					services.AddDbContext<LoggingManagementDatabase>(options => options.UseSqlServer(hostContext.Configuration.GetConnectionString("PrimaryDatabaseConnectionString")));
-
-					services.AddTransient<ILoggingManagementDataService, LoggingManagementDataService>();
-					services.AddTransient<IMessageQueueing, CodeProject.MessageQueueing.MessageQueueing>();
-
-					services.AddTransient<IMessageQueueProcessing>(provider =>
-					new MessageProcessing(provider.GetRequiredService<ILoggingManagementDataService>()));
-
-					services.AddOptions();
-					services.Configure<MessageQueueAppConfig>(hostContext.Configuration.GetSection("MessageQueueAppConfig"));
-					services.Configure<ConnectionStrings>(hostContext.Configuration.GetSection("ConnectionStrings"));
-
-					services.AddSingleton<IHostedService, ReceiveMessages>();
-
+					services.AddTransient<IHostedService>(provider => receiveLoggingManagementMessages);
 				})
 				.ConfigureLogging((hostingContext, logging) =>
 				{

@@ -22,7 +22,9 @@ namespace CodeProject.InventoryManagement.MessageQueueing
 	{
 		public static async Task Main(string[] args)
 		{
-
+			//
+			//	get configuration information
+			//
 			MessageQueueAppConfig messageQueueAppConfig = new MessageQueueAppConfig();
 			ConnectionStrings connectionStrings = new ConnectionStrings();
 
@@ -37,97 +39,70 @@ namespace CodeProject.InventoryManagement.MessageQueueing
 
 			configuration.GetSection("MessageQueueAppConfig").Bind(messageQueueAppConfig);
 			configuration.GetSection("ConnectionStrings").Bind(connectionStrings);
-
-			IMessageQueueConnection messageQueueConnection = new MessageQueueConnection(messageQueueAppConfig);
-			messageQueueConnection.CreateConnection();
+			//
+			//	set up sending queue
+			//
+			IMessageQueueConnection sendingQueueConnection = new MessageQueueConnection(messageQueueAppConfig);
+			sendingQueueConnection.CreateConnection();
 
 			List<IMessageQueueConfiguration> messageQueueConfigurations = new List<IMessageQueueConfiguration>();
 
-			IMessageQueueConfiguration productUpdatedConfiguration = new MessageQueueConfiguration(MessageQueueExchanges.ProductUpdated, messageQueueAppConfig, messageQueueConnection);
+			IMessageQueueConfiguration productUpdatedConfiguration = new MessageQueueConfiguration(MessageQueueExchanges.ProductUpdated, messageQueueAppConfig, sendingQueueConnection);
+
 			productUpdatedConfiguration.AddQueue(MessageQueueEndpoints.SalesOrderQueue);
 			productUpdatedConfiguration.AddQueue(MessageQueueEndpoints.PurchaseOrderQueue);
 			productUpdatedConfiguration.AddQueue(MessageQueueEndpoints.LoggingQueue);
-			productUpdatedConfiguration.InitializeMessageQueueing();
+
+			productUpdatedConfiguration.InitializeOutboundMessageQueueing();
 			messageQueueConfigurations.Add(productUpdatedConfiguration);
 
-			IMessageQueueConfiguration orderShippedConfiguration = new MessageQueueConfiguration(MessageQueueExchanges.OrderShipped, messageQueueAppConfig, messageQueueConnection);
+			IMessageQueueConfiguration orderShippedConfiguration = new MessageQueueConfiguration(MessageQueueExchanges.OrderShipped, messageQueueAppConfig, sendingQueueConnection);
+
 			orderShippedConfiguration.AddQueue(MessageQueueEndpoints.SalesOrderQueue);
 			orderShippedConfiguration.AddQueue(MessageQueueEndpoints.LoggingQueue);
-			orderShippedConfiguration.InitializeMessageQueueing();
+
+			orderShippedConfiguration.InitializeOutboundMessageQueueing();
 			messageQueueConfigurations.Add(orderShippedConfiguration);
 
-			IMessageQueueing messageQueueing = new CodeProject.MessageQueueing.MessageQueueing();
 			IInventoryManagementDataService inventoryManagementDataService = new InventoryManagementDataService();
 			IMessageQueueProcessing messageProcessing = new MessageProcessing(inventoryManagementDataService);
 
-			IHostedService sendInventoryManagementMessages = new TestSendMessages(messageQueueConnection, messageProcessing, messageQueueAppConfig, connectionStrings, messageQueueConfigurations);
-	
-			var builder = new HostBuilder().ConfigureAppConfiguration((hostingContext, config) =>
-				{
-					string aspNetCoreEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-					string jsonConfigFile = $"appsettings.{aspNetCoreEnvironment}.json";
-					config.AddJsonFile(jsonConfigFile, optional: true);
-					config.AddEnvironmentVariables();
+			IHostedService sendInventoryManagementMessages = new SendMessages(sendingQueueConnection, messageProcessing, messageQueueAppConfig, connectionStrings, messageQueueConfigurations);
+			//
+			//	set up receiving queue
+			//
+			IMessageQueueConnection receivingConnection = new MessageQueueConnection(messageQueueAppConfig);
+			receivingConnection.CreateConnection();
 
-					if (args != null)
-					{
-						config.AddCommandLine(args);
-					}
+			List<IMessageQueueConfiguration> inboundMessageQueueConfigurations = new List<IMessageQueueConfiguration>();
+			IMessageQueueConfiguration inboundConfiguration = new MessageQueueConfiguration(messageQueueAppConfig, receivingConnection);
+			inboundMessageQueueConfigurations.Add(inboundConfiguration);
 
-				})
+			inboundConfiguration.InitializeInboundMessageQueueing(MessageQueueEndpoints.InventoryQueue);
+			inboundConfiguration.InitializeLoggingExchange(MessageQueueExchanges.Logging, MessageQueueEndpoints.LoggingQueue);
+			IInventoryManagementDataService inboundInventoryManagementDataService = new InventoryManagementDataService();
+			IMessageQueueProcessing inboundMessageProcessing = new MessageProcessing(inboundInventoryManagementDataService);
+
+			IHostedService receiveInventoryManagementMessages = new ReceiveMessages(receivingConnection, inboundMessageProcessing, messageQueueAppConfig, connectionStrings, inboundMessageQueueConfigurations);
+			//
+			//	Set Up Message Processing
+			//
+			IInventoryManagementDataService inventoryManagementProcessingDataService = new InventoryManagementDataService();
+			IMessageQueueProcessing messageProcessor = new MessageProcessing(inventoryManagementProcessingDataService);
+			ProcessMessages processMessages = new ProcessMessages(messageProcessor, messageQueueAppConfig, connectionStrings);
+
+			var builder = new HostBuilder().ConfigureAppConfiguration((hostingContext, config) => {})
 				.ConfigureServices((hostContext, services) =>
 				{
-					/*services.AddDbContext<InventoryManagementDatabase>(options => options.UseSqlServer(hostContext.Configuration.GetConnectionString("PrimaryDatabaseConnectionString")));
-
-					services.AddTransient<IInventoryManagementDataService, InventoryManagementDataService>();
-					services.AddTransient<IMessageQueueing, CodeProject.MessageQueueing.MessageQueueing>();
-
-					services.AddTransient<IMessageQueueProcessing>(provider => new MessageProcessing(provider.GetRequiredService<IInventoryManagementDataService>()));
-
-					services.AddOptions();
-					services.Configure<MessageQueueAppConfig>(hostContext.Configuration.GetSection("MessageQueueAppConfig"));
-					services.Configure<ConnectionStrings>(hostContext.Configuration.GetSection("ConnectionStrings"));
-
-					services.AddSingleton<IHostedService, SendMessages>();*/
-
-
-				})
-				.ConfigureServices((hostContext, services) =>
-				{
-					/*services.AddDbContext<InventoryManagementDatabase>(options => options.UseSqlServer(hostContext.Configuration.GetConnectionString("PrimaryDatabaseConnectionString")));
-
-					services.AddTransient<IInventoryManagementDataService, InventoryManagementDataService>();
-					services.AddTransient<IMessageQueueing, CodeProject.MessageQueueing.MessageQueueing>();
-
-					services.AddTransient<IMessageQueueProcessing>(provider => new MessageProcessing(provider.GetRequiredService<IInventoryManagementDataService>()));
-
-					services.AddOptions();
-					services.Configure<MessageQueueAppConfig>(hostContext.Configuration.GetSection("MessageQueueAppConfig"));
-					services.Configure<ConnectionStrings>(hostContext.Configuration.GetSection("ConnectionStrings"));
-
-					services.AddSingleton<IHostedService, ReceiveMessages>();*/
-
-				})
-				.ConfigureServices((hostContext, services) =>
-				{
-					/*services.AddDbContext<InventoryManagementDatabase>(options => options.UseSqlServer(hostContext.Configuration.GetConnectionString("PrimaryDatabaseConnectionString")));
-
-					services.AddTransient<IInventoryManagementDataService, InventoryManagementDataService>();
-					services.AddTransient<IMessageQueueing, CodeProject.MessageQueueing.MessageQueueing>();
-
-					services.AddTransient<IMessageQueueProcessing>(provider => new MessageProcessing(
-						provider.GetRequiredService<IInventoryManagementDataService>()));
-
-					services.AddOptions();
-					services.Configure<MessageQueueAppConfig>(hostContext.Configuration.GetSection("MessageQueueAppConfig"));
-					services.Configure<ConnectionStrings>(hostContext.Configuration.GetSection("ConnectionStrings"));
-
-					services.AddSingleton<IHostedService, ProcessMessages>();*/
-
+					services.AddTransient<IHostedService>(provider => processMessages);
 				})
 				.ConfigureServices((hostContext, services) =>
 				{
 					services.AddTransient<IHostedService>(provider => sendInventoryManagementMessages);
+				})
+				.ConfigureServices((hostContext, services) =>
+				{
+					services.AddTransient<IHostedService>(provider => receiveInventoryManagementMessages);
 				})
 				.ConfigureLogging((hostingContext, logging) =>
 				{

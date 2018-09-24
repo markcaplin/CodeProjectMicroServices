@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Data;
 using CodeProject.Shared.Common.Utilities;
 using CodeProject.Shared.Common.Models.MessageQueuePayloads;
+using CodeProject.InventoryManagement.BusinessRules;
 
 namespace CodeProject.PurchaseOrderManagement.BusinessServices
 {
@@ -33,29 +34,43 @@ namespace CodeProject.PurchaseOrderManagement.BusinessServices
 		}
 
 		/// <summary>
-		/// Create Product
+		/// Create Supplier
 		/// </summary>
 		/// <param name="productDataTransformation"></param>
 		/// <returns></returns>
-		public async Task<ResponseModel<ProductDataTransformation>> CreateProduct(ProductDataTransformation productDataTransformation)
+		public async Task<ResponseModel<SupplierDataTransformation>> CreateSupplier(SupplierDataTransformation supplierDataTransformation)
 		{
 
-			ResponseModel<ProductDataTransformation> returnResponse = new ResponseModel<ProductDataTransformation>();
+			ResponseModel<SupplierDataTransformation> returnResponse = new ResponseModel<SupplierDataTransformation>();
 
-			Product product = new Product();
+			Supplier supplier = new Supplier();
 			
-
 			try
 			{
 				_purchaseOrderManagementDataService.OpenConnection(_connectionStrings.PrimaryDatabaseConnectionString);
 				_purchaseOrderManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
 
-				product.AccountId = productDataTransformation.AccountId;
-				product.ProductNumber = productDataTransformation.ProductNumber;
-				product.Description = productDataTransformation.Description;
-				product.UnitPrice = productDataTransformation.UnitPrice;
-			
-				await _purchaseOrderManagementDataService.CreateProduct(product);
+				SupplierBusinessRules<SupplierDataTransformation> supplierBusinessRules = new SupplierBusinessRules<SupplierDataTransformation>(supplierDataTransformation, _purchaseOrderManagementDataService);
+				ValidationResult validationResult = await supplierBusinessRules.Validate();
+				if (validationResult.ValidationStatus == false)
+				{
+					_purchaseOrderManagementDataService.RollbackTransaction();
+
+					returnResponse.ReturnMessage = validationResult.ValidationMessages;
+					returnResponse.ReturnStatus = validationResult.ValidationStatus;
+
+					return returnResponse;
+				}
+
+				supplier.AccountId = supplierDataTransformation.AccountId;
+				supplier.Name = supplierDataTransformation.Name;
+				supplier.AddressLine1 = supplierDataTransformation.AddressLine1;
+				supplier.AddressLine2 = supplierDataTransformation.AddressLine2;
+				supplier.City = supplierDataTransformation.City;
+				supplier.Region = supplierDataTransformation.Region;
+				supplier.PostalCode = supplierDataTransformation.PostalCode;
+
+				await _purchaseOrderManagementDataService.CreateSupplier(supplier);
 
 				await _purchaseOrderManagementDataService.UpdateDatabase();
 
@@ -75,40 +90,55 @@ namespace CodeProject.PurchaseOrderManagement.BusinessServices
 				_purchaseOrderManagementDataService.CloseConnection();
 			}
 
-			productDataTransformation.ProductId = product.ProductId;
+			supplierDataTransformation.SupplierId = supplier.SupplierId;
 		
-			returnResponse.Entity = productDataTransformation;
+			returnResponse.Entity = supplierDataTransformation;
 
 			return returnResponse;
 
 		}
 
 		/// <summary>
-		/// Update Product
+		/// Update Supplier
 		/// </summary>
 		/// <param name="productDataTransformation"></param>
 		/// <returns></returns>
-		public async Task<ResponseModel<ProductDataTransformation>> UpdateProduct(ProductDataTransformation productDataTransformation)
+		public async Task<ResponseModel<SupplierDataTransformation>> UpdateSupplier(SupplierDataTransformation supplierDataTransformation)
 		{
 
-			ResponseModel<ProductDataTransformation> returnResponse = new ResponseModel<ProductDataTransformation>();
+			ResponseModel<SupplierDataTransformation> returnResponse = new ResponseModel<SupplierDataTransformation>();
 
-			Product product = new Product();
+			Supplier supplier = new Supplier();
 	
 			try
 			{
 				_purchaseOrderManagementDataService.OpenConnection(_connectionStrings.PrimaryDatabaseConnectionString);
 				_purchaseOrderManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
 
-				int productId = productDataTransformation.ProductId;
+				SupplierBusinessRules<SupplierDataTransformation> supplierBusinessRules = new SupplierBusinessRules<SupplierDataTransformation>(supplierDataTransformation, _purchaseOrderManagementDataService);
+				ValidationResult validationResult = await supplierBusinessRules.Validate();
+				if (validationResult.ValidationStatus == false)
+				{
+					_purchaseOrderManagementDataService.RollbackTransaction();
 
-				product = await _purchaseOrderManagementDataService.GetProductInformationForUpdate(productId);
+					returnResponse.ReturnMessage = validationResult.ValidationMessages;
+					returnResponse.ReturnStatus = validationResult.ValidationStatus;
 
-				product.ProductNumber = productDataTransformation.ProductNumber;
-				product.Description = productDataTransformation.Description;
-				product.UnitPrice = productDataTransformation.UnitPrice;
-			
-				await _purchaseOrderManagementDataService.UpdateProduct(product);
+					return returnResponse;
+				}
+
+				int supplierId = supplierDataTransformation.SupplierId;
+
+				supplier = await _purchaseOrderManagementDataService.GetSupplierInformationForUpdate(supplierId);
+
+				supplier.Name = supplierDataTransformation.Name;
+				supplier.AddressLine1 = supplierDataTransformation.AddressLine1;
+				supplier.AddressLine2 = supplierDataTransformation.AddressLine2;
+				supplier.City = supplierDataTransformation.City;
+				supplier.Region = supplierDataTransformation.Region;
+				supplier.PostalCode = supplierDataTransformation.PostalCode;
+
+				await _purchaseOrderManagementDataService.UpdateSupplier(supplier);
 
 				await _purchaseOrderManagementDataService.UpdateDatabase();
 
@@ -128,7 +158,7 @@ namespace CodeProject.PurchaseOrderManagement.BusinessServices
 				_purchaseOrderManagementDataService.CloseConnection();
 			}
 
-			returnResponse.Entity = productDataTransformation;
+			returnResponse.Entity = supplierDataTransformation;
 
 			return returnResponse;
 

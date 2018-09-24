@@ -35,9 +35,9 @@ export class ProductMaintenanceComponent implements OnInit {
 
     let url = '';
     if (product.productId === 0) {
-      url = 'https://localhost:44340/api/product/createproduct';
+      url = this.sessionService.appSettings.inventoryManagementWebApiUrl +  'product/createproduct';
     } else {
-      url = 'https://localhost:44340/api/product/updateproduct';
+      url = this.sessionService.appSettings.inventoryManagementWebApiUrl +  'product/updateproduct';
     }
 
     this.httpService.HttpPost<ProductViewModelResponse>(url, product).subscribe((response: ProductViewModelResponse) => {

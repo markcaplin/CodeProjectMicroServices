@@ -11,21 +11,32 @@ using CodeProject.Shared.Common.Models;
 using CodeProject.Shared.Common.Interfaces;
 using CodeProject.Shared.Common.Models.MessageQueuePayloads;
 using Newtonsoft.Json;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using RabbitMQ.Client.MessagePatterns;
 
 namespace CodeProject.MessageQueueing
 {
 
 	public class ReceiveMessages : IHostedService, IDisposable
 	{
+
+		private readonly List<IMessageQueueConfiguration> _messageQueueConfigurations;
+		private readonly IMessageQueueConnection _messageQueueConnection;
 		private readonly IMessageQueueProcessing _messageProcessor;
-		private readonly IMessageQueueing _messageQueueing;
-		private readonly ILogger _logger;
-		private readonly IOptions<MessageQueueAppConfig> _appConfig;
-		private readonly IOptions<ConnectionStrings> _connectionStrings;
+		private readonly MessageQueueAppConfig _appConfig;
+		private readonly ConnectionStrings _connectionStrings;
+
+		//private readonly IMessageQueueProcessing _messageProcessor;
+		//private readonly IMessageQueueing _messageQueueing;
+		//private readonly ILogger _logger;
+		//private readonly IOptions<MessageQueueAppConfig> _appConfig;
+		//private readonly IOptions<ConnectionStrings> _connectionStrings;
 
 		private Timer _timer;
+		private Boolean _running = false;
 
-		private Subject<MessageQueue> _subject;
+		//private Subject<MessageQueue> _subject;
 
 		/// <summary>
 		/// Constructor
@@ -34,24 +45,33 @@ namespace CodeProject.MessageQueueing
 		/// <param name="appConfig"></param>
 		/// <param name="messageQueueing"></param>
 		/// <param name="inventoryManagementBusinessService"></param>
-		public ReceiveMessages(ILogger<ReceiveMessages> logger, IOptions<ConnectionStrings> connectionStrings, IOptions<MessageQueueAppConfig> appConfig, IMessageQueueing messageQueueing, IMessageQueueProcessing messageProcessor)
+		//public ReceiveMessages(ILogger<ReceiveMessages> logger, IOptions<ConnectionStrings> connectionStrings, IOptions<MessageQueueAppConfig> appConfig, IMessageQueueing messageQueueing, IMessageQueueProcessing messageProcessor)
+		//{
+		//	_logger = logger;
+		//	_appConfig = appConfig;
+		//	_connectionStrings = connectionStrings;
+		//	_messageProcessor = messageProcessor;
+		//	_messageQueueing = messageQueueing;
+
+		//	_messageQueueing.SetConnectionStrings(_connectionStrings.Value);
+		//	_messageQueueing.InitializeMessageQueueing(appConfig.Value.MessageQueueHostName, appConfig.Value.MessageQueueUserName, appConfig.Value.MessageQueuePassword);
+		//	_messageQueueing.SetInboundSemaphoreKey(appConfig.Value.InboundSemaphoreKey);
+		//	_messageQueueing.SetOutboundSemaphoreKey(appConfig.Value.OutboundSemaphoreKey);
+		//	_messageQueueing.InitializeExchange(appConfig.Value.ExchangeName, appConfig.Value.RoutingKey);
+		//	_messageQueueing.InitializeLogging(appConfig.Value.OriginatingQueueName, appConfig.Value.LoggingMessageQueue, appConfig.Value.SendToLoggingQueue);
+		//	_messageQueueing.InitializeLoggingExchange(appConfig.Value.LoggingExchangeName, appConfig.Value.RoutingKey);
+		//	_messageQueueing.InitializeQueue(appConfig.Value.InboundMessageQueue, appConfig.Value.RoutingKey);
+
+		//	_logger.LogInformation("Receive Messages Constructor ");
+		//}
+
+		public ReceiveMessages(IMessageQueueConnection messageQueueConnection, IMessageQueueProcessing messageProcessor, MessageQueueAppConfig appConfig, ConnectionStrings connectionStrings, List<IMessageQueueConfiguration> messageQueueConfigurations)
 		{
-			_logger = logger;
-			_appConfig = appConfig;
+			_messageQueueConnection = messageQueueConnection;
+			_messageQueueConfigurations = messageQueueConfigurations;
 			_connectionStrings = connectionStrings;
 			_messageProcessor = messageProcessor;
-			_messageQueueing = messageQueueing;
-
-			_messageQueueing.SetConnectionStrings(_connectionStrings.Value);
-			_messageQueueing.InitializeMessageQueueing(appConfig.Value.MessageQueueHostName, appConfig.Value.MessageQueueUserName, appConfig.Value.MessageQueuePassword);
-			_messageQueueing.SetInboundSemaphoreKey(appConfig.Value.InboundSemaphoreKey);
-			_messageQueueing.SetOutboundSemaphoreKey(appConfig.Value.OutboundSemaphoreKey);
-			_messageQueueing.InitializeExchange(appConfig.Value.ExchangeName, appConfig.Value.RoutingKey);
-			_messageQueueing.InitializeLogging(appConfig.Value.OriginatingQueueName, appConfig.Value.LoggingMessageQueue, appConfig.Value.SendToLoggingQueue);
-			_messageQueueing.InitializeLoggingExchange(appConfig.Value.LoggingExchangeName, appConfig.Value.RoutingKey);
-			_messageQueueing.InitializeQueue(appConfig.Value.InboundMessageQueue, appConfig.Value.RoutingKey);
-		
-			_logger.LogInformation("Receive Messages Constructor ");
+			_appConfig = appConfig;
 		}
 
 		/// <summary>
@@ -61,12 +81,12 @@ namespace CodeProject.MessageQueueing
 		/// <returns></returns>
 		public Task StartAsync(CancellationToken cancellationToken)
 		{
-			_logger.LogInformation("Starting Receiving Messages");
+			Console.WriteLine("Starting Receiving Messages");
 
-			_subject = new Subject<MessageQueue>();
-			_subject.Subscribe(MessageReceived);
+			//_subject = new Subject<MessageQueue>();
+			//_subject.Subscribe(MessageReceived);
 
-			_timer = new Timer(GetMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(_appConfig.Value.ReceivingIntervalSeconds));
+			_timer = new Timer(GetMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(_appConfig.ReceivingIntervalSeconds));
 
 			return Task.CompletedTask;
 		}
@@ -77,22 +97,57 @@ namespace CodeProject.MessageQueueing
 		/// <param name="state"></param>
 		private async void GetMessagesInQueue(object state)
 		{
+	
+			if (_running == true)
+			{
+				return;
+			}
 
-			_logger.LogInformation("Receive Messages in Queue at " + DateTime.Now);
+			_running = true;
 
-			await _messageQueueing.ReceiveMessages(_appConfig.Value.InboundMessageQueue, _subject, _messageProcessor);
+			Console.WriteLine("Receiving Messages at " + DateTime.Now);
+
+			Subscription subscription = _messageQueueConfigurations[0].GetSubscription();
+
+			foreach (BasicDeliverEventArgs e in subscription)
+			{
+				string message = Encoding.UTF8.GetString(e.Body);
+
+				MessageQueue messageQueue = JsonConvert.DeserializeObject<MessageQueue>(message);
+
+				if (messageQueue.QueueName == string.Empty || messageQueue.QueueName == null)
+				{
+					string originatingQueue = _messageQueueConfigurations[0].GetOriginatingQueueName();
+					if (originatingQueue != MessageQueueEndpoints.LoggingQueue)
+					{
+						messageQueue.QueueName = originatingQueue;
+					}
+				}
+
+				Console.WriteLine("Receiving Message id " + messageQueue.TransactionQueueId);
+
+				ResponseModel<MessageQueue> responseMessage = await _messageProcessor.CommitInboundMessage(messageQueue, _connectionStrings);
+				if (responseMessage.ReturnStatus == true)
+				{
+					if (_appConfig.SendToLoggingQueue == true && messageQueue.TransactionCode != TransactionQueueTypes.Acknowledgement)
+					{
+						responseMessage = _messageQueueConfigurations[0].SendReceivedMessageToLoggingQueue(messageQueue, MessageQueueExchanges.Logging);
+					}
+
+					if (responseMessage.ReturnStatus == true)
+					{
+						Console.WriteLine($"Message Committed: {messageQueue.TransactionQueueId}");
+						subscription.Ack(e);
+					}
+
+					await _messageProcessor.ProcessMessages(_appConfig.InboundSemaphoreKey, _connectionStrings);
+
+				}
+
+			}
 
 		}
-		/// <summary>
-		/// Message Received
-		/// </summary>
-		/// <param name="messageQueue"></param>
-		public async void MessageReceived(MessageQueue messageQueue)
-		{
-			await Task.Delay(0);
-
-		}
-
+		
 		/// <summary>
 		/// Stop Async
 		/// </summary>
@@ -100,14 +155,14 @@ namespace CodeProject.MessageQueueing
 		/// <returns></returns>
 		public Task StopAsync(CancellationToken cancellationToken)
 		{
-			_logger.LogInformation("Stopping.");
+			Console.WriteLine("Stopping.");
 
 			return Task.CompletedTask;
 		}
 
 		public void Dispose()
 		{
-		
+
 		}
 	}
 }

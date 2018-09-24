@@ -35,7 +35,7 @@ export class LoginComponent implements OnInit {
     let user = new UserViewModel();
     user = this.userViewModel;
 
-    let url = 'https://localhost:44303/api/authorization/login';
+    let url = this.sessionService.appSettings.accountManagementWebApiUrl +  'authorization/login';
     this.httpService.HttpPost<UserViewModelResponse>(url, user).subscribe((response: UserViewModelResponse) => {
       this.loginSuccess(response);
     }, response => this.loginFailed(response));

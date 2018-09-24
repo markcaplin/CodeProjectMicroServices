@@ -19,9 +19,6 @@ export class HttpService {
 
         let tokenString = '';
 
-        const basePath = this.sessionService.appSettings.webApiUrl;
-        const absoluteUrl = basePath + url;
-
         let httpHeaders = new HttpHeaders();
         const securityToken: string = localStorage.getItem('token');
         if (securityToken != null) {
@@ -47,7 +44,7 @@ export class HttpService {
         // console.log('token=' + tokenString);
         console.log('url=' + url);
 
-        return this.httpClient.get<T>(absoluteUrl, { headers: httpHeaders })
+        return this.httpClient.get<T>(url, { headers: httpHeaders })
             .pipe(
                 catchError((err) => this.handleError(err)),
                 finalize(() => {
@@ -86,12 +83,9 @@ export class HttpService {
         console.log('token=' + tokenString);
         // const basePath = this.sessionService.appSettings.webApiUrl;
 
-        const basePath = '';
-
-        const absoluteUrl = basePath + url;
         console.log('url=' + url);
 
-        return this.httpClient.post<T>(absoluteUrl, data, { headers: httpHeaders })
+        return this.httpClient.post<T>(url, data, { headers: httpHeaders })
             .pipe(
                 catchError((err) => this.handleError(err)),
                 finalize(() => {

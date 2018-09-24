@@ -1,3 +1,5 @@
 export class AppSettings {
-    public webApiUrl: string;
+    public accountManagementWebApiUrl: string;
+    public inventoryManagementWebApiUrl: string;
+    public purchaseOrderManagementWebApiUrl: string;
 }

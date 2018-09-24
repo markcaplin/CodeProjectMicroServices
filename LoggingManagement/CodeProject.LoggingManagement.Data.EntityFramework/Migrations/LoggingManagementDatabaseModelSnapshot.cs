@@ -25,6 +25,8 @@ namespace CodeProject.LoggingManagement.Data.EntityFramework.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("AcknowledgementQueue");
+
                     b.Property<DateTime>("DateCreated");
 
                     b.Property<string>("ExchangeName");

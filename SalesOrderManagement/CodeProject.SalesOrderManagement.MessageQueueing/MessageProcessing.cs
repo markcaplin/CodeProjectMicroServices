@@ -45,7 +45,7 @@ namespace CodeProject.SalesOrderManagement.Business.MessageService
 		/// <param name="messageQueueing"></param>
 		/// <param name="outboundSemaphoreKey"></param>
 		/// <returns></returns>
-		public async Task<ResponseModel<List<MessageQueue>>> SendQueueMessages(IMessageQueueing messageQueueing, string outboundSemaphoreKey, ConnectionStrings connectionStrings)
+	    public async Task<ResponseModel<List<MessageQueue>>> SendQueueMessages(List<IMessageQueueConfiguration> messageQueueConfigurations, string outboundSemaphoreKey, ConnectionStrings connectionStrings)
 		{
 
 			ResponseModel<List<MessageQueue>> returnResponse = new ResponseModel<List<MessageQueue>>();
@@ -91,7 +91,14 @@ namespace CodeProject.SalesOrderManagement.Business.MessageService
 					message.TransactionCode = transactionQueueItem.TransactionCode;
 					message.Payload = transactionQueueItem.Payload;
 
-					ResponseModel<MessageQueue> messageQueueResponse = messageQueueing.SendMessage(message);
+					IMessageQueueConfiguration messageQueueConfiguration = messageQueueConfigurations.Where(x => x.TransactionCode == message.TransactionCode).FirstOrDefault();
+					if (messageQueueConfiguration == null)
+					{
+						break;
+					}
+
+					ResponseModel<MessageQueue> messageQueueResponse = messageQueueConfiguration.SendMessage(message);
+
 					if (messageQueueResponse.ReturnStatus == true)
 					{
 						transactionQueueItem.SentToExchange = true;
@@ -278,6 +285,7 @@ namespace CodeProject.SalesOrderManagement.Business.MessageService
 			else
 			{
 				product = new Product();
+				product.AccountId = payload.AccountId;
 				product.ProductNumber = payload.ProductNumber;
 				product.ProductMasterId = payload.ProductId;
 				product.Description = payload.Description;

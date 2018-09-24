@@ -16,35 +16,46 @@ namespace CodeProject.MessageQueueing
 
 	public class ProcessMessages : IHostedService, IDisposable
 	{
+	
 		private readonly IMessageQueueProcessing _messageProcessor;
-		private readonly IMessageQueueing _messageQueueing;
-		private readonly ILogger _logger;
-		private readonly IOptions<MessageQueueAppConfig> _appConfig;
-		private readonly IOptions<ConnectionStrings> _connectionStrings;
+		private readonly MessageQueueAppConfig _appConfig;
+		private readonly ConnectionStrings _connectionStrings;
+
 		private Timer _timer;
 		private int _counter;
 
-		public ProcessMessages(ILogger<SendMessages> logger, IOptions<ConnectionStrings> connectionStrings, IOptions<MessageQueueAppConfig> appConfig, IMessageQueueing messageQueueing, IMessageQueueProcessing messageProcessor)
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="messageProcessor"></param>
+		/// <param name="appConfig"></param>
+		/// <param name="connectionStrings"></param>
+		public ProcessMessages(IMessageQueueProcessing messageProcessor, MessageQueueAppConfig appConfig, ConnectionStrings connectionStrings)
 		{
-			_logger = logger;
+			
 			_appConfig = appConfig;
 			_messageProcessor = messageProcessor;
-			_messageQueueing = messageQueueing;
 			_connectionStrings = connectionStrings;
 
-			_logger.LogInformation("Process Messages Constructor ");
+			Console.WriteLine("Process Messages Constructor ");
 		}
 
+		/// <summary>
+		/// Start Processing Interval
+		/// </summary>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
 		public Task StartAsync(CancellationToken cancellationToken)
 		{
-			_logger.LogInformation("Starting Processing Messages");
+			Console.WriteLine("Starting Processing Messages");
 
 			_counter = 0;
 
-			_timer = new Timer(ProcessMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(_appConfig.Value.ProcessingIntervalSeconds));
+			_timer = new Timer(ProcessMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(_appConfig.ProcessingIntervalSeconds));
 
 			return Task.CompletedTask;
 		}
+
 		/// <summary>
 		/// Get Messages In Queue
 		/// </summary>
@@ -54,21 +65,29 @@ namespace CodeProject.MessageQueueing
 
 			_counter++;
 
-			ResponseModel<List<MessageQueue>> messages = await _messageProcessor.ProcessMessages(_appConfig.Value.InboundSemaphoreKey, _connectionStrings.Value);
+			ResponseModel<List<MessageQueue>> messages = await _messageProcessor.ProcessMessages(_appConfig.InboundSemaphoreKey, _connectionStrings);
 
-			_logger.LogInformation("total messages processed " + messages.Entity.Count.ToString() + " sent at " + DateTime.Now);
+			Console.WriteLine("total messages processed " + messages.Entity.Count.ToString() + " sent at " + DateTime.Now);
 
 		}
 
+		/// <summary>
+		/// Stop Processing
+		/// </summary>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
 		public Task StopAsync(CancellationToken cancellationToken)
 		{
-			_logger.LogInformation("Stopping.");
+			Console.WriteLine("Stopping.");
 
 			_timer?.Change(Timeout.Infinite, 0);
 
 			return Task.CompletedTask;
 		}
 
+		/// <summary>
+		/// Dispose Timer
+		/// </summary>
 		public void Dispose()
 		{
 			_timer?.Dispose();

@@ -46,7 +46,7 @@ export class RegisterComponent implements OnInit {
     let user = new UserViewModel();
     user = this.userViewModel;
 
-    let url = 'https://localhost:44303/api/authorization/register';
+    let url = this.sessionService.appSettings.accountManagementWebApiUrl +  'authorization/register';
     this.httpService.HttpPost<UserViewModelResponse>(url, user).subscribe((response: UserViewModelResponse) => {
       this.registerSuccess(response);
     }, response => this.registerFailed(response));

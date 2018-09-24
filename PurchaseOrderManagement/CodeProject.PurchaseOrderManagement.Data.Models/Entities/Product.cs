@@ -8,6 +8,7 @@ namespace CodeProject.PurchaseOrderManagement.Data.Entities
     {
 		public int AccountId { get; set; }
 		public int ProductId { get; set; }
+		public int ProductMasterId { get; set; }
 		public string ProductNumber { get; set; }
 		public string Description { get; set; }
 		public string BinLocation { get; set; }

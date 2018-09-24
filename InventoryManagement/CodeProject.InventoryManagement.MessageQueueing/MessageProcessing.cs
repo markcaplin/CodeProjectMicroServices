@@ -103,6 +103,7 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 			TransactionQueueSemaphore transactionQueueSemaphore = null;
 
 			ResponseModel<List<MessageQueue>> returnResponse = new ResponseModel<List<MessageQueue>>();
+			returnResponse.Entity = new List<MessageQueue>();
 
 			try
 			{

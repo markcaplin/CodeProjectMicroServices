@@ -7,6 +7,6 @@ namespace CodeProject.Shared.Common.Models
   
 	public static class MessageExchangeFanouts
 	{
-		public static int ProductUpdated = 1;
+		public static int ProductUpdated = 2;
 	}
 }
