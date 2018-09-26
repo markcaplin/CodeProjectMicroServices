@@ -35,7 +35,7 @@ namespace CodeProject.InventoryManagement.BusinessRules
 			ValidateRequired("Region", "State/Region");
 			ValidateRequired("PostalCode", "Postal Code");
 
-			await ValidateUniqueSupplierName("SupplierID", "Name", "AccountId");
+			await ValidateUniqueSupplierName("SupplierId", "Name", "AccountId");
 
 			return ValidationResult;
 		}
@@ -51,7 +51,7 @@ namespace CodeProject.InventoryManagement.BusinessRules
 
 			Supplier supplier = await _purchaseOrderManagementDataService.GetSupplierInformationBySupplierName(valueOfSupplierName.ToString(), (int)valueOfAccountId);
 
-			if (supplierId != null && (int)valueOfSupplierId == 0)
+			if (supplier != null && (int)valueOfSupplierId == 0)
 			{
 				AddValidationError(supplierName, "Supplier Name already exists.");
 				return;

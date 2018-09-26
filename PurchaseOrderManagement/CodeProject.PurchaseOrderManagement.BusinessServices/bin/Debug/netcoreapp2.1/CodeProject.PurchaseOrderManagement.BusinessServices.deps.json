@@ -1099,6 +1099,13 @@
         }
       },
       "CodeProject.PurchaseOrderManagement.BusinessRules/1.0.0": {
+        "dependencies": {
+          "CodeProject.PurchaseOrderManagement.Data.Models": "1.0.0",
+          "CodeProject.PurchaseOrderManagement.Interfaces": "1.0.0",
+          "CodeProject.Shared.Common.Interfaces": "1.0.0",
+          "CodeProject.Shared.Common.Models": "1.0.0",
+          "CodeProject.Shared.Common.Utilities": "1.0.0"
+        },
         "runtime": {
           "CodeProject.PurchaseOrderManagement.BusinessRules.dll": {}
         }

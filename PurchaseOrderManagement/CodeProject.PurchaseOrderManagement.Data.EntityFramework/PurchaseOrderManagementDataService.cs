@@ -99,6 +99,19 @@ namespace CodeProject.PurchaseOrderManagement.Data.EntityFramework
 		}
 
 		/// <summary>
+		/// Update Supplier
+		/// </summary>
+		/// <param name="supplier"></param>
+		/// <returns></returns>
+		public async Task UpdateSupplier(Supplier supplier)
+		{
+			await Task.Delay(0);
+			DateTime dateUpdated = DateTime.UtcNow;
+			supplier.DateUpdated = dateUpdated;
+
+		}
+
+		/// <summary>
 		/// Create Product
 		/// </summary>
 		/// <param name="product"></param>
@@ -126,6 +139,23 @@ namespace CodeProject.PurchaseOrderManagement.Data.EntityFramework
 			Product product = await dbConnection.Products.FromSql(sqlStatement, productIdParameter).FirstOrDefaultAsync();
 			return product;
 		}
+
+
+		/// <summary>
+		/// Get Supplier Information For Update
+		/// </summary>
+		/// <param name="supplierId"></param>
+		/// <returns></returns>
+		public async Task<Supplier> GetSupplierInformationForUpdate(int supplierId)
+		{
+			string sqlStatement = "SELECT * FROM Suppliers WITH (UPDLOCK) WHERE SupplierId = @SupplierId";
+
+			DbParameter supplierIdParameter = new SqlParameter("SupplierId", supplierId);
+
+			Supplier supplier = await dbConnection.Suppliers.FromSql(sqlStatement, supplierIdParameter).FirstOrDefaultAsync();
+			return supplier;
+		}
+
 		/// <summary>
 		/// Get Product Information B yProduct Master For Update
 		/// </summary>
@@ -151,6 +181,18 @@ namespace CodeProject.PurchaseOrderManagement.Data.EntityFramework
 			DateTime dateUpdated = DateTime.UtcNow;
 			product.DateUpdated = dateUpdated;
 
+		}
+
+		/// <summary>
+		/// Get Supplier Information By Supplier Name
+		/// </summary>
+		/// <param name="supplierName"></param>
+		/// <param name="accountId"></param>
+		/// <returns></returns>
+		public async Task<Supplier> GetSupplierInformationBySupplierName(string supplierName, int accountId)
+		{
+			Supplier supplier = await dbConnection.Suppliers.Where(x => x.Name == supplierName && x.AccountId == accountId).FirstOrDefaultAsync();
+			return supplier;
 		}
 
 		/// <summary>

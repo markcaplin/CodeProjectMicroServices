@@ -25,6 +25,7 @@ export class SupplierMaintenanceComponent implements OnInit {
     this.supplierViewModel.city = 'Pembroke Pines';
     this.supplierViewModel.region = 'FL';
     this.supplierViewModel.postalCode = '33029';
+    this.supplierViewModel.supplierId = 0;
 
   }
 
@@ -32,8 +33,8 @@ export class SupplierMaintenanceComponent implements OnInit {
 
   }
 
-  public createOrUpdateProduct() {
-    
+  public createOrUpdateSupplier() {
+
     let supplier = new SupplierViewModel();
     supplier = this.supplierViewModel;
 

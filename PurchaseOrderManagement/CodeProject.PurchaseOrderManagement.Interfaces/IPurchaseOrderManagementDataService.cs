@@ -15,6 +15,7 @@ namespace CodeProject.PurchaseOrderManagement.Interfaces
 		Task CreateInboundTransactionQueue(TransactionQueueInbound transactionQueue);
 		Task CreateInboundTransactionQueueHistory(TransactionQueueInboundHistory transactionQueueHistory);
 		Task<TransactionQueueInboundHistory> GetInboundTransactionQueueHistoryBySender(int senderTransactionQueueId, string exchangeName);
+		Task<Supplier> GetSupplierInformationBySupplierName(string supplierName, int accountId);
 		Task<Product> GetProductInformationByProductMasterForUpdate(int productMasterId);
 		Task DeleteInboundTransactionQueueEntry(int transactionQueueId);
 		Task CreateOutboundTransactionQueue(TransactionQueueOutbound transactionQueue);
