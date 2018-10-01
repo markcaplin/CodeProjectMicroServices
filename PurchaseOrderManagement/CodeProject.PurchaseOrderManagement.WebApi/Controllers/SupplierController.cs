@@ -117,6 +117,86 @@ namespace CodeProject.PurchaseOrderManagement.WebApi.Controllers
 
 		}
 
+		/// <summary>
+		/// Supplier Inquiry
+		/// </summary>
+		/// <param name="supplierInquiryDataTransformation"></param>
+		/// <returns></returns>
+		[HttpPost]
+		[Route("SupplierInquiry")]
+		public async Task<IActionResult> SupplierInquiry([FromBody] SupplierInquiryDataTransformation supplierInquiryDataTransformation)
+		{
+
+			SecurityModel securityModel = (SecurityModel)(HttpContext.Items["SecurityModel"]);
+
+			int accountId = securityModel.AccountId;
+			string supplierName = supplierInquiryDataTransformation.SupplierName;
+			int pageSize = supplierInquiryDataTransformation.PageSize;
+			int currentPageNumber = supplierInquiryDataTransformation.CurrentPageNumber;
+			string sortDirection = supplierInquiryDataTransformation.SortDirection;
+			string sortExpression = supplierInquiryDataTransformation.SortExpression;
+
+			ResponseModel<List<SupplierDataTransformation>> returnResponse = new ResponseModel<List<SupplierDataTransformation>>();
+
+			try
+			{
+				returnResponse = await _purchaseOrderManagementBusinessService.SupplierInquiry(accountId, supplierName, currentPageNumber, pageSize, sortExpression, sortDirection);
+				returnResponse.Token = securityModel.Token;
+				if (returnResponse.ReturnStatus == false)
+				{
+					return BadRequest(returnResponse);
+				}
+
+				return Ok(returnResponse);
+
+			}
+			catch (Exception ex)
+			{
+				returnResponse.ReturnStatus = false;
+				returnResponse.ReturnMessage.Add(ex.Message);
+				return BadRequest(returnResponse);
+			}
+
+		}
+
+		/// <summary>
+		/// Get Supplier
+		/// </summary>
+		/// <param name="supplierDataTransformation"></param>
+		/// <returns></returns>
+		[HttpPost]
+		[Route("GetSupplier")]
+		public async Task<IActionResult> GetSupplier([FromBody] SupplierDataTransformation supplierDataTransformation)
+		{
+
+			SecurityModel securityModel = (SecurityModel)(HttpContext.Items["SecurityModel"]);
+
+			int accountId = securityModel.AccountId;
+			int supplierId = supplierDataTransformation.SupplierId;
+		
+			ResponseModel<SupplierDataTransformation> returnResponse = new ResponseModel<SupplierDataTransformation>();
+
+			try
+			{
+				returnResponse = await _purchaseOrderManagementBusinessService.GetSupplierInformation(accountId, supplierId);
+				returnResponse.Token = securityModel.Token;
+				if (returnResponse.ReturnStatus == false)
+				{
+					return BadRequest(returnResponse);
+				}
+
+				return Ok(returnResponse);
+
+			}
+			catch (Exception ex)
+			{
+				returnResponse.ReturnStatus = false;
+				returnResponse.ReturnMessage.Add(ex.Message);
+				return BadRequest(returnResponse);
+			}
+
+		}
+
 
 	}
 }

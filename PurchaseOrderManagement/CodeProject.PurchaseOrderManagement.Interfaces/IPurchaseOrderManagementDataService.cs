@@ -4,12 +4,14 @@ using System.Text;
 using CodeProject.PurchaseOrderManagement.Data.Entities;
 using System.Threading.Tasks;
 using CodeProject.Shared.Common.Interfaces;
+using CodeProject.Shared.Common.Models;
 
 namespace CodeProject.PurchaseOrderManagement.Interfaces
 {
     public interface IPurchaseOrderManagementDataService : IDataRepository, IDisposable
 	{
-		Task<Supplier> GetSupplierInformationForUpdate(int supplierId);
+		Task<Supplier> GetSupplierInformationForUpdate(int accountId, int supplierId);
+		Task<Supplier> GetSupplierInformation(int accountId, int supplierId);
 		Task CreatePurchaseOrder(PurchaseOrder purchaseOrder);
 		Task CreatePurchaseOrderDetail(PurchaseOrderDetail purchaseOrderDetail);
 		Task CreateInboundTransactionQueue(TransactionQueueInbound transactionQueue);
@@ -27,5 +29,8 @@ namespace CodeProject.PurchaseOrderManagement.Interfaces
 		Task<TransactionQueueSemaphore> GetTransactionQueueSemaphore(string semaphoreKey);
 		Task UpdateTransactionQueueSemaphore(TransactionQueueSemaphore transactionQueueSemaphore);
 		Task CreateTransactionQueueSemaphore(TransactionQueueSemaphore transactionQueueSemaphore);
+		Task<List<Supplier>> SupplierInquiry(int accountID, string supplierName, DataGridPagingInformation paging);
+
+
 	}
 }

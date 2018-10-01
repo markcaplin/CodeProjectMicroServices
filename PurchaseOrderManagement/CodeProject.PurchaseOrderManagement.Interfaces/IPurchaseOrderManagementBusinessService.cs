@@ -12,5 +12,7 @@ namespace CodeProject.PurchaseOrderManagement.Interfaces
 	{ 
 		Task<ResponseModel<SupplierDataTransformation>> CreateSupplier(SupplierDataTransformation supplierDataTransformation);
 		Task<ResponseModel<SupplierDataTransformation>> UpdateSupplier(SupplierDataTransformation supplierDataTransformation);
+		Task<ResponseModel<SupplierDataTransformation>> GetSupplierInformation(int accountId, int supplierId);
+		Task<ResponseModel<List<SupplierDataTransformation>>> SupplierInquiry(int accountId, string supplierName, int currentPageNumber, int pageSize, string sortExpression, string sortDirection);
 	}
 }

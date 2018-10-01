@@ -63,7 +63,7 @@ namespace CodeProject.PurchaseOrderManagement.BusinessServices
 				}
 
 				supplier.AccountId = supplierDataTransformation.AccountId;
-				supplier.Name = supplierDataTransformation.Name;
+				supplier.Name = supplierDataTransformation.SupplierName;
 				supplier.AddressLine1 = supplierDataTransformation.AddressLine1;
 				supplier.AddressLine2 = supplierDataTransformation.AddressLine2;
 				supplier.City = supplierDataTransformation.City;
@@ -128,10 +128,11 @@ namespace CodeProject.PurchaseOrderManagement.BusinessServices
 				}
 
 				int supplierId = supplierDataTransformation.SupplierId;
+				int accountId = supplierDataTransformation.AccountId;
 
-				supplier = await _purchaseOrderManagementDataService.GetSupplierInformationForUpdate(supplierId);
+				supplier = await _purchaseOrderManagementDataService.GetSupplierInformationForUpdate(accountId, supplierId);
 
-				supplier.Name = supplierDataTransformation.Name;
+				supplier.Name = supplierDataTransformation.SupplierName;
 				supplier.AddressLine1 = supplierDataTransformation.AddressLine1;
 				supplier.AddressLine2 = supplierDataTransformation.AddressLine2;
 				supplier.City = supplierDataTransformation.City;
@@ -163,7 +164,121 @@ namespace CodeProject.PurchaseOrderManagement.BusinessServices
 			return returnResponse;
 
 		}
-	
+
+		/// <summary>
+		/// Supplier Inquiry
+		/// </summary>
+		/// <param name="accountId"></param>
+		/// <param name="supplierName"></param>
+		/// <param name="currentPageNumber"></param>
+		/// <param name="pageSize"></param>
+		/// <param name="sortExpression"></param>
+		/// <param name="sortDirection"></param>
+		/// <returns></returns>
+		public async Task<ResponseModel<List<SupplierDataTransformation>>> SupplierInquiry(int accountId, string supplierName, int currentPageNumber, int pageSize, string sortExpression, string sortDirection)
+		{
+
+			ResponseModel<List<SupplierDataTransformation>> returnResponse = new ResponseModel<List<SupplierDataTransformation>>();
+
+			List<SupplierDataTransformation> suppliers = new List<SupplierDataTransformation>();
+
+			try
+			{
+				_purchaseOrderManagementDataService.OpenConnection(_connectionStrings.PrimaryDatabaseConnectionString);
+
+				DataGridPagingInformation dataGridPagingInformation = new DataGridPagingInformation();
+				dataGridPagingInformation.CurrentPageNumber = currentPageNumber;
+				dataGridPagingInformation.PageSize = pageSize;
+				dataGridPagingInformation.SortDirection = sortDirection;
+				dataGridPagingInformation.SortExpression = sortExpression;
+
+				List<Supplier> supplierList = await _purchaseOrderManagementDataService.SupplierInquiry(accountId, supplierName, dataGridPagingInformation);
+				foreach(Supplier supplier in supplierList)
+				{
+					SupplierDataTransformation supplierDataTransformation = new SupplierDataTransformation();
+					supplierDataTransformation.SupplierId = supplier.SupplierId;
+					supplierDataTransformation.AddressLine1 = supplier.AddressLine1;
+					supplierDataTransformation.AddressLine2 = supplier.AddressLine2;
+					supplierDataTransformation.City = supplier.City;
+					supplierDataTransformation.Region = supplier.Region;
+					supplierDataTransformation.PostalCode = supplier.PostalCode;
+					supplierDataTransformation.SupplierName = supplier.Name;
+					suppliers.Add(supplierDataTransformation);
+
+				}
+
+				returnResponse.Entity = suppliers;
+				returnResponse.TotalRows = dataGridPagingInformation.TotalRows;
+				returnResponse.TotalPages = dataGridPagingInformation.TotalPages;
+
+				returnResponse.ReturnStatus = true;
+
+			}
+			catch (Exception ex)
+			{
+				_purchaseOrderManagementDataService.RollbackTransaction();
+				returnResponse.ReturnStatus = false;
+				returnResponse.ReturnMessage.Add(ex.Message);
+			}
+			finally
+			{
+				_purchaseOrderManagementDataService.CloseConnection();
+			}
+
+			return returnResponse;
+
+		}
+
+		/// <summary>
+		/// Get Supplier Information
+		/// </summary>
+		/// <param name="accountId"></param>
+		/// <param name="supplierId"></param>
+		/// <returns></returns>
+		public async Task<ResponseModel<SupplierDataTransformation>> GetSupplierInformation(int accountId, int supplierId)
+		{
+
+			ResponseModel<SupplierDataTransformation> returnResponse = new ResponseModel<SupplierDataTransformation>();
+			SupplierDataTransformation supplierDataTransformation = new SupplierDataTransformation();
+
+			Supplier supplier = new Supplier();
+
+			try
+			{
+				_purchaseOrderManagementDataService.OpenConnection(_connectionStrings.PrimaryDatabaseConnectionString);
+
+				supplier = await _purchaseOrderManagementDataService.GetSupplierInformation(accountId, supplierId);
+
+				supplierDataTransformation = new SupplierDataTransformation();
+				supplierDataTransformation.SupplierId = supplier.SupplierId;
+				supplierDataTransformation.AddressLine1 = supplier.AddressLine1;
+				supplierDataTransformation.AddressLine2 = supplier.AddressLine2;
+				supplierDataTransformation.City = supplier.City;
+				supplierDataTransformation.Region = supplier.Region;
+				supplierDataTransformation.PostalCode = supplier.PostalCode;
+				supplierDataTransformation.SupplierName = supplier.Name;
+		
+				returnResponse.ReturnStatus = true;
+
+			}
+			catch (Exception ex)
+			{
+				_purchaseOrderManagementDataService.RollbackTransaction();
+				returnResponse.ReturnStatus = false;
+				returnResponse.ReturnMessage.Add(ex.Message);
+			}
+			finally
+			{
+				_purchaseOrderManagementDataService.CloseConnection();
+			}
+
+			returnResponse.Entity = supplierDataTransformation;
+
+			return returnResponse;
+
+		}
+
+
 	}
 
 }

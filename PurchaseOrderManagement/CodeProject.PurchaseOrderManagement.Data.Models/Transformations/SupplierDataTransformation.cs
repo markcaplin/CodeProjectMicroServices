@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeProject.PurchaseOrderManagement.Data.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,7 +9,7 @@ namespace CodeProject.PurchaseOrderManagement.Data.Transformations
     {
 		public int AccountId { get; set; }
 		public int SupplierId { get; set; }
-		public string Name { get; set; }
+		public string SupplierName { get; set; }
 		public string AddressLine1 { get; set; }
 		public string AddressLine2 { get; set; }
 		public string City { get; set; }

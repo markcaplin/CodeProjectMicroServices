@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Data.SqlClient;
 using System.Data.Common;
+using CodeProject.Shared.Common.Models;
+using System.Linq.Dynamic.Core;
 
 namespace CodeProject.PurchaseOrderManagement.Data.EntityFramework
 {
@@ -144,15 +146,29 @@ namespace CodeProject.PurchaseOrderManagement.Data.EntityFramework
 		/// <summary>
 		/// Get Supplier Information For Update
 		/// </summary>
+		/// <param name="accountId"></param>
 		/// <param name="supplierId"></param>
 		/// <returns></returns>
-		public async Task<Supplier> GetSupplierInformationForUpdate(int supplierId)
+		public async Task<Supplier> GetSupplierInformationForUpdate(int accountId, int supplierId)
 		{
-			string sqlStatement = "SELECT * FROM Suppliers WITH (UPDLOCK) WHERE SupplierId = @SupplierId";
+			string sqlStatement = "SELECT * FROM Suppliers WITH (UPDLOCK) WHERE SupplierId = @SupplierId AND AccountId = @AccountId" ;
 
 			DbParameter supplierIdParameter = new SqlParameter("SupplierId", supplierId);
+			DbParameter accountIdParameter = new SqlParameter("AccountId", accountId);
 
-			Supplier supplier = await dbConnection.Suppliers.FromSql(sqlStatement, supplierIdParameter).FirstOrDefaultAsync();
+			Supplier supplier = await dbConnection.Suppliers.FromSql(sqlStatement, supplierIdParameter, accountIdParameter).FirstOrDefaultAsync();
+			return supplier;
+		}
+
+		/// <summary>
+		/// Get Supplier Information
+		/// </summary>
+		/// <param name="accountId"></param>
+		/// <param name="supplierId"></param>
+		/// <returns></returns>
+		public async Task<Supplier> GetSupplierInformation(int accountId, int supplierId)
+		{
+			Supplier supplier = await dbConnection.Suppliers.Where(x => x.SupplierId == supplierId && x.AccountId == accountId).FirstOrDefaultAsync();
 			return supplier;
 		}
 
@@ -304,6 +320,51 @@ namespace CodeProject.PurchaseOrderManagement.Data.EntityFramework
 			TransactionQueueSemaphore transactionQueue = await dbConnection.TransactionQueueSemaphores.FromSql(sqlStatement, semaphoreKeyParameter).FirstOrDefaultAsync();
 
 			return transactionQueue;
+
+		}
+
+		/// <summary>
+		/// Supplier Inquiry
+		/// </summary>
+		/// <param name="accountID"></param>
+		/// <param name="supplierName"></param>
+		/// <param name="paging"></param>
+		/// <returns></returns>
+		public async Task<List<Supplier>> SupplierInquiry(int accountID, string supplierName, DataGridPagingInformation paging)
+		{
+
+			string sortExpression = paging.SortExpression;
+			string sortDirection = paging.SortDirection;
+
+			if (string.IsNullOrEmpty(sortExpression))
+			{
+				sortExpression = "Name";
+			}
+
+			if (paging.SortDirection != string.Empty)
+				sortExpression = sortExpression + " " + paging.SortDirection;
+
+			int numberOfRows = 0;
+
+			var query = dbConnection.Suppliers.AsQueryable();
+
+			if (supplierName.Trim().Length > 0)
+			{
+				query = query.Where(p => p.Name.Contains(supplierName));
+			}
+
+			query = query.Where(p => p.AccountId == accountID);
+
+			var supplierResults = from p in query select p;
+
+			numberOfRows = await supplierResults.CountAsync();
+
+			List<Supplier> suppliers = await supplierResults.OrderBy(sortExpression).Skip((paging.CurrentPageNumber - 1) * paging.PageSize).Take(paging.PageSize).ToListAsync();
+
+			paging.TotalRows = numberOfRows;
+			paging.TotalPages = CodeProject.Shared.Common.Utilties.Functions.CalculateTotalPages(numberOfRows, paging.PageSize);
+
+			return suppliers;
 
 		}
 	}

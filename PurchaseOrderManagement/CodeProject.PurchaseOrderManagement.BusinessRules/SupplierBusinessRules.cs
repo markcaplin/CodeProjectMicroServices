@@ -29,13 +29,13 @@ namespace CodeProject.InventoryManagement.BusinessRules
 
 		public async Task<ValidationResult> Validate()
 		{
-			ValidateRequired("Name", "Supplier Name");
+			ValidateRequired("SupplierName", "Supplier Name");
 			ValidateRequired("AddressLine1", "Address Line 1");
 			ValidateRequired("City", "City");
 			ValidateRequired("Region", "State/Region");
 			ValidateRequired("PostalCode", "Postal Code");
 
-			await ValidateUniqueSupplierName("SupplierId", "Name", "AccountId");
+			await ValidateUniqueSupplierName("SupplierId", "SupplierName", "AccountId");
 
 			return ValidationResult;
 		}
