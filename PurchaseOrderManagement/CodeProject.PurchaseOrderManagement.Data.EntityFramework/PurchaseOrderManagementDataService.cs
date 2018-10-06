@@ -114,6 +114,32 @@ namespace CodeProject.PurchaseOrderManagement.Data.EntityFramework
 		}
 
 		/// <summary>
+		/// Update Purchase Order Number Sequence
+		/// </summary>
+		/// <param name="purchaseOrderNumberSequence"></param>
+		/// <returns></returns>
+		public async Task UpdatePurchaseOrderNumberSequence(PurchaseOrderNumberSequence purchaseOrderNumberSequence)
+		{
+			await Task.Delay(0);
+			DateTime dateUpdated = DateTime.UtcNow;
+			purchaseOrderNumberSequence.DateUpdated = dateUpdated;
+		}
+
+		/// <summary>
+		/// Create Purchase Order Number Sequence
+		/// </summary>
+		/// <param name="purchaseOrderNumberSequence"></param>
+		/// <returns></returns>
+		public async Task CreatePurchaseOrderNumberSequence(PurchaseOrderNumberSequence purchaseOrderNumberSequence)
+		{
+			DateTime dateCreated = DateTime.UtcNow;
+			purchaseOrderNumberSequence.DateCreated = dateCreated;
+			purchaseOrderNumberSequence.DateUpdated = dateCreated;
+
+			await dbConnection.PurchaseOrderNumberSequences.AddAsync(purchaseOrderNumberSequence);
+		}
+
+		/// <summary>
 		/// Create Product
 		/// </summary>
 		/// <param name="product"></param>
@@ -142,6 +168,20 @@ namespace CodeProject.PurchaseOrderManagement.Data.EntityFramework
 			return product;
 		}
 
+		/// <summary>
+		/// Get Purchase Order Number Sequence
+		/// </summary>
+		/// <param name="accountId"></param>
+		/// <returns></returns>
+		public async Task<PurchaseOrderNumberSequence> GetPurchaseOrderNumberSequence(int accountId)
+		{
+			string sqlStatement = "SELECT * FROM PurchaseOrderNumberSequences WITH (UPDLOCK) WHERE AccountId = @AccountId";
+
+			DbParameter accountIdParameter = new SqlParameter("AccountId", accountId);
+
+			PurchaseOrderNumberSequence purchaseOrderNumberSequence = await dbConnection.PurchaseOrderNumberSequences.FromSql(sqlStatement, accountIdParameter).FirstOrDefaultAsync();
+			return purchaseOrderNumberSequence;
+		}
 
 		/// <summary>
 		/// Get Supplier Information For Update
@@ -366,6 +406,23 @@ namespace CodeProject.PurchaseOrderManagement.Data.EntityFramework
 
 			return suppliers;
 
+		}
+
+		/// <summary>
+		/// Get Purchase Order
+		/// </summary>
+		/// <param name="accountId"></param>
+		/// <param name="purchaseOrderId"></param>
+		/// <returns></returns>
+		public async Task<PurchaseOrder> GetPurchaseOrder(int accountId, int purchaseOrderId)
+		{
+			PurchaseOrder purchaseOrder = await dbConnection.PurchaseOrders
+				.Include(x=>x.PurchaseOrderStatus)
+				.Include(x=>x.Supplier)
+				.Include(x=>x.PurchaseOrderDetails).ThenInclude(p=>p.Product)
+				.Where(x=> x.AccountId == accountId && x.PurchaseOrderId == purchaseOrderId).FirstOrDefaultAsync();
+
+			return purchaseOrder;
 		}
 	}
 }

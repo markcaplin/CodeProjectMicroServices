@@ -7,6 +7,6 @@ namespace CodeProject.PurchaseOrderManagement.Data.Entities
     public class PurchaseOrderStatus
     {
 		public int PurchaseOrderStatusId { get; set; }
-		public int Description { get; set; }
+		public string Description { get; set; }
     }
 }

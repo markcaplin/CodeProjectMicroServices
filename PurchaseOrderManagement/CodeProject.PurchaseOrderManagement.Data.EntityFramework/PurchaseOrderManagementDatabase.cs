@@ -19,6 +19,7 @@ namespace CodeProject.PurchaseOrderManagement.Data.EntityFramework
 		public DbSet<PurchaseOrderStatus> PurchaseOrderStatuses { get; set; }
 		public DbSet<PurchaseOrderDetail> PurchaseOrderDetails { get; set; }
 		public DbSet<TransactionQueueSemaphore> TransactionQueueSemaphores { get; set; }
+		public DbSet<PurchaseOrderNumberSequence> PurchaseOrderNumberSequences { get; set; }
 
 		private string _connectionString;
 
@@ -51,6 +52,11 @@ namespace CodeProject.PurchaseOrderManagement.Data.EntityFramework
 			
 			modelBuilder.Entity<Product>().HasIndex(u=> u.ProductNumber);
 			modelBuilder.Entity<TransactionQueueSemaphore>().HasIndex(u => u.SemaphoreKey).IsUnique();
+
+			modelBuilder.Entity<PurchaseOrderStatus>().HasData(
+				new { PurchaseOrderStatusId = 1, Description = "Open" },
+				new { PurchaseOrderStatusId = 2, Description = "Submitted" },
+				new { PurchaseOrderStatusId = 3, Description = "Completed" });
 
 		}
 

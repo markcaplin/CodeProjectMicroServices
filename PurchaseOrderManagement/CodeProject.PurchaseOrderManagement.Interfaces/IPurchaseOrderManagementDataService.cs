@@ -12,6 +12,9 @@ namespace CodeProject.PurchaseOrderManagement.Interfaces
 	{
 		Task<Supplier> GetSupplierInformationForUpdate(int accountId, int supplierId);
 		Task<Supplier> GetSupplierInformation(int accountId, int supplierId);
+		Task<PurchaseOrderNumberSequence> GetPurchaseOrderNumberSequence(int accountId);
+		Task CreatePurchaseOrderNumberSequence(PurchaseOrderNumberSequence purchaseOrderNumberSequence);
+		Task UpdatePurchaseOrderNumberSequence(PurchaseOrderNumberSequence purchaseOrderNumberSequence);
 		Task CreatePurchaseOrder(PurchaseOrder purchaseOrder);
 		Task CreatePurchaseOrderDetail(PurchaseOrderDetail purchaseOrderDetail);
 		Task CreateInboundTransactionQueue(TransactionQueueInbound transactionQueue);
@@ -29,7 +32,8 @@ namespace CodeProject.PurchaseOrderManagement.Interfaces
 		Task<TransactionQueueSemaphore> GetTransactionQueueSemaphore(string semaphoreKey);
 		Task UpdateTransactionQueueSemaphore(TransactionQueueSemaphore transactionQueueSemaphore);
 		Task CreateTransactionQueueSemaphore(TransactionQueueSemaphore transactionQueueSemaphore);
-		Task<List<Supplier>> SupplierInquiry(int accountID, string supplierName, DataGridPagingInformation paging);
+		Task<List<Supplier>> SupplierInquiry(int accountId, string supplierName, DataGridPagingInformation paging);
+		Task<PurchaseOrder> GetPurchaseOrder(int accountId, int purchaseOrderId);
 
 
 	}

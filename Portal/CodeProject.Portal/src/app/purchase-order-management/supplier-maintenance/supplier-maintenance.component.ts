@@ -8,6 +8,8 @@ import { SupplierViewModel } from '../view-models/supplier.viewmodel';
 import { SupplierViewModelResponse } from '../view-models/supplier-response.viewmodel';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { PurchaseOrderViewModel } from '../view-models/purchase-order.viewmodel';
+import { PurchaseOrderViewModelResponse } from '../view-models/purchase-order-response.viewmodel';
 
 @Component({
   selector: 'app-supplier-maintenance',
@@ -88,12 +90,14 @@ export class SupplierMaintenanceComponent implements OnInit, OnDestroy {
   }
 
   private getSupplierFailed(error: HttpErrorResponse) {
+
     let errorResponse: SupplierViewModelResponse = error.error;
     if (error.status > 0) {
       this.alertService.ShowErrorMessage(errorResponse.returnMessage[0]);
     } else {
       this.alertService.ShowErrorMessage(error.message);
     }
+
   }
 
   public createOrUpdateSupplier() {
@@ -116,6 +120,7 @@ export class SupplierMaintenanceComponent implements OnInit, OnDestroy {
   }
 
   private createOrUpdateSupplierSuccess(response: SupplierViewModelResponse) {
+
     let supplierViewModel: SupplierViewModel = response.entity;
     this.supplierViewModel.supplierId = supplierViewModel.supplierId;
     const message = 'Supplier successfully saved.';
@@ -127,12 +132,14 @@ export class SupplierMaintenanceComponent implements OnInit, OnDestroy {
   }
 
   private createOrUpdateSupplierFailed(error: HttpErrorResponse) {
+
     let errorResponse: SupplierViewModelResponse = error.error;
     if (error.status > 0) {
       this.alertService.ShowErrorMessage(errorResponse.returnMessage[0]);
     } else {
       this.alertService.ShowErrorMessage(error.message);
     }
+
   }
 
   private editSupplier() {
@@ -141,8 +148,30 @@ export class SupplierMaintenanceComponent implements OnInit, OnDestroy {
   }
 
   public createPurchaseOrder() {
-    let supplierId = this.supplierViewModel.supplierId;
-    this.router.navigate(['/purchaseordermanagement/purchase-order-maintenance'], { queryParams: { id: supplierId } });
+
+    let purchaseOrderViewModel = new PurchaseOrderViewModel();
+    purchaseOrderViewModel.supplierId = this.supplierViewModel.supplierId;
+
+    let url = this.sessionService.appSettings.purchaseOrderManagementWebApiUrl + 'purchaseorder/createpurchaseorder';
+    this.httpService.HttpPost<PurchaseOrderViewModelResponse>(url, purchaseOrderViewModel)
+    .subscribe((response: PurchaseOrderViewModelResponse) => {
+      this.createPurchaseOrderSuccess(response);
+    }, response => this.createPurchaseOrderFailed(response));
+
+  }
+
+  private createPurchaseOrderSuccess(response: PurchaseOrderViewModelResponse) {
+    let purchaseOrderId = response.entity.purchaseOrderId;
+    this.router.navigate(['/purchaseordermanagement/purchase-order-maintenance'], { queryParams: { id: purchaseOrderId } });
+  }
+
+  private createPurchaseOrderFailed(error: HttpErrorResponse) {
+    let errorResponse: SupplierViewModelResponse = error.error;
+    if (error.status > 0) {
+      this.alertService.ShowErrorMessage(errorResponse.returnMessage[0]);
+    } else {
+      this.alertService.ShowErrorMessage(error.message);
+    }
   }
 
 }

@@ -106,17 +106,42 @@ namespace CodeProject.PurchaseOrderManagement.Data.EntityFramework.Migrations
                     b.ToTable("PurchaseOrderDetails");
                 });
 
+            modelBuilder.Entity("CodeProject.PurchaseOrderManagement.Data.Entities.PurchaseOrderNumberSequence", b =>
+                {
+                    b.Property<int>("PurchaseOrderNumberSequenceId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AccountId");
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<DateTime>("DateUpdated");
+
+                    b.Property<int>("PurchaseOrderNumber");
+
+                    b.HasKey("PurchaseOrderNumberSequenceId");
+
+                    b.ToTable("PurchaseOrderNumberSequences");
+                });
+
             modelBuilder.Entity("CodeProject.PurchaseOrderManagement.Data.Entities.PurchaseOrderStatus", b =>
                 {
                     b.Property<int>("PurchaseOrderStatusId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("Description");
+                    b.Property<string>("Description");
 
                     b.HasKey("PurchaseOrderStatusId");
 
                     b.ToTable("PurchaseOrderStatuses");
+
+                    b.HasData(
+                        new { PurchaseOrderStatusId = 1, Description = "Open" },
+                        new { PurchaseOrderStatusId = 2, Description = "Submitted" },
+                        new { PurchaseOrderStatusId = 3, Description = "Completed" }
+                    );
                 });
 
             modelBuilder.Entity("CodeProject.PurchaseOrderManagement.Data.Entities.Supplier", b =>
@@ -266,7 +291,7 @@ namespace CodeProject.PurchaseOrderManagement.Data.EntityFramework.Migrations
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("CodeProject.PurchaseOrderManagement.Data.Entities.PurchaseOrder", "SalesOrder")
+                    b.HasOne("CodeProject.PurchaseOrderManagement.Data.Entities.PurchaseOrder", "PurchaseOrder")
                         .WithMany()
                         .HasForeignKey("PurchaseOrderId")
                         .OnDelete(DeleteBehavior.Cascade);

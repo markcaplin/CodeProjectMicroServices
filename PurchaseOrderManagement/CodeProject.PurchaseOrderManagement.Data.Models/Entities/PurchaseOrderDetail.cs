@@ -14,6 +14,6 @@ namespace CodeProject.PurchaseOrderManagement.Data.Entities
 		public DateTime DateCreated { get; set; }
 		public DateTime DateUpdated { get; set; }
 		public Product Product { get; set; }
-		public PurchaseOrder SalesOrder { get; set; }
+		public PurchaseOrder PurchaseOrder { get; set; }
 	}
 }

@@ -28,7 +28,6 @@ export class SupplierInquiryComponent implements OnInit {
   public supplierInquiryViewModel: SupplierInquiryViewModel;
   public selectedRowIndex = -1;
 
- 
   constructor(private router: Router, private sessionService: SessionService, private httpService: HttpService,
      private alertService: AlertService) {
 
@@ -37,17 +36,20 @@ export class SupplierInquiryComponent implements OnInit {
     this.supplierInquiryViewModel = new SupplierInquiryViewModel();
     this.supplierInquiryViewModel.pageSize = 20;
 
-    this.supplierInquiryViewModel.displayedColumns = ['supplierName', 'addressLine1', 'addressLine2',
-     'city', 'region', 'postalCode'];
+    this.supplierInquiryViewModel.displayedColumns = ['supplierName', 'addressLine1', 'addressLine2', 'city', 'region', 'postalCode'];
     this.supplierInquiryViewModel.pageSizeOptions = [5, 10, 25, 100];
 
     this.initializeSearch();
  }
 
   ngOnInit() {
- 
+
     this.searchForm.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe(
-      changes => this.executeSearch()
+      changes => {
+          this.supplierInquiryViewModel.currentPageNumber = 1;
+          this.supplierInquiryViewModel.currentPageIndex = 0;
+          this.executeSearch();
+        }
       );
 
     this.executeSearch();
@@ -55,6 +57,7 @@ export class SupplierInquiryComponent implements OnInit {
   }
 
   private initializeSearch() {
+
     this.supplierInquiryViewModel.supplierName = '';
     this.supplierInquiryViewModel.currentPageNumber = 1;
     this.supplierInquiryViewModel.currentPageIndex = 0;
@@ -64,6 +67,7 @@ export class SupplierInquiryComponent implements OnInit {
     this.supplierInquiryViewModel.sortExpression = '';
 
     this.supplierInquiryViewModel.suppliers = new Array<SupplierViewModel>();
+
   }
 
   private executeSearch() {
@@ -110,7 +114,6 @@ export class SupplierInquiryComponent implements OnInit {
   public selectSupplier(row){
     let supplierId = this.supplierInquiryViewModel.suppliers[row].supplierId;
     this.router.navigate(['/purchaseordermanagement/supplier-maintenance'], { queryParams: { id: supplierId } });
-
   }
 
 }

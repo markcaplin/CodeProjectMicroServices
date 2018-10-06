@@ -16,6 +16,7 @@ namespace CodeProject.PurchaseOrderManagement.Data.Entities
 		public PurchaseOrderStatus PurchaseOrderStatus { get; set; }
 		public DateTime DateCreated { get; set; }
 		public DateTime DateUpdated { get; set; }
+		public List<PurchaseOrderDetail> PurchaseOrderDetails { get; set; }
 	}
 
 }
