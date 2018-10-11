@@ -20,7 +20,9 @@ export class PurchaseOrderViewModel {
     public purchaseOrderStatusId: number;
     public purchaseOrderStatusDescription: string;
     public dateCreated: Date;
+    public orderDate: string;
     public dateUpdated: Date;
     public purchaseOrderDetails: Array<PurchaseOrderDetailViewModel>;
+    public displayedColumns: Array<string>;
 
 }

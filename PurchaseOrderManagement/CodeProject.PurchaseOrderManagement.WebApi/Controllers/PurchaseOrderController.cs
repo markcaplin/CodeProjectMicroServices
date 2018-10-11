@@ -82,6 +82,45 @@ namespace CodeProject.PurchaseOrderManagement.WebApi.Controllers
 
 		}
 
+		/// <summary>
+		/// Create Purchase Order Detail
+		/// </summary>
+		/// <param name="purchaseOrderDetailDataTransformation"></param>
+		/// <returns></returns>
+		[HttpPost]
+		[Route("CreatePurchaseOrderDetail")]
+		public async Task<IActionResult> CreatePurchaseOrderDetail([FromBody] PurchaseOrderDetailDataTransformation purchaseOrderDetailDataTransformation)
+		{
+
+			SecurityModel securityModel = (SecurityModel)(HttpContext.Items["SecurityModel"]);
+
+			int accountId = securityModel.AccountId;
+			int purchaseOrderId = purchaseOrderDetailDataTransformation.PurchaseOrderId;
+
+			purchaseOrderDetailDataTransformation.AccountId = accountId;
+
+			ResponseModel<PurchaseOrderDetailDataTransformation> returnResponse = new ResponseModel<PurchaseOrderDetailDataTransformation>();
+	
+			try
+			{
+				returnResponse = await _purchaseOrderManagementBusinessService.CreatePurchaseOrderDetail(purchaseOrderDetailDataTransformation);
+				returnResponse.Token = securityModel.Token;
+				if (returnResponse.ReturnStatus == false)
+				{
+					return BadRequest(returnResponse);
+				}
+
+				return Ok(returnResponse);
+
+			}
+			catch (Exception ex)
+			{
+				returnResponse.ReturnStatus = false;
+				returnResponse.ReturnMessage.Add(ex.Message);
+				return BadRequest(returnResponse);
+			}
+
+		}
 
 		/// <summary>
 		/// Get Purchase Order
@@ -103,6 +142,86 @@ namespace CodeProject.PurchaseOrderManagement.WebApi.Controllers
 			try
 			{
 				returnResponse = await _purchaseOrderManagementBusinessService.GetPurchaseOrder(accountId, purchaseOrderId);
+				returnResponse.Token = securityModel.Token;
+				if (returnResponse.ReturnStatus == false)
+				{
+					return BadRequest(returnResponse);
+				}
+
+				return Ok(returnResponse);
+
+			}
+			catch (Exception ex)
+			{
+				returnResponse.ReturnStatus = false;
+				returnResponse.ReturnMessage.Add(ex.Message);
+				return BadRequest(returnResponse);
+			}
+
+		}
+
+		/// <summary>
+		/// Get Product
+		/// </summary>
+		/// <param name="productDataTransformation"></param>
+		/// <returns></returns>
+		[HttpPost]
+		[Route("GetProduct")]
+		public async Task<IActionResult> GetProduct([FromBody] ProductDataTransformation productDataTransformation)
+		{
+
+			SecurityModel securityModel = (SecurityModel)(HttpContext.Items["SecurityModel"]);
+
+			int accountId = securityModel.AccountId;
+			string productNumber = productDataTransformation.ProductNumber;
+
+			ResponseModel<ProductDataTransformation> returnResponse = new ResponseModel<ProductDataTransformation>();
+
+			try
+			{
+				returnResponse = await _purchaseOrderManagementBusinessService.GetProduct(accountId, productNumber);
+				returnResponse.Token = securityModel.Token;
+				if (returnResponse.ReturnStatus == false)
+				{
+					return BadRequest(returnResponse);
+				}
+
+				return Ok(returnResponse);
+
+			}
+			catch (Exception ex)
+			{
+				returnResponse.ReturnStatus = false;
+				returnResponse.ReturnMessage.Add(ex.Message);
+				return BadRequest(returnResponse);
+			}
+
+		}
+
+		/// <summary>
+		/// Purchase Order Inquiry
+		/// </summary>
+		/// <param name="purchaseOrderInquiryDataTransformation"></param>
+		/// <returns></returns>
+		[HttpPost]
+		[Route("PurchaseOrderInquiry")]
+		public async Task<IActionResult> PurchaseOrderInquiry([FromBody] PurchaseOrderInquiryDataTransformation purchaseOrderInquiryDataTransformation)
+		{
+
+			SecurityModel securityModel = (SecurityModel)(HttpContext.Items["SecurityModel"]);
+
+			int accountId = securityModel.AccountId;
+			string supplierName = purchaseOrderInquiryDataTransformation.SupplierName;
+			int pageSize = purchaseOrderInquiryDataTransformation.PageSize;
+			int currentPageNumber = purchaseOrderInquiryDataTransformation.CurrentPageNumber;
+			string sortDirection = purchaseOrderInquiryDataTransformation.SortDirection;
+			string sortExpression = purchaseOrderInquiryDataTransformation.SortExpression;
+
+			ResponseModel<List<PurchaseOrderDataTransformation>> returnResponse = new ResponseModel<List<PurchaseOrderDataTransformation>>();
+
+			try
+			{
+				returnResponse = await _purchaseOrderManagementBusinessService.PurchaseOrderInquiry(accountId, supplierName, currentPageNumber, pageSize, sortExpression, sortDirection);
 				returnResponse.Token = securityModel.Token;
 				if (returnResponse.ReturnStatus == false)
 				{

@@ -25,7 +25,7 @@ export class SupplierMaintenanceComponent implements OnInit, OnDestroy {
   private routerSubscription: Subscription;
 
 
-  constructor(private router: Router, private route: ActivatedRoute, private sessionService: SessionService, 
+  constructor(private router: Router, private route: ActivatedRoute, private sessionService: SessionService,
     private alertService: AlertService, private httpService: HttpService) {
 
     this.supplierViewModel = new SupplierViewModel();

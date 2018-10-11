@@ -44,7 +44,7 @@ namespace CodeProject.PurchaseOrderManagement.BusinessServices
 			ResponseModel<SupplierDataTransformation> returnResponse = new ResponseModel<SupplierDataTransformation>();
 
 			Supplier supplier = new Supplier();
-			
+
 			try
 			{
 				_purchaseOrderManagementDataService.OpenConnection(_connectionStrings.PrimaryDatabaseConnectionString);
@@ -91,7 +91,7 @@ namespace CodeProject.PurchaseOrderManagement.BusinessServices
 			}
 
 			supplierDataTransformation.SupplierId = supplier.SupplierId;
-		
+
 			returnResponse.Entity = supplierDataTransformation;
 
 			return returnResponse;
@@ -165,6 +165,98 @@ namespace CodeProject.PurchaseOrderManagement.BusinessServices
 		}
 
 
+		/// <summary>
+		/// Create Purchase Order Detail
+		/// </summary>
+		/// <param name="purchaseOrderDetailDataTransformation"></param>
+		/// <returns></returns>
+		public async Task<ResponseModel<PurchaseOrderDetailDataTransformation>> CreatePurchaseOrderDetail(PurchaseOrderDetailDataTransformation purchaseOrderDetailDataTransformation)
+		{
+
+			ResponseModel<PurchaseOrderDetailDataTransformation> returnResponse = new ResponseModel<PurchaseOrderDetailDataTransformation>();
+
+			PurchaseOrderDetail purchaseOrderDetail = new PurchaseOrderDetail();
+
+			try
+			{
+				int accountId = purchaseOrderDetailDataTransformation.AccountId;
+				int purchaseOrderId = purchaseOrderDetailDataTransformation.PurchaseOrderId;
+
+				_purchaseOrderManagementDataService.OpenConnection(_connectionStrings.PrimaryDatabaseConnectionString);
+				_purchaseOrderManagementDataService.BeginTransaction((int)IsolationLevel.ReadCommitted);
+
+				PurchaseOrderDetailBusinessRules<PurchaseOrderDetailDataTransformation> purchaseOrderDetailBusinessRules = new PurchaseOrderDetailBusinessRules<PurchaseOrderDetailDataTransformation>(purchaseOrderDetailDataTransformation);
+				ValidationResult validationResult = purchaseOrderDetailBusinessRules.Validate();
+				if (validationResult.ValidationStatus == false)
+				{
+					_purchaseOrderManagementDataService.RollbackTransaction();
+
+					returnResponse.ReturnMessage = validationResult.ValidationMessages;
+					returnResponse.ReturnStatus = validationResult.ValidationStatus;
+
+					return returnResponse;
+				}
+
+				PurchaseOrder purchaseOrder = await _purchaseOrderManagementDataService.GetPurchaseOrderHeader(accountId, purchaseOrderId);
+				if (purchaseOrder == null)
+				{
+					_purchaseOrderManagementDataService.RollbackTransaction();
+
+					returnResponse.ReturnMessage.Add("Purchase Order not found");
+					returnResponse.ReturnStatus = false;
+
+					return returnResponse;
+				}
+
+				double lineItemAmount = purchaseOrderDetailDataTransformation.UnitPrice * purchaseOrderDetailDataTransformation.OrderQuantity;
+
+				purchaseOrder.OrderTotal = purchaseOrder.OrderTotal + lineItemAmount;
+
+				await _purchaseOrderManagementDataService.UpdatePurchaseOrderHeader(purchaseOrder);
+
+				purchaseOrderDetail.ProductId = purchaseOrderDetailDataTransformation.ProductId;
+				purchaseOrderDetail.PurchaseOrderId = purchaseOrderDetailDataTransformation.PurchaseOrderId;
+				purchaseOrderDetail.UnitPrice = purchaseOrderDetailDataTransformation.UnitPrice;
+				purchaseOrderDetail.OrderQuantity = purchaseOrderDetailDataTransformation.OrderQuantity;
+
+				await _purchaseOrderManagementDataService.CreatePurchaseOrderDetail(purchaseOrderDetail);
+
+				await _purchaseOrderManagementDataService.UpdateDatabase();
+
+				_purchaseOrderManagementDataService.CommitTransaction();
+
+				PurchaseOrderDetail updatedPurchaseOrderDetail = await _purchaseOrderManagementDataService.GetPurchaseOrderDetail(purchaseOrderDetail.PurchaseOrderDetailId);
+
+				purchaseOrderDetailDataTransformation = new PurchaseOrderDetailDataTransformation();
+
+				purchaseOrderDetailDataTransformation.PurchaseOrderDetailId = updatedPurchaseOrderDetail.PurchaseOrderDetailId;
+				purchaseOrderDetailDataTransformation.PurchaseOrderId = updatedPurchaseOrderDetail.PurchaseOrderId;
+				purchaseOrderDetailDataTransformation.ProductId = updatedPurchaseOrderDetail.ProductId;
+				purchaseOrderDetailDataTransformation.ProductMasterId = updatedPurchaseOrderDetail.Product.ProductMasterId;
+				purchaseOrderDetailDataTransformation.ProductNumber = updatedPurchaseOrderDetail.Product.ProductNumber;
+				purchaseOrderDetailDataTransformation.ProductDescription = updatedPurchaseOrderDetail.Product.Description;
+				purchaseOrderDetailDataTransformation.UnitPrice = updatedPurchaseOrderDetail.UnitPrice;
+				purchaseOrderDetailDataTransformation.OrderQuantity = updatedPurchaseOrderDetail.OrderQuantity;
+
+				returnResponse.ReturnStatus = true;
+
+			}
+			catch (Exception ex)
+			{
+				_purchaseOrderManagementDataService.RollbackTransaction();
+				returnResponse.ReturnStatus = false;
+				returnResponse.ReturnMessage.Add(ex.Message);
+			}
+			finally
+			{
+				_purchaseOrderManagementDataService.CloseConnection();
+			}
+
+			returnResponse.Entity = purchaseOrderDetailDataTransformation;
+
+			return returnResponse;
+
+		}
 
 		/// <summary>
 		/// Update Supplier
@@ -177,7 +269,7 @@ namespace CodeProject.PurchaseOrderManagement.BusinessServices
 			ResponseModel<SupplierDataTransformation> returnResponse = new ResponseModel<SupplierDataTransformation>();
 
 			Supplier supplier = new Supplier();
-	
+
 			try
 			{
 				_purchaseOrderManagementDataService.OpenConnection(_connectionStrings.PrimaryDatabaseConnectionString);
@@ -261,7 +353,7 @@ namespace CodeProject.PurchaseOrderManagement.BusinessServices
 				dataGridPagingInformation.SortExpression = sortExpression;
 
 				List<Supplier> supplierList = await _purchaseOrderManagementDataService.SupplierInquiry(accountId, supplierName, dataGridPagingInformation);
-				foreach(Supplier supplier in supplierList)
+				foreach (Supplier supplier in supplierList)
 				{
 					SupplierDataTransformation supplierDataTransformation = new SupplierDataTransformation();
 					supplierDataTransformation.SupplierId = supplier.SupplierId;
@@ -325,7 +417,7 @@ namespace CodeProject.PurchaseOrderManagement.BusinessServices
 				supplierDataTransformation.Region = supplier.Region;
 				supplierDataTransformation.PostalCode = supplier.PostalCode;
 				supplierDataTransformation.SupplierName = supplier.Name;
-		
+
 				returnResponse.ReturnStatus = true;
 
 			}
@@ -379,7 +471,7 @@ namespace CodeProject.PurchaseOrderManagement.BusinessServices
 				purchaseOrderDataTransformation.DateUpdated = purchaseOrder.DateUpdated;
 				purchaseOrderDataTransformation.PurchaseOrderDetails = new List<PurchaseOrderDetailDataTransformation>();
 
-				foreach(PurchaseOrderDetail purchaseOrderDetail in purchaseOrder.PurchaseOrderDetails)
+				foreach (PurchaseOrderDetail purchaseOrderDetail in purchaseOrder.PurchaseOrderDetails)
 				{
 					PurchaseOrderDetailDataTransformation purchaseOrderDetailDataTransformation = new PurchaseOrderDetailDataTransformation();
 					purchaseOrderDetailDataTransformation.PurchaseOrderDetailId = purchaseOrderDetail.PurchaseOrderDetailId;
@@ -387,14 +479,133 @@ namespace CodeProject.PurchaseOrderManagement.BusinessServices
 					purchaseOrderDetailDataTransformation.ProductId = purchaseOrderDetail.ProductId;
 					purchaseOrderDetailDataTransformation.ProductMasterId = purchaseOrderDetail.Product.ProductMasterId;
 					purchaseOrderDetailDataTransformation.ProductNumber = purchaseOrderDetail.Product.ProductNumber;
-					purchaseOrderDetailDataTransformation.Description = purchaseOrderDetail.Product.Description;
-					purchaseOrderDetailDataTransformation.UnitPrice = purchaseOrderDetail.Product.UnitPrice;
+					purchaseOrderDetailDataTransformation.ProductDescription = purchaseOrderDetail.Product.Description;
+					purchaseOrderDetailDataTransformation.UnitPrice = purchaseOrderDetail.UnitPrice;
 					purchaseOrderDetailDataTransformation.OrderQuantity = purchaseOrderDetail.OrderQuantity;
 					purchaseOrderDetailDataTransformation.DateCreated = purchaseOrderDetail.DateCreated;
 					purchaseOrderDetailDataTransformation.DateUpdated = purchaseOrderDetail.DateUpdated;
 
 					purchaseOrderDataTransformation.PurchaseOrderDetails.Add(purchaseOrderDetailDataTransformation);
 				}
+
+				returnResponse.ReturnStatus = true;
+
+			}
+			catch (Exception ex)
+			{
+				returnResponse.ReturnStatus = false;
+				returnResponse.ReturnMessage.Add(ex.Message);
+			}
+			finally
+			{
+				_purchaseOrderManagementDataService.CloseConnection();
+			}
+
+			returnResponse.Entity = purchaseOrderDataTransformation;
+
+			return returnResponse;
+
+		}
+
+		/// <summary>
+		/// Get Product
+		/// </summary>
+		/// <param name="accountId"></param>
+		/// <param name="productNumber"></param>
+		/// <returns></returns>
+		public async Task<ResponseModel<ProductDataTransformation>> GetProduct(int accountId, string productNumber)
+		{
+			ResponseModel<ProductDataTransformation> returnResponse = new ResponseModel<ProductDataTransformation>();
+			ProductDataTransformation productDataTransformation = new ProductDataTransformation();
+
+			try
+			{
+				_purchaseOrderManagementDataService.OpenConnection(_connectionStrings.PrimaryDatabaseConnectionString);
+
+				Product product = await _purchaseOrderManagementDataService.GetProduct(accountId, productNumber);
+				if (product == null)
+				{
+					returnResponse.ReturnStatus = false;
+					returnResponse.ReturnMessage.Add("Product Number not found.");
+				}
+				else
+				{
+					productDataTransformation.AccountId = product.AccountId;
+					productDataTransformation.ProductId = product.ProductId;
+					productDataTransformation.ProductMasterId = product.ProductMasterId;
+					productDataTransformation.ProductNumber = product.ProductNumber;
+					productDataTransformation.Description = product.Description;
+					returnResponse.ReturnStatus = true;
+				}
+
+			}
+			catch (Exception ex)
+			{
+				returnResponse.ReturnStatus = false;
+				returnResponse.ReturnMessage.Add(ex.Message);
+			}
+			finally
+			{
+				_purchaseOrderManagementDataService.CloseConnection();
+			}
+
+			returnResponse.Entity = productDataTransformation;
+
+			return returnResponse;
+
+		}
+
+		/// <summary>
+		/// Purchase Order Inquiry
+		/// </summary>
+		/// <param name="accountId"></param>
+		/// <param name="supplierName"></param>
+		/// <param name="currentPageNumber"></param>
+		/// <param name="pageSize"></param>
+		/// <param name="sortExpression"></param>
+		/// <param name="sortDirection"></param>
+		/// <returns></returns>
+		public async Task<ResponseModel<List<PurchaseOrderDataTransformation>>> PurchaseOrderInquiry(int accountId, string supplierName, int currentPageNumber, int pageSize, string sortExpression, string sortDirection)
+		{
+
+			ResponseModel<List<PurchaseOrderDataTransformation>> returnResponse = new ResponseModel<List<PurchaseOrderDataTransformation>>();
+
+			List<PurchaseOrderDataTransformation> purchaseOrders = new List<PurchaseOrderDataTransformation>();
+
+			try
+			{
+				_purchaseOrderManagementDataService.OpenConnection(_connectionStrings.PrimaryDatabaseConnectionString);
+
+				DataGridPagingInformation dataGridPagingInformation = new DataGridPagingInformation();
+				dataGridPagingInformation.CurrentPageNumber = currentPageNumber;
+				dataGridPagingInformation.PageSize = pageSize;
+				dataGridPagingInformation.SortDirection = sortDirection;
+				dataGridPagingInformation.SortExpression = sortExpression;
+
+				List<PurchaseOrder> purchaseOrderList = await _purchaseOrderManagementDataService.PurchaseOrderInquiry(accountId, supplierName, dataGridPagingInformation);
+				foreach (PurchaseOrder purchaseOrder in purchaseOrderList)
+				{
+					PurchaseOrderDataTransformation purchaseOrderDataTransformation = new PurchaseOrderDataTransformation();
+					purchaseOrderDataTransformation.SupplierId = purchaseOrder.SupplierId;
+					purchaseOrderDataTransformation.AddressLine1 = purchaseOrder.Supplier.AddressLine1;
+					purchaseOrderDataTransformation.AddressLine2 = purchaseOrder.Supplier.AddressLine2;
+					purchaseOrderDataTransformation.City = purchaseOrder.Supplier.City;
+					purchaseOrderDataTransformation.Region = purchaseOrder.Supplier.Region;
+					purchaseOrderDataTransformation.PostalCode = purchaseOrder.Supplier.PostalCode;
+					purchaseOrderDataTransformation.SupplierName = purchaseOrder.Supplier.Name;
+					purchaseOrderDataTransformation.DateCreated = purchaseOrder.DateCreated;
+					purchaseOrderDataTransformation.OrderTotal = purchaseOrder.OrderTotal;
+					purchaseOrderDataTransformation.AccountId = purchaseOrder.AccountId;
+					purchaseOrderDataTransformation.PurchaseOrderId = purchaseOrder.PurchaseOrderId;
+					purchaseOrderDataTransformation.PurchaseOrderNumber = purchaseOrder.PurchaseOrderNumber;
+					purchaseOrderDataTransformation.PurchaseOrderStatusId = purchaseOrder.PurchaseOrderStatusId;
+					purchaseOrderDataTransformation.PurchaseOrderStatusDescription = purchaseOrder.PurchaseOrderStatus.Description;
+					purchaseOrders.Add(purchaseOrderDataTransformation);
+				}
+
+				returnResponse.Entity = purchaseOrders;
+				returnResponse.TotalRows = dataGridPagingInformation.TotalRows;
+				returnResponse.TotalPages = dataGridPagingInformation.TotalPages;
 
 				returnResponse.ReturnStatus = true;
 
@@ -410,12 +621,9 @@ namespace CodeProject.PurchaseOrderManagement.BusinessServices
 				_purchaseOrderManagementDataService.CloseConnection();
 			}
 
-			returnResponse.Entity = purchaseOrderDataTransformation;
-
 			return returnResponse;
 
 		}
-
 
 
 

@@ -4,9 +4,15 @@ export class PurchaseOrderDetailViewModel {
     public productId: number;
     public productMasterId: number;
     public productNumber: string;
-    public description: string;
+    public productDescription: string;
     public unitPrice: number;
+    public unitPriceFormatted: string;
     public orderQuantity: number;
+    public orderQuantityFormatted: string;
     public dateCreated: Date;
     public dateUpdated: Date;
+    public editQuantity: Boolean;
+    public editUnitPrice: Boolean;
+    public editProductNumber: Boolean;
+    public editMode: Boolean;
 }

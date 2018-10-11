@@ -153,7 +153,6 @@ namespace CodeProject.Shared.Common.BusinessRules.BusinessRules
 			return true;
 		}
 
-
 		/// <summary>
 		/// IsInteger
 		/// </summary>

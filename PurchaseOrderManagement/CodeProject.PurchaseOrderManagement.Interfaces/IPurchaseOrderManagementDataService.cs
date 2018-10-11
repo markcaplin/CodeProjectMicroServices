@@ -34,6 +34,11 @@ namespace CodeProject.PurchaseOrderManagement.Interfaces
 		Task CreateTransactionQueueSemaphore(TransactionQueueSemaphore transactionQueueSemaphore);
 		Task<List<Supplier>> SupplierInquiry(int accountId, string supplierName, DataGridPagingInformation paging);
 		Task<PurchaseOrder> GetPurchaseOrder(int accountId, int purchaseOrderId);
+		Task<Product> GetProduct(int accountId, string productNumber);
+		Task<PurchaseOrder> GetPurchaseOrderHeader(int accountId, int purchaseOrderId);
+		Task UpdatePurchaseOrderHeader(PurchaseOrder purchaseOrder);
+		Task<List<PurchaseOrder>> PurchaseOrderInquiry(int accountId, string supplierName, DataGridPagingInformation paging);
+		Task<PurchaseOrderDetail> GetPurchaseOrderDetail(int purchaseOrderDetailId);
 
 
 	}

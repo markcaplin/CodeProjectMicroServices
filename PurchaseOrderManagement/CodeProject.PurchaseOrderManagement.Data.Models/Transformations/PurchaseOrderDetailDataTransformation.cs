@@ -6,12 +6,13 @@ namespace CodeProject.PurchaseOrderManagement.Data.Transformations
 {
     public class PurchaseOrderDetailDataTransformation
     {
+		public int AccountId { get; set; }
 		public int PurchaseOrderDetailId { get; set; }
 		public int PurchaseOrderId { get; set; }
 		public int ProductId { get; set; }
 		public int ProductMasterId { get; set; }
 		public string ProductNumber { get; set; }
-		public string Description { get; set; }
+		public string ProductDescription { get; set; }
 		public double UnitPrice { get; set; }
 		public int OrderQuantity { get; set; }
 		public DateTime DateCreated { get; set; }
