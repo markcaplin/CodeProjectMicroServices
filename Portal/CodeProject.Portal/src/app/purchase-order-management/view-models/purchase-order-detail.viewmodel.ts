@@ -15,4 +15,9 @@ export class PurchaseOrderDetailViewModel {
     public editUnitPrice: Boolean;
     public editProductNumber: Boolean;
     public editMode: Boolean;
+    public disableSaveButton: Boolean;
+    public disableEditButton: Boolean;
+    public disableAddButton: Boolean;
+    public disableCancelButton: Boolean;
+    public disableDeleteButton: Boolean;
 }

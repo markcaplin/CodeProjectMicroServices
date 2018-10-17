@@ -62,7 +62,7 @@
       </div>
 
       <div style="margin-top:10px; margin-bottom:20px">
-        Purchase Order Details {{purchaseOrderViewModel.purchaseOrderDetails.length}}
+        Purchase Order Details
       </div>
 
       <table #table mat-table [dataSource]="detailDataSource" class="mat-elevation-z8">
@@ -71,7 +71,7 @@
           <th mat-header-cell *matHeaderCellDef> Product Number</th>
           <td mat-cell *matCellDef="let element;  let i = index;">
             <mat-form-field style="width:250px !important">
-              <input [disabled]="!element.editProductNumber" (blur)="getProduct()" matInput name="ProductNumberGrid{{i}}"
+              <input tabindex="1" required [disabled]="!element.editProductNumber" (blur)="getProduct()" matInput name="ProductNumberGrid{{i}}"
                 [value]="element.productNumber" [(ngModel)]="element.productNumber">
             </mat-form-field>
           </td>
@@ -90,7 +90,7 @@
           <th mat-header-cell *matHeaderCellDef> Unit Price</th>
           <td mat-cell *matCellDef="let element; let i = index;">
             <mat-form-field style="width:100px !important">
-              <input type="number" [disabled]="!element.editUnitPrice" matInput name="UnitPriceGrid{{i}}" [value]="element.unitPriceFormatted"
+              <input tabindex="2" type="number" required [disabled]="!element.editUnitPrice" matInput name="UnitPriceGrid{{i}}" [value]="element.unitPriceFormatted"
                 [(ngModel)]="element.unitPriceFormatted">
             </mat-form-field>
           </td>
@@ -100,7 +100,7 @@
           <th mat-header-cell *matHeaderCellDef> Order Quantity</th>
           <td mat-cell *matCellDef="let element; let i = index;">
             <mat-form-field style="width:100px !important">
-              <input type="number" [disabled]="!element.editQuantity" matInput name="OrderQuantityGrid{{i}}" [value]="element.orderQuantityFormatted"
+              <input tabindex="3" type="number" required [disabled]="!element.editQuantity" matInput name="OrderQuantityGrid{{i}}" [value]="element.orderQuantityFormatted"
                 [(ngModel)]="element.orderQuantityFormatted">
 
             </mat-form-field>
@@ -111,33 +111,27 @@
           <th mat-header-cell *matHeaderCellDef>Actions</th>
           <td mat-cell *matCellDef="let element; let i = index;">
 
-            <!---
-            <button [disabled]="element.editMode" mat-flat-button color="primary" (click)="editLineItem(i)">Edit</button>&nbsp;
-            <button [disabled]="!element.editMode" mat-flat-button color="primary" (click)="saveLineItem(i)">Save</button>&nbsp;
-            <button [disabled]="element.editMode" mat-flat-button color="accent">Delete</button>&nbsp;
-            -->
-
             <button mat-icon-button [matMenuTriggerFor]="menu">
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
-              <button mat-menu-item [disabled]="element.editMode" (click)="editLineItem(i)">
+              <button mat-menu-item [disabled]="element.disableAddButton" (click)="addLineItem()">
                 <mat-icon>add</mat-icon>
                 <span>Add</span>
               </button>
-              <button mat-menu-item [disabled]="element.editMode" (click)="editLineItem(i)">
+              <button mat-menu-item [disabled]="element.disableEditButton" (click)="editLineItem(i)">
                 <mat-icon>edit</mat-icon>
                 <span>Edit</span>
               </button>
-              <button mat-menu-item [disabled]="!element.editMode">
+              <button mat-menu-item [disabled]="element.disableCancelButton" (click)="cancelEdit(i)">
                 <mat-icon>undo</mat-icon>
                 <span>Cancel</span>
               </button>
-              <button mat-menu-item [disabled]="!element.editMode" (click)="saveLineItem(i)">
+              <button mat-menu-item [disabled]="element.disableSaveButton" (click)="updateLineItem(i)">
                 <mat-icon>save</mat-icon>
                 <span>Save</span>
               </button>
-              <button mat-menu-item [disabled]="element.editMode">
+              <button mat-menu-item [disabled]="element.disableDeleteButton"  (click)="deleteLineItemDialog(i)">
                 <mat-icon>remove</mat-icon>
                 <span>Delete</span>
               </button>

@@ -39,6 +39,9 @@ namespace CodeProject.PurchaseOrderManagement.Interfaces
 		Task UpdatePurchaseOrderHeader(PurchaseOrder purchaseOrder);
 		Task<List<PurchaseOrder>> PurchaseOrderInquiry(int accountId, string supplierName, DataGridPagingInformation paging);
 		Task<PurchaseOrderDetail> GetPurchaseOrderDetail(int purchaseOrderDetailId);
+		Task UpdatePurchaseOrderDetail(PurchaseOrderDetail purchaseOrderDetail);
+		Task<PurchaseOrderDetail> GetPurchaseOrderDetailForUpdate(int purchaseOrderDetailId);
+		Task DeletePurchaseOrderDetail(int purchaseOrderDetailId);
 
 
 	}

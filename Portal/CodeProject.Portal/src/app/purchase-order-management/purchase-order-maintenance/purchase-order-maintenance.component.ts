@@ -2,7 +2,7 @@
 import { PurchaseOrderDetailViewModel } from './../view-models/purchase-order-detail.viewmodel';
 import { ProductViewModel } from './../view-models/product.viewmodel';
 import { AlertService } from './../../shared-components-services/alert.service';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { PurchaseOrderViewModel } from '../view-models/purchase-order.viewmodel';
 import { PurchaseOrderViewModelResponse } from '../view-models/purchase-order-response.viewmodel';
 import { SessionService } from '../../shared-components-services/session.service';
@@ -14,6 +14,16 @@ import { ProductViewModelResponse } from '../view-models/product-response.viewmo
 import { PurchaseOrderDetailViewModelResponse } from '../view-models/purchase-order-detail-response.viewmodel';
 
 import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+
+
+export interface DeletePurchaseOrderLineItemDialogData {
+  title: string;
+  index: number;
+  productNumber: string;
+  orderQuantity: string;
+  unitPrice: string;
+}
 
 @Component({
   selector: 'app-purchase-order-maintenance',
@@ -25,8 +35,9 @@ export class PurchaseOrderMaintenanceComponent implements OnInit, OnDestroy {
   public purchaseOrderViewModel: PurchaseOrderViewModel;
   private routerSubscription: Subscription;
   public detailDataSource = new MatTableDataSource<PurchaseOrderDetailViewModel>();
+  private currentLineItem: number;
 
-  constructor(private router: Router, private httpService: HttpService, private route: ActivatedRoute,
+  constructor(public dialog: MatDialog, private router: Router, private httpService: HttpService, private route: ActivatedRoute,
     private sessionService: SessionService, private alertService: AlertService) {
 
     this.purchaseOrderViewModel = new PurchaseOrderViewModel();
@@ -41,8 +52,17 @@ export class PurchaseOrderMaintenanceComponent implements OnInit, OnDestroy {
     purchaseOrderDetailViewModel.editQuantity = false;
     purchaseOrderDetailViewModel.editUnitPrice = false;
     purchaseOrderDetailViewModel.editMode = false;
+    purchaseOrderDetailViewModel.disableAddButton = true;
+    purchaseOrderDetailViewModel.disableCancelButton = true;
+    purchaseOrderDetailViewModel.disableDeleteButton = true;
+    purchaseOrderDetailViewModel.disableEditButton = true;
+    purchaseOrderDetailViewModel.disableSaveButton = true;
+
+    let purchaseOrderDetailViewModelOriginalValues = new PurchaseOrderDetailViewModel();
 
     this.purchaseOrderViewModel.purchaseOrderDetails.push(purchaseOrderDetailViewModel);
+    this.purchaseOrderViewModel.purchaseOrderDetailsOriginalValues.push(purchaseOrderDetailViewModelOriginalValues);
+
     this.detailDataSource.data = this.purchaseOrderViewModel.purchaseOrderDetails;
 
   }
@@ -63,11 +83,13 @@ export class PurchaseOrderMaintenanceComponent implements OnInit, OnDestroy {
   }
 
   private getPurchaseOrder() {
+
     let url = this.sessionService.appSettings.purchaseOrderManagementWebApiUrl + 'purchaseorder/getpurchaseorder';
     this.httpService.HttpPost<PurchaseOrderViewModelResponse>(url, this.purchaseOrderViewModel)
       .subscribe((response: PurchaseOrderViewModelResponse) => {
         this.getPurchaseOrderSuccess(response);
       }, response => this.getPurchaseOrderFailed(response));
+
   }
 
   private getPurchaseOrderSuccess(response: PurchaseOrderViewModelResponse) {
@@ -103,8 +125,21 @@ export class PurchaseOrderMaintenanceComponent implements OnInit, OnDestroy {
       purchaseOrderDetailViewModel.editUnitPrice = false;
       purchaseOrderDetailViewModel.editProductNumber = false;
       purchaseOrderDetailViewModel.editMode = false;
+      purchaseOrderDetailViewModel.disableAddButton = true;
+      purchaseOrderDetailViewModel.disableSaveButton = true;
+      purchaseOrderDetailViewModel.disableCancelButton = true;
+      purchaseOrderDetailViewModel.disableDeleteButton = false;
+      purchaseOrderDetailViewModel.disableEditButton = false;
+
+      let purchaseOrderDetailViewModelOriginalValues = new PurchaseOrderDetailViewModel();
+      purchaseOrderDetailViewModelOriginalValues .unitPrice = element.unitPrice;
+      purchaseOrderDetailViewModelOriginalValues .orderQuantity = element.orderQuantity;
+      purchaseOrderDetailViewModelOriginalValues .orderQuantityFormatted = element.orderQuantity.toFixed(0);
+      purchaseOrderDetailViewModelOriginalValues .unitPriceFormatted = element.unitPrice.toFixed(2);
 
       this.purchaseOrderViewModel.purchaseOrderDetails.push(purchaseOrderDetailViewModel);
+      this.purchaseOrderViewModel.purchaseOrderDetailsOriginalValues.push(purchaseOrderDetailViewModelOriginalValues);
+
     });
 
     this.detailDataSource.data = this.purchaseOrderViewModel.purchaseOrderDetails;
@@ -143,17 +178,21 @@ export class PurchaseOrderMaintenanceComponent implements OnInit, OnDestroy {
   }
 
   private getProductSuccess(response: ProductViewModelResponse) {
+
     this.purchaseOrderViewModel.purchaseOrderDetails[0].productDescription = response.entity.description;
     this.purchaseOrderViewModel.purchaseOrderDetails[0].productId = response.entity.productId;
     this.purchaseOrderViewModel.purchaseOrderDetails[0].editQuantity = true;
     this.purchaseOrderViewModel.purchaseOrderDetails[0].editUnitPrice = true;
     this.purchaseOrderViewModel.purchaseOrderDetails[0].editMode = true;
+    this.purchaseOrderViewModel.purchaseOrderDetails[0].disableAddButton = false;
+
   }
 
   private getProductFailed(error: HttpErrorResponse) {
 
+    this.purchaseOrderViewModel.purchaseOrderDetails[0].disableAddButton = true;
     let errorResponse: PurchaseOrderViewModelResponse = error.error;
-    console.log(error.status + ' error status');
+
     if (error.status > 0) {
       this.alertService.ShowErrorMessage(errorResponse.returnMessage[0]);
     } else {
@@ -162,7 +201,7 @@ export class PurchaseOrderMaintenanceComponent implements OnInit, OnDestroy {
 
   }
 
-  public saveLineItem(i: number) {
+  public addLineItem() {
 
     let purchaseOrderDetailViewModel = new PurchaseOrderDetailViewModel();
 
@@ -185,6 +224,7 @@ export class PurchaseOrderMaintenanceComponent implements OnInit, OnDestroy {
   private addLineItemSuccess(response: PurchaseOrderDetailViewModelResponse) {
 
     let purchaseOrderDetailViewModel = new PurchaseOrderDetailViewModel();
+
     purchaseOrderDetailViewModel.purchaseOrderDetailId = response.entity.purchaseOrderDetailId;
     purchaseOrderDetailViewModel.purchaseOrderId = response.entity.purchaseOrderId;
     purchaseOrderDetailViewModel.productId = response.entity.productId;
@@ -199,8 +239,21 @@ export class PurchaseOrderMaintenanceComponent implements OnInit, OnDestroy {
     purchaseOrderDetailViewModel.editUnitPrice = false;
     purchaseOrderDetailViewModel.editProductNumber = false;
     purchaseOrderDetailViewModel.editMode = false;
+    purchaseOrderDetailViewModel.disableAddButton = true;
+    purchaseOrderDetailViewModel.disableSaveButton = true;
+    purchaseOrderDetailViewModel.disableCancelButton = true;
+    purchaseOrderDetailViewModel.disableDeleteButton = false;
+    purchaseOrderDetailViewModel.disableEditButton = false;
+
+    let purchaseOrderDetailViewModelOriginalValues = new PurchaseOrderDetailViewModel();
+    purchaseOrderDetailViewModelOriginalValues.unitPrice = response.entity.unitPrice;
+    purchaseOrderDetailViewModelOriginalValues.orderQuantity = response.entity.orderQuantity;
+    purchaseOrderDetailViewModelOriginalValues.orderQuantityFormatted = response.entity.orderQuantity.toFixed(0);
+    purchaseOrderDetailViewModelOriginalValues.unitPriceFormatted = response.entity.unitPrice.toFixed(2);
 
     this.purchaseOrderViewModel.purchaseOrderDetails.push(purchaseOrderDetailViewModel);
+    this.purchaseOrderViewModel.purchaseOrderDetailsOriginalValues.push(purchaseOrderDetailViewModelOriginalValues);
+
     this.detailDataSource.data = this.purchaseOrderViewModel.purchaseOrderDetails;
 
     this.purchaseOrderViewModel.purchaseOrderDetails[0].productNumber = ' ';
@@ -213,6 +266,11 @@ export class PurchaseOrderMaintenanceComponent implements OnInit, OnDestroy {
     this.purchaseOrderViewModel.purchaseOrderDetails[0].editUnitPrice = false;
     this.purchaseOrderViewModel.purchaseOrderDetails[0].editProductNumber = true;
     this.purchaseOrderViewModel.purchaseOrderDetails[0].editMode = false;
+    this.purchaseOrderViewModel.purchaseOrderDetails[0].disableAddButton = true;
+    this.purchaseOrderViewModel.purchaseOrderDetails[0].disableCancelButton = true;
+    this.purchaseOrderViewModel.purchaseOrderDetails[0].disableDeleteButton = true;
+    this.purchaseOrderViewModel.purchaseOrderDetails[0].disableEditButton = true;
+    this.purchaseOrderViewModel.purchaseOrderDetails[0].disableSaveButton = true;
 
     const message = 'Line Item successfully saved.';
     this.alertService.ShowSuccessMessage(message);
@@ -232,17 +290,200 @@ export class PurchaseOrderMaintenanceComponent implements OnInit, OnDestroy {
   }
 
   public editLineItem(i: number) {
+
     this.purchaseOrderViewModel.purchaseOrderDetails[i].editQuantity = true;
     this.purchaseOrderViewModel.purchaseOrderDetails[i].editUnitPrice = true;
     this.purchaseOrderViewModel.purchaseOrderDetails[i].editMode = true;
+    this.purchaseOrderViewModel.purchaseOrderDetails[i].disableAddButton = true;
+    this.purchaseOrderViewModel.purchaseOrderDetails[i].disableSaveButton = false;
+    this.purchaseOrderViewModel.purchaseOrderDetails[i].disableCancelButton = false;
+    this.purchaseOrderViewModel.purchaseOrderDetails[i].disableDeleteButton = true;
+    this.purchaseOrderViewModel.purchaseOrderDetails[i].disableEditButton = true;
+
+    let purchaseOrderDetailViewModelOriginalValues = new PurchaseOrderDetailViewModel();
+ 
+    purchaseOrderDetailViewModelOriginalValues.unitPrice =
+      this.purchaseOrderViewModel.purchaseOrderDetails[i].unitPrice;
+
+    purchaseOrderDetailViewModelOriginalValues.orderQuantity =
+      this.purchaseOrderViewModel.purchaseOrderDetails[i].orderQuantity;
+
+    purchaseOrderDetailViewModelOriginalValues.orderQuantityFormatted =
+      this.purchaseOrderViewModel.purchaseOrderDetails[i].orderQuantity.toFixed(0);
+
+    purchaseOrderDetailViewModelOriginalValues.unitPriceFormatted =
+      this.purchaseOrderViewModel.purchaseOrderDetails[i].unitPrice.toFixed(2);
+
+    this.purchaseOrderViewModel.purchaseOrderDetailsOriginalValues[i] =
+      purchaseOrderDetailViewModelOriginalValues;
+
   }
 
-  /*public saveLineItem(i: number) {
-    this.purchaseOrderViewModel.purchaseOrderDetails[i].unitPrice =
-       parseFloat(this.purchaseOrderViewModel.purchaseOrderDetails[i].unitPriceFormatted);
-    this.purchaseOrderViewModel.purchaseOrderDetails[i].orderQuantity =
-       parseInt(this.purchaseOrderViewModel.purchaseOrderDetails[i].orderQuantityFormatted, 0);
+  public updateLineItem(i: number) {
 
-  }*/
+    this.currentLineItem = i;
+
+    let purchaseOrderDetailViewModel = new PurchaseOrderDetailViewModel();
+
+    purchaseOrderDetailViewModel.purchaseOrderDetailId = this.purchaseOrderViewModel.purchaseOrderDetails[i].purchaseOrderDetailId;
+    purchaseOrderDetailViewModel.purchaseOrderId = this.purchaseOrderViewModel.purchaseOrderId;
+    purchaseOrderDetailViewModel.productId = this.purchaseOrderViewModel.purchaseOrderDetails[i].productId;
+    purchaseOrderDetailViewModel.productMasterId = this.purchaseOrderViewModel.purchaseOrderDetails[i].productMasterId;
+    purchaseOrderDetailViewModel.productNumber = this.purchaseOrderViewModel.purchaseOrderDetails[i].productNumber;
+    purchaseOrderDetailViewModel.unitPrice = parseFloat(this.purchaseOrderViewModel.purchaseOrderDetails[i].unitPriceFormatted);
+    purchaseOrderDetailViewModel.orderQuantity = parseInt(this.purchaseOrderViewModel.purchaseOrderDetails[i].orderQuantityFormatted, 0);
+
+    this.purchaseOrderViewModel.purchaseOrderDetails[this.currentLineItem].orderQuantity =
+        parseInt(this.purchaseOrderViewModel.purchaseOrderDetails[this.currentLineItem].orderQuantityFormatted, 0);
+    this.purchaseOrderViewModel.purchaseOrderDetails[this.currentLineItem].unitPrice =
+        parseFloat(this.purchaseOrderViewModel.purchaseOrderDetails[this.currentLineItem].unitPriceFormatted);
+
+    let url = this.sessionService.appSettings.purchaseOrderManagementWebApiUrl + 'purchaseorder/updatepurchaseorderdetail';
+    this.httpService.HttpPost<PurchaseOrderDetailViewModelResponse>(url, purchaseOrderDetailViewModel)
+      .subscribe((response: PurchaseOrderDetailViewModelResponse) => {
+        this.updateLineItemSuccess(response);
+      }, response => this.updateLineItemFailed(response));
+
+  }
+
+  private deleteLineItem(i: number) {
+
+    this.currentLineItem = i;
+
+    let purchaseOrderDetailViewModel = new PurchaseOrderDetailViewModel();
+
+    purchaseOrderDetailViewModel.purchaseOrderId = this.purchaseOrderViewModel.purchaseOrderDetails[i].purchaseOrderId;
+    purchaseOrderDetailViewModel.purchaseOrderDetailId = this.purchaseOrderViewModel.purchaseOrderDetails[i].purchaseOrderDetailId;
+
+    let url = this.sessionService.appSettings.purchaseOrderManagementWebApiUrl + 'purchaseorder/deletepurchaseorderdetail';
+    this.httpService.HttpPost<PurchaseOrderDetailViewModelResponse>(url, purchaseOrderDetailViewModel)
+      .subscribe((response: PurchaseOrderDetailViewModelResponse) => {
+        this.deleteLineItemSuccess(response);
+      }, response => this.deleteLineItemFailed(response));
+
+  }
+
+  private cancelEdit(i: number) {
+
+    this.purchaseOrderViewModel.purchaseOrderDetails[i].unitPrice =
+       this.purchaseOrderViewModel.purchaseOrderDetailsOriginalValues[i].unitPrice;
+
+    this.purchaseOrderViewModel.purchaseOrderDetails[i].unitPriceFormatted =
+      this.purchaseOrderViewModel.purchaseOrderDetailsOriginalValues[i].unitPriceFormatted;
+
+    this.purchaseOrderViewModel.purchaseOrderDetails[i].orderQuantity =
+      this.purchaseOrderViewModel.purchaseOrderDetailsOriginalValues[i].orderQuantity;
+
+    this.purchaseOrderViewModel.purchaseOrderDetails[i].orderQuantityFormatted =
+      this.purchaseOrderViewModel.purchaseOrderDetailsOriginalValues[i].orderQuantityFormatted;
+
+    this.purchaseOrderViewModel.purchaseOrderDetails[i].editQuantity = false;
+    this.purchaseOrderViewModel.purchaseOrderDetails[i].editUnitPrice = false;
+    this.purchaseOrderViewModel.purchaseOrderDetails[i].editMode = false;
+    this.purchaseOrderViewModel.purchaseOrderDetails[i].disableAddButton = true;
+    this.purchaseOrderViewModel.purchaseOrderDetails[i].disableSaveButton = true;
+    this.purchaseOrderViewModel.purchaseOrderDetails[i].disableCancelButton = true;
+    this.purchaseOrderViewModel.purchaseOrderDetails[i].disableDeleteButton = false;
+    this.purchaseOrderViewModel.purchaseOrderDetails[i].disableEditButton = false;
+  }
+
+  private updateLineItemSuccess(response: PurchaseOrderDetailViewModelResponse) {
+
+    this.purchaseOrderViewModel.purchaseOrderDetails[this.currentLineItem].editQuantity = false;
+    this.purchaseOrderViewModel.purchaseOrderDetails[this.currentLineItem].editUnitPrice = false;
+    this.purchaseOrderViewModel.purchaseOrderDetails[this.currentLineItem].editMode = false;
+    this.purchaseOrderViewModel.purchaseOrderDetails[this.currentLineItem].disableAddButton = true;
+    this.purchaseOrderViewModel.purchaseOrderDetails[this.currentLineItem].disableSaveButton = true;
+    this.purchaseOrderViewModel.purchaseOrderDetails[this.currentLineItem].disableCancelButton = true;
+    this.purchaseOrderViewModel.purchaseOrderDetails[this.currentLineItem].disableDeleteButton = false;
+    this.purchaseOrderViewModel.purchaseOrderDetails[this.currentLineItem].disableEditButton = false;
+
+    this.purchaseOrderViewModel.purchaseOrderDetails[this.currentLineItem].orderQuantityFormatted =
+      this.purchaseOrderViewModel.purchaseOrderDetails[this.currentLineItem].orderQuantity.toFixed(0);
+    this.purchaseOrderViewModel.purchaseOrderDetails[this.currentLineItem].unitPriceFormatted =
+      this.purchaseOrderViewModel.purchaseOrderDetails[this.currentLineItem].unitPrice.toFixed(2);
+
+    const message = 'Line Item successfully updated.';
+    this.alertService.ShowSuccessMessage(message);
+
+  }
+
+  private deleteLineItemSuccess(response: PurchaseOrderDetailViewModelResponse) {
+
+    this.purchaseOrderViewModel.purchaseOrderDetails.splice(this.currentLineItem, 1);
+    this.purchaseOrderViewModel.purchaseOrderDetailsOriginalValues.splice(this.currentLineItem, 1);
+
+    this.detailDataSource.data = this.purchaseOrderViewModel.purchaseOrderDetails;
+
+    const message = 'Line Item successfully deleted.';
+    this.alertService.ShowSuccessMessage(message);
+
+  }
+
+  private deleteLineItemFailed(error: HttpErrorResponse) {
+
+    let errorResponse: PurchaseOrderDetailViewModelResponse = error.error;
+    console.log(error.status + ' error status');
+    if (error.status > 0) {
+      this.alertService.ShowErrorMessage(errorResponse.returnMessage[0]);
+    } else {
+      this.alertService.ShowErrorMessage(error.message);
+    }
+
+  }
+
+  private updateLineItemFailed(error: HttpErrorResponse) {
+
+    let errorResponse: PurchaseOrderDetailViewModelResponse = error.error;
+    console.log(error.status + ' error status');
+    if (error.status > 0) {
+      this.alertService.ShowErrorMessage(errorResponse.returnMessage[0]);
+    } else {
+      this.alertService.ShowErrorMessage(error.message);
+    }
+
+  }
+
+  public deleteLineItemDialog(i: number): void {
+
+    let productNumber = this.purchaseOrderViewModel.purchaseOrderDetails[i].productNumber;
+    let orderQuantity = this.purchaseOrderViewModel.purchaseOrderDetails[i].orderQuantityFormatted;
+    let unitPrice = this.purchaseOrderViewModel.purchaseOrderDetails[i].unitPriceFormatted;
+    let index = i;
+
+    const dialogRef = this.dialog.open(DeletePurchaseOrderLineItemDialogComponent, {
+      width: '50%',
+      data: {
+        title: 'Delete Purchase Order Line Item',
+        index: index,
+        orderQuantity: orderQuantity,
+        unitPrice: unitPrice,
+        productNumber: productNumber
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      let returnedIndex = parseInt(result, 0);
+      if (returnedIndex > 0 ) {
+        this.deleteLineItem(returnedIndex);
+      }
+    });
+  }
+
+}
+
+@Component({
+  selector: 'app-delete-purchase-order-lineitem-dialog',
+  templateUrl: 'delete-purchase-order-lineitem-dialog.html',
+})
+export class DeletePurchaseOrderLineItemDialogComponent {
+
+  constructor(
+    public dialogRef: MatDialogRef<DeletePurchaseOrderLineItemDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: DeletePurchaseOrderLineItemDialogData) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
 
 }

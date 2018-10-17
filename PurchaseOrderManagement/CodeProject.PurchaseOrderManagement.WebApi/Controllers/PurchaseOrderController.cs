@@ -123,6 +123,82 @@ namespace CodeProject.PurchaseOrderManagement.WebApi.Controllers
 		}
 
 		/// <summary>
+		/// Update Purchase Order Detail
+		/// </summary>
+		/// <param name="purchaseOrderDetailDataTransformation"></param>
+		/// <returns></returns>
+		[HttpPost]
+		[Route("UpdatePurchaseOrderDetail")]
+		public async Task<IActionResult> UpdatePurchaseOrderDetail([FromBody] PurchaseOrderDetailDataTransformation purchaseOrderDetailDataTransformation)
+		{
+
+			SecurityModel securityModel = (SecurityModel)(HttpContext.Items["SecurityModel"]);
+
+			int accountId = securityModel.AccountId;
+			purchaseOrderDetailDataTransformation.AccountId = accountId;
+
+			ResponseModel<PurchaseOrderDetailDataTransformation> returnResponse = new ResponseModel<PurchaseOrderDetailDataTransformation>();
+
+			try
+			{
+				returnResponse = await _purchaseOrderManagementBusinessService.UpdatePurchaseOrderDetail(purchaseOrderDetailDataTransformation);
+				returnResponse.Token = securityModel.Token;
+				if (returnResponse.ReturnStatus == false)
+				{
+					return BadRequest(returnResponse);
+				}
+
+				return Ok(returnResponse);
+
+			}
+			catch (Exception ex)
+			{
+				returnResponse.ReturnStatus = false;
+				returnResponse.ReturnMessage.Add(ex.Message);
+				return BadRequest(returnResponse);
+			}
+
+		}
+
+		/// <summary>
+		/// Delete Purchase Order Detail
+		/// </summary>
+		/// <param name="purchaseOrderDetailDataTransformation"></param>
+		/// <returns></returns>
+		[HttpPost]
+		[Route("DeletePurchaseOrderDetail")]
+		public async Task<IActionResult> DeletePurchaseOrderDetail([FromBody] PurchaseOrderDetailDataTransformation purchaseOrderDetailDataTransformation)
+		{
+
+			SecurityModel securityModel = (SecurityModel)(HttpContext.Items["SecurityModel"]);
+
+			int accountId = securityModel.AccountId;
+			purchaseOrderDetailDataTransformation.AccountId = accountId;
+
+			ResponseModel<PurchaseOrderDetailDataTransformation> returnResponse = new ResponseModel<PurchaseOrderDetailDataTransformation>();
+
+			try
+			{
+				returnResponse = await _purchaseOrderManagementBusinessService.DeletePurchaseOrderDetail(purchaseOrderDetailDataTransformation);
+				returnResponse.Token = securityModel.Token;
+				if (returnResponse.ReturnStatus == false)
+				{
+					return BadRequest(returnResponse);
+				}
+
+				return Ok(returnResponse);
+
+			}
+			catch (Exception ex)
+			{
+				returnResponse.ReturnStatus = false;
+				returnResponse.ReturnMessage.Add(ex.Message);
+				return BadRequest(returnResponse);
+			}
+
+		}
+
+		/// <summary>
 		/// Get Purchase Order
 		/// </summary>
 		/// <param name="purchaseOrderDataTransformation"></param>

@@ -454,6 +454,19 @@ namespace CodeProject.PurchaseOrderManagement.Data.EntityFramework
 		}
 
 		/// <summary>
+		/// Get Purchase Order Detail For Update
+		/// </summary>
+		/// <param name="purchaseOrderDetailId"></param>
+		/// <returns></returns>
+		public async Task<PurchaseOrderDetail> GetPurchaseOrderDetailForUpdate(int purchaseOrderDetailId)
+		{
+			PurchaseOrderDetail purchaseOrderDetail = await dbConnection.PurchaseOrderDetails
+				.Where(x => x.PurchaseOrderDetailId == purchaseOrderDetailId).FirstOrDefaultAsync();
+
+			return purchaseOrderDetail;
+		}
+
+		/// <summary>
 		/// Get Product
 		/// </summary>
 		/// <param name="accountId"></param>
@@ -475,6 +488,29 @@ namespace CodeProject.PurchaseOrderManagement.Data.EntityFramework
 			await Task.Delay(0);
 			DateTime dateUpdated = DateTime.UtcNow;
 			purchaseOrder.DateUpdated = dateUpdated;
+		}
+
+		/// <summary>
+		/// Update Purchase Order Detail
+		/// </summary>
+		/// <param name="purchaseOrderDetail"></param>
+		/// <returns></returns>
+		public async Task UpdatePurchaseOrderDetail(PurchaseOrderDetail purchaseOrderDetail)
+		{
+			await Task.Delay(0);
+			DateTime dateUpdated = DateTime.UtcNow;
+			purchaseOrderDetail.DateUpdated = dateUpdated;
+		}
+
+		/// <summary>
+		/// Delete Purchase Order Detail
+		/// </summary>
+		/// <param name="purchaseOrderDetailId"></param>
+		/// <returns></returns>
+		public async Task DeletePurchaseOrderDetail(int purchaseOrderDetailId)
+		{
+			PurchaseOrderDetail purchaseOrderDetail = await dbConnection.PurchaseOrderDetails.Where(x => x.PurchaseOrderDetailId == purchaseOrderDetailId).FirstOrDefaultAsync();
+			dbConnection.PurchaseOrderDetails.Remove(purchaseOrderDetail);
 		}
 
 		/// <summary>

@@ -4,6 +4,7 @@ export class PurchaseOrderViewModel {
 
     constructor() {
         this.purchaseOrderDetails = new Array<PurchaseOrderDetailViewModel>();
+        this.purchaseOrderDetailsOriginalValues = new Array<PurchaseOrderDetailViewModel>();
     }
 
     public purchaseOrderId: number;
@@ -23,6 +24,7 @@ export class PurchaseOrderViewModel {
     public orderDate: string;
     public dateUpdated: Date;
     public purchaseOrderDetails: Array<PurchaseOrderDetailViewModel>;
+    public purchaseOrderDetailsOriginalValues: Array<PurchaseOrderDetailViewModel>;
     public displayedColumns: Array<string>;
 
 }

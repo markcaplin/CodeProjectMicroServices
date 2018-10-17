@@ -13,6 +13,8 @@ import { FormsModule } from '@angular/forms';
 import { MaterialModule } from '../material.module';
 import { PurchaseOrderManagementRoutingModule } from './purchase-order-management.routing';
 import { PurchaseOrderManagementNavBarComponent } from './purchase-order-management-nav-bar/purchase-order-management-nav-bar.component';
+import { DeletePurchaseOrderLineItemDialogComponent } from './purchase-order-maintenance/purchase-order-maintenance.component';
+
 @NgModule({
     imports: [
         PurchaseOrderManagementRoutingModule,
@@ -20,9 +22,10 @@ import { PurchaseOrderManagementNavBarComponent } from './purchase-order-managem
         FormsModule,
         MaterialModule
     ],
+    entryComponents: [DeletePurchaseOrderLineItemDialogComponent],
     declarations: [SupplierInquiryComponent, SupplierMaintenanceComponent,
         PurchaseOrderInquiryComponent, PurchaseOrderMaintenanceComponent,
-        PurchaseOrderManagementNavBarComponent]
+        PurchaseOrderManagementNavBarComponent, DeletePurchaseOrderLineItemDialogComponent]
 })
 export class PurchaseOrderManagementModule {
 }

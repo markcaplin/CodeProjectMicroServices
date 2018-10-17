@@ -8,8 +8,8 @@ using CodeProject.PurchaseOrderManagement.Data.Transformations;
 
 namespace CodeProject.PurchaseOrderManagement.Interfaces
 {
-    public interface IPurchaseOrderManagementBusinessService
-	{ 
+	public interface IPurchaseOrderManagementBusinessService
+	{
 		Task<ResponseModel<SupplierDataTransformation>> CreateSupplier(SupplierDataTransformation supplierDataTransformation);
 		Task<ResponseModel<SupplierDataTransformation>> UpdateSupplier(SupplierDataTransformation supplierDataTransformation);
 		Task<ResponseModel<SupplierDataTransformation>> GetSupplierInformation(int accountId, int supplierId);
@@ -19,7 +19,9 @@ namespace CodeProject.PurchaseOrderManagement.Interfaces
 		Task<ResponseModel<ProductDataTransformation>> GetProduct(int accountId, string productNumber);
 		Task<ResponseModel<PurchaseOrderDetailDataTransformation>> CreatePurchaseOrderDetail(PurchaseOrderDetailDataTransformation purchaseOrderDetailDataTransformation);
 		Task<ResponseModel<List<PurchaseOrderDataTransformation>>> PurchaseOrderInquiry(int accountId, string supplierName, int currentPageNumber, int pageSize, string sortExpression, string sortDirection);
-
+		Task<ResponseModel<PurchaseOrderDetailDataTransformation>> UpdatePurchaseOrderDetail(PurchaseOrderDetailDataTransformation purchaseOrderDetailDataTransformation);
+		Task<ResponseModel<PurchaseOrderDetailDataTransformation>> DeletePurchaseOrderDetail(PurchaseOrderDetailDataTransformation purchaseOrderDetailDataTransformation);
 
 	}
+
 }
