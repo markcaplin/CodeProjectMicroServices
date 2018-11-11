@@ -47,6 +47,22 @@ namespace CodeProject.PurchaseOrderManagement.MessageQueueing
 
 			List<IMessageQueueConfiguration> messageQueueConfigurations = new List<IMessageQueueConfiguration>();
 
+			IMessageQueueConfiguration purchaseOrderSubmittedConfiguration = new MessageQueueConfiguration(MessageQueueExchanges.PurchaseOrderSubmitted, messageQueueAppConfig, sendingQueueConnection);
+
+			purchaseOrderSubmittedConfiguration.AddQueue(MessageQueueEndpoints.InventoryQueue);
+			purchaseOrderSubmittedConfiguration.AddQueue(MessageQueueEndpoints.LoggingQueue);
+
+			purchaseOrderSubmittedConfiguration.InitializeOutboundMessageQueueing();
+			messageQueueConfigurations.Add(purchaseOrderSubmittedConfiguration);
+
+			IPurchaseOrderManagementDataService submittedPurchaseOrderManagementDataService = new PurchaseOrderManagementDataService();
+			IMessageQueueProcessing messageProcessing = new MessageProcessing(submittedPurchaseOrderManagementDataService);
+
+			IHostedService submittedPurchaseOrderManagementMessages =
+				new SendMessages(sendingQueueConnection, messageProcessing, messageQueueAppConfig,
+				connectionStrings, messageQueueConfigurations, MessageQueueEndpoints.PurchaseOrderQueue);
+
+
 			/*IMessageQueueConfiguration productUpdatedConfiguration = new MessageQueueConfiguration(MessageQueueExchanges.ProductUpdated, messageQueueAppConfig, sendingQueueConnection);
 
 			productUpdatedConfiguration.AddQueue(MessageQueueEndpoints.SalesOrderQueue);
@@ -69,7 +85,7 @@ namespace CodeProject.PurchaseOrderManagement.MessageQueueing
 
 			IHostedService sendPurchaseOrderManagementMessages = new SendMessages(sendingQueueConnection, messageProcessing, messageQueueAppConfig, connectionStrings, messageQueueConfigurations);
 			*/
-	
+
 			//
 			//	set up receiving queue
 			//
@@ -100,7 +116,7 @@ namespace CodeProject.PurchaseOrderManagement.MessageQueueing
 				})
 				.ConfigureServices((hostContext, services) =>
 				{
-					//services.AddTransient<IHostedService>(provider => sendPurchaseOrderManagementMessages);
+					services.AddTransient<IHostedService>(provider => submittedPurchaseOrderManagementMessages);
 				})
 				.ConfigureServices((hostContext, services) =>
 				{

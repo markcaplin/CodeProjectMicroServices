@@ -25,6 +25,12 @@ export interface DeletePurchaseOrderLineItemDialogData {
   unitPrice: string;
 }
 
+export interface SubmitPurchaseOrderDialogData {
+  title: string;
+  purchaseOrderNumber: string;
+  orderTotal: string;
+}
+
 @Component({
   selector: 'app-purchase-order-maintenance',
   templateUrl: './purchase-order-maintenance.component.html',
@@ -36,10 +42,12 @@ export class PurchaseOrderMaintenanceComponent implements OnInit, OnDestroy {
   private routerSubscription: Subscription;
   public detailDataSource = new MatTableDataSource<PurchaseOrderDetailViewModel>();
   private currentLineItem: number;
+  public disableSubmitButton: boolean;
 
   constructor(public dialog: MatDialog, private router: Router, private httpService: HttpService, private route: ActivatedRoute,
     private sessionService: SessionService, private alertService: AlertService) {
 
+    this.disableSubmitButton = true;
     this.purchaseOrderViewModel = new PurchaseOrderViewModel();
 
     let purchaseOrderDetailViewModel = new PurchaseOrderDetailViewModel();
@@ -106,7 +114,12 @@ export class PurchaseOrderMaintenanceComponent implements OnInit, OnDestroy {
     this.purchaseOrderViewModel.purchaseOrderId = response.entity.purchaseOrderId;
     this.purchaseOrderViewModel.purchaseOrderNumber = response.entity.purchaseOrderNumber;
     this.purchaseOrderViewModel.orderDate = response.entity.orderDate;
+    this.purchaseOrderViewModel.orderTotal = response.entity.orderTotal;
     this.purchaseOrderViewModel.purchaseOrderStatusDescription = response.entity.purchaseOrderStatusDescription;
+
+    this.purchaseOrderViewModel.orderTotalFormatted = response.entity.orderTotal.toFixed(2);
+  
+    this.setEnableSubmitButton();
 
     response.entity.purchaseOrderDetails.forEach(element => {
 
@@ -145,6 +158,11 @@ export class PurchaseOrderMaintenanceComponent implements OnInit, OnDestroy {
     this.detailDataSource.data = this.purchaseOrderViewModel.purchaseOrderDetails;
 
     this.purchaseOrderViewModel.displayedColumns = ['productNumber', 'description', 'unitPrice', 'orderQuantity', 'actions'];
+ 
+    if (this.purchaseOrderViewModel.purchaseOrderStatusDescription !== 'Open') {
+        this.disablePurchaseOrderButtons();
+    }
+ 
   }
 
   private getPurchaseOrderFailed(error: HttpErrorResponse) {
@@ -235,6 +253,10 @@ export class PurchaseOrderMaintenanceComponent implements OnInit, OnDestroy {
     purchaseOrderDetailViewModel.orderQuantity = response.entity.orderQuantity;
     purchaseOrderDetailViewModel.orderQuantityFormatted = response.entity.orderQuantity.toFixed(0);
     purchaseOrderDetailViewModel.unitPriceFormatted = response.entity.unitPrice.toFixed(2);
+
+    this.purchaseOrderViewModel.orderTotal = response.entity.orderTotal;
+    this.purchaseOrderViewModel.orderTotalFormatted = response.entity.orderTotal.toFixed(2);
+  
     purchaseOrderDetailViewModel.editQuantity = false;
     purchaseOrderDetailViewModel.editUnitPrice = false;
     purchaseOrderDetailViewModel.editProductNumber = false;
@@ -244,6 +266,7 @@ export class PurchaseOrderMaintenanceComponent implements OnInit, OnDestroy {
     purchaseOrderDetailViewModel.disableCancelButton = true;
     purchaseOrderDetailViewModel.disableDeleteButton = false;
     purchaseOrderDetailViewModel.disableEditButton = false;
+
 
     let purchaseOrderDetailViewModelOriginalValues = new PurchaseOrderDetailViewModel();
     purchaseOrderDetailViewModelOriginalValues.unitPrice = response.entity.unitPrice;
@@ -317,6 +340,8 @@ export class PurchaseOrderMaintenanceComponent implements OnInit, OnDestroy {
     this.purchaseOrderViewModel.purchaseOrderDetailsOriginalValues[i] =
       purchaseOrderDetailViewModelOriginalValues;
 
+    this.setDisableSubmitButton();
+
   }
 
   public updateLineItem(i: number) {
@@ -385,6 +410,9 @@ export class PurchaseOrderMaintenanceComponent implements OnInit, OnDestroy {
     this.purchaseOrderViewModel.purchaseOrderDetails[i].disableCancelButton = true;
     this.purchaseOrderViewModel.purchaseOrderDetails[i].disableDeleteButton = false;
     this.purchaseOrderViewModel.purchaseOrderDetails[i].disableEditButton = false;
+
+    this.setEnableSubmitButton();
+
   }
 
   private updateLineItemSuccess(response: PurchaseOrderDetailViewModelResponse) {
@@ -403,6 +431,11 @@ export class PurchaseOrderMaintenanceComponent implements OnInit, OnDestroy {
     this.purchaseOrderViewModel.purchaseOrderDetails[this.currentLineItem].unitPriceFormatted =
       this.purchaseOrderViewModel.purchaseOrderDetails[this.currentLineItem].unitPrice.toFixed(2);
 
+    this.purchaseOrderViewModel.orderTotal = response.entity.orderTotal;
+    this.purchaseOrderViewModel.orderTotalFormatted = response.entity.orderTotal.toFixed(2);
+
+    this.setEnableSubmitButton();
+
     const message = 'Line Item successfully updated.';
     this.alertService.ShowSuccessMessage(message);
 
@@ -414,6 +447,11 @@ export class PurchaseOrderMaintenanceComponent implements OnInit, OnDestroy {
     this.purchaseOrderViewModel.purchaseOrderDetailsOriginalValues.splice(this.currentLineItem, 1);
 
     this.detailDataSource.data = this.purchaseOrderViewModel.purchaseOrderDetails;
+
+    this.purchaseOrderViewModel.orderTotal = response.entity.orderTotal;
+    this.purchaseOrderViewModel.orderTotalFormatted = response.entity.orderTotal.toFixed(2);
+
+    this.setEnableSubmitButton();
 
     const message = 'Line Item successfully deleted.';
     this.alertService.ShowSuccessMessage(message);
@@ -444,6 +482,58 @@ export class PurchaseOrderMaintenanceComponent implements OnInit, OnDestroy {
 
   }
 
+  private setDisableSubmitButton() {
+    this.disableSubmitButton = true;
+  }
+
+  private setEnableSubmitButton() {
+    this.disableSubmitButton = true;
+    if (this.purchaseOrderViewModel.orderTotal > 0 && this.purchaseOrderViewModel.purchaseOrderStatusDescription === 'Open') {
+      this.disableSubmitButton = false;
+    }
+  }
+
+  private submitPurchaseOrder() {
+    let purchaseOrderViewModel = new PurchaseOrderViewModel();
+
+    purchaseOrderViewModel.purchaseOrderId = this.purchaseOrderViewModel.purchaseOrderId;
+
+    let url = this.sessionService.appSettings.purchaseOrderManagementWebApiUrl + 'purchaseorder/submitpurchaseorder';
+    this.httpService.HttpPost<PurchaseOrderViewModelResponse>(url, purchaseOrderViewModel)
+      .subscribe((response: PurchaseOrderViewModelResponse) => {
+        this.submitPurchaseOrderSuccess(response);
+      }, response => this.submitPurchaseOrderFailed(response));
+
+  }
+
+  private submitPurchaseOrderSuccess(response: PurchaseOrderViewModelResponse) {
+
+    this.purchaseOrderViewModel.purchaseOrderStatusDescription = response.entity.purchaseOrderStatusDescription;
+
+    this.setDisableSubmitButton();
+
+    const message = 'Purchase Order Submitted.';
+    this.alertService.ShowSuccessMessage(message);
+
+  }
+
+  private submitPurchaseOrderFailed(error: HttpErrorResponse) {
+
+    let errorResponse: PurchaseOrderViewModelResponse = error.error;
+    console.log(error.status + ' error status');
+    if (error.status > 0) {
+      this.alertService.ShowErrorMessage(errorResponse.returnMessage[0]);
+    } else {
+      this.alertService.ShowErrorMessage(error.message);
+    }
+
+  }
+
+  private disablePurchaseOrderButtons()
+  {
+
+  }
+
   public deleteLineItemDialog(i: number): void {
 
     let productNumber = this.purchaseOrderViewModel.purchaseOrderDetails[i].productNumber;
@@ -470,6 +560,27 @@ export class PurchaseOrderMaintenanceComponent implements OnInit, OnDestroy {
     });
   }
 
+  public submitPurchaseOrderDialog(): void {
+
+    let purchaseOrderNumber = this.purchaseOrderViewModel.purchaseOrderNumber;
+    let orderTotal = this.purchaseOrderViewModel.orderTotalFormatted;
+    const dialogRef = this.dialog.open(SubmitPurchaseOrderDialogComponent, {
+      width: '50%',
+      data: {
+        title: 'Submit Purchase Order',
+        orderTotal: orderTotal,
+        purchaseOrderNumber: purchaseOrderNumber
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      let returnedResponse = parseInt(result, 0);
+      if (returnedResponse > 0 ) {
+        this.submitPurchaseOrder();
+      }
+    });
+  }
+
 }
 
 @Component({
@@ -481,6 +592,23 @@ export class DeletePurchaseOrderLineItemDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<DeletePurchaseOrderLineItemDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DeletePurchaseOrderLineItemDialogData) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+}
+
+
+@Component({
+  selector: 'app-submit-purchase-order-dialog',
+  templateUrl: 'submit-purchase-order-dialog.html',
+})
+export class SubmitPurchaseOrderDialogComponent {
+
+  constructor(
+    public dialogRef: MatDialogRef<SubmitPurchaseOrderDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: SubmitPurchaseOrderDialogData) {}
 
   onNoClick(): void {
     this.dialogRef.close();

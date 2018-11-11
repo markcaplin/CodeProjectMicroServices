@@ -9,3 +9,4 @@ C:\MyFiles\_CodeProjectMicroServices\Support\SpawnProcesses\SpawnProcesses\obj\D
 C:\MyFiles\_CodeProjectMicroServices\Support\SpawnProcesses\SpawnProcesses\obj\Debug\netcoreapp2.1\SpawnProcesses.dll
 C:\MyFiles\_CodeProjectMicroServices\Support\SpawnProcesses\SpawnProcesses\obj\Debug\netcoreapp2.1\SpawnProcesses.pdb
 C:\MyFiles\_CodeProjectMicroServices\Support\SpawnProcesses\SpawnProcesses\bin\Debug\netcoreapp2.1\appsettings.Development.json
+C:\MyFiles\_CodeProjectMicroServices\Support\SpawnProcesses\SpawnProcesses\obj\Debug\netcoreapp2.1\SpawnProcesses.csprojAssemblyReference.cache

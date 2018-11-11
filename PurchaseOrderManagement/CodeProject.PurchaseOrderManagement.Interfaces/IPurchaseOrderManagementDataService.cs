@@ -42,6 +42,11 @@ namespace CodeProject.PurchaseOrderManagement.Interfaces
 		Task UpdatePurchaseOrderDetail(PurchaseOrderDetail purchaseOrderDetail);
 		Task<PurchaseOrderDetail> GetPurchaseOrderDetailForUpdate(int purchaseOrderDetailId);
 		Task DeletePurchaseOrderDetail(int purchaseOrderDetailId);
+		Task UpdateProduct(Product product);
+		Task CreateProduct(Product product);
+		Task CreateOutboundTransactionQueueHistory(TransactionQueueOutboundHistory transactionQueueItem);
+		Task DeleteOutboundTransactionQueueEntry(int transactionQueueId);
+		Task<TransactionQueueOutbound> GetOutboundTransactionQueueItemById(int transactionQueueId);
 
 
 	}

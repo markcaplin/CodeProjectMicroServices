@@ -271,23 +271,23 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 					string exchangeName = transactionQueueItem.ExchangeName;
 					string transactionCode = transactionQueueItem.TransactionCode;
 
-					if (transactionCode == TransactionQueueTypes.Acknowledgement)
+					TransactionQueueInboundHistory transactionHistory = await _inventoryManagementDataService.GetInboundTransactionQueueHistoryBySender(senderId, exchangeName);
+					if (transactionHistory != null)
+					{
+						await LogDuplicateMessage(transactionQueueItem);
+						await _inventoryManagementDataService.DeleteInboundTransactionQueueEntry(transactionQueueItem.TransactionQueueInboundId);
+					}
+					else if (transactionCode == TransactionQueueTypes.PurchaseOrderSubmitted)
+					{
+						await PurchaseOrderSubmitted(transactionQueueItem);
+						await _inventoryManagementDataService.DeleteInboundTransactionQueueEntry(transactionQueueItem.TransactionQueueInboundId);
+					}
+					else if (transactionCode == TransactionQueueTypes.Acknowledgement)
 					{
 						await ProcessAcknowledgement(transactionQueueItem);
 						await _inventoryManagementDataService.DeleteInboundTransactionQueueEntry(transactionQueueItem.TransactionQueueInboundId);
 					}
-					else
-					{
-						//TransactionQueueInboundHistory transactionHistory = await _inventoryManagementDataService.GetInboundTransactionQueueHistoryBySender(senderId, exchangeName);
-						// if (transactionHistory != null)
-						///{
-						//	await LogDuplicateMessage(transactionQueueItem);
-						//	await _inventoryManagementDataService.DeleteInboundTransactionQueueEntry(transactionQueueItem.TransactionQueueInboundId);
-						//}
-					}
-
-
-
+				
 				}
 
 				await _inventoryManagementDataService.UpdateDatabase();
@@ -351,6 +351,100 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 			await _inventoryManagementDataService.DeleteOutboundTransactionQueueEntry(transactionQueueItem.TransactionQueueOutboundId);
 
 		}
+
+
+		/// <summary>
+		///  Log Duplicate Message
+		/// </summary>
+		/// <param name="transactionQueueItem"></param>
+		/// <returns></returns>
+		private async Task LogDuplicateMessage(TransactionQueueInbound transactionQueueItem)
+		{
+			// log history as duplicate
+			TransactionQueueInboundHistory transactionHistory = new TransactionQueueInboundHistory();
+			transactionHistory.TransactionQueueInboundId = transactionQueueItem.TransactionQueueInboundId;
+			transactionHistory.SenderTransactionQueueId = transactionQueueItem.SenderTransactionQueueId;
+			transactionHistory.TransactionCode = transactionQueueItem.TransactionCode;
+			transactionHistory.Payload = transactionQueueItem.Payload;
+			transactionHistory.ExchangeName = transactionQueueItem.ExchangeName;
+			transactionHistory.ProcessedSuccessfully = false;
+			transactionHistory.DuplicateMessage = true;
+			transactionHistory.ErrorMessage = string.Empty;
+			transactionHistory.DateCreatedInbound = transactionQueueItem.DateCreated;
+
+			await _inventoryManagementDataService.CreateInboundTransactionQueueHistory(transactionHistory);
+
+		}
+
+		/// <summary>
+		/// Log Successfully Processed
+		/// </summary>
+		/// <param name="transaction"></param>
+		/// <returns></returns>
+		private async Task LogSuccessfullyProcessed(TransactionQueueInbound transaction)
+		{
+			TransactionQueueInboundHistory transactionHistory = new TransactionQueueInboundHistory();
+			transactionHistory.TransactionQueueInboundId = transaction.TransactionQueueInboundId;
+			transactionHistory.SenderTransactionQueueId = transaction.SenderTransactionQueueId;
+			transactionHistory.TransactionCode = transaction.TransactionCode;
+			transactionHistory.Payload = transaction.Payload;
+			transactionHistory.ExchangeName = transaction.ExchangeName;
+			transactionHistory.ProcessedSuccessfully = true;
+			transactionHistory.DuplicateMessage = false;
+			transactionHistory.ErrorMessage = string.Empty;
+			transactionHistory.DateCreatedInbound = transaction.DateCreated;
+
+			await _inventoryManagementDataService.CreateInboundTransactionQueueHistory(transactionHistory);
+		}
+
+
+		/// <summary>
+		/// Purchase Order Submitted
+		/// </summary>
+		/// <param name=""></param>
+		private async Task PurchaseOrderSubmitted(TransactionQueueInbound transaction)
+		{
+			PurchaseOrderUpdatePayload payload = JsonConvert.DeserializeObject<PurchaseOrderUpdatePayload>(transaction.Payload);
+
+			PurchaseOrder purchaseOrder = new PurchaseOrder();
+			purchaseOrder.AccountId = payload.AccountId;
+			purchaseOrder.AddressLine1 = payload.AddressLine1;
+			purchaseOrder.AddressLine2 = payload.AddressLine2;
+			purchaseOrder.City = payload.City;
+			purchaseOrder.Region = payload.Region;
+			purchaseOrder.PostalCode = payload.PostalCode;
+			purchaseOrder.SupplierName = payload.SupplierName;
+			purchaseOrder.PurchaseOrderStatusId = PurchaseOrderStatuses.Open;
+			purchaseOrder.PurchaseOrderNumber = payload.PurchaseOrderNumber;
+			purchaseOrder.MasterPurchaseOrderId = payload.PurchaseOrderId;
+			purchaseOrder.OrderTotal = payload.OrderTotal;
+
+			await _inventoryManagementDataService.CreatePurchaseOrder(purchaseOrder);
+
+			await _inventoryManagementDataService.UpdateDatabase();
+
+			foreach(PurchaseOrderDetailUpdatePayload detail in payload.PurchaseOrderDetails)
+			{
+				PurchaseOrderDetail purchaseOrderDetail = new PurchaseOrderDetail();
+
+				purchaseOrderDetail.AccountId = payload.AccountId;
+				purchaseOrderDetail.MasterPurchaseOrderDetailId = detail.PurchaseOrderDetailId;
+				purchaseOrderDetail.PurchaseOrderId = purchaseOrder.PurchaseOrderId;
+				purchaseOrderDetail.ProductId = detail.ProductMasterId;
+				purchaseOrderDetail.ProductNumber = detail.ProductNumber;
+				purchaseOrderDetail.ProductDescription = detail.ProductDescription;
+				purchaseOrderDetail.UnitPrice = detail.UnitPrice;
+				purchaseOrderDetail.OrderQuantity = detail.OrderQuantity;
+				purchaseOrderDetail.ReceivedQuantity = 0;
+				purchaseOrderDetail.OrderTotal = detail.UnitPrice * detail.OrderQuantity;
+
+				await _inventoryManagementDataService.CreatePurchaseOrderDetail(purchaseOrderDetail);
+
+			}
+
+			await LogSuccessfullyProcessed(transaction);
+		}
+
 	}
 
 }

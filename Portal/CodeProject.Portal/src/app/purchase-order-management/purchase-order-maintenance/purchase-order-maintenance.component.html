@@ -25,6 +25,12 @@
           <input [disabled]="true" matInput name="PurchaseOrderStatusDescription" value="{{purchaseOrderViewModel.purchaseOrderStatusDescription}}"
             [(ngModel)]="purchaseOrderViewModel.purchaseOrderStatusDescription" placeholder="Status">
         </mat-form-field>
+
+        <mat-form-field style="width:300px">
+            <input [disabled]="true" matInput name="PurchaseOrderTotal" value="{{purchaseOrderViewModel.orderTotalFormatted}}"
+              [(ngModel)]="purchaseOrderViewModel.orderTotalFormatted" placeholder="Order Total">
+          </mat-form-field>
+
       </div>
 
       <div>
@@ -148,5 +154,7 @@
     </form>
   </mat-card-content>
   <mat-card-actions>
+      <button [disabled]="disableSubmitButton" mat-flat-button color="primary"
+      (click)="submitPurchaseOrderDialog()">Submit Purchase Order</button>&nbsp;
   </mat-card-actions>
 </mat-card>

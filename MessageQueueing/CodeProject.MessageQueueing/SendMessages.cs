@@ -22,9 +22,10 @@ namespace CodeProject.MessageQueueing
 		private readonly IMessageQueueProcessing _messageProcessor;
 		private readonly MessageQueueAppConfig _appConfig;
 		private readonly ConnectionStrings _connectionStrings;
+		private readonly string _signalRQueue;
 	
-		private IBasicProperties _basicProperties;
-		private IModel _channel;
+		// private IBasicProperties basicProperties;
+		// private IModel_channel;
 
 		HubConnection _signalRHubConnection;
 		private Timer _timer;
@@ -37,13 +38,14 @@ namespace CodeProject.MessageQueueing
 		/// <param name="appConfig"></param>
 		/// <param name="connectionStrings"></param>
 		/// <param name="messageQueueConfigurations"></param>
-		public SendMessages(IMessageQueueConnection messageQueueConnection, IMessageQueueProcessing messageProcessor, MessageQueueAppConfig appConfig, ConnectionStrings connectionStrings, List<IMessageQueueConfiguration> messageQueueConfigurations)
+		public SendMessages(IMessageQueueConnection messageQueueConnection, IMessageQueueProcessing messageProcessor, MessageQueueAppConfig appConfig, ConnectionStrings connectionStrings, List<IMessageQueueConfiguration> messageQueueConfigurations, string signalRQueue)
 		{
 			_messageQueueConnection = messageQueueConnection;
 			_messageQueueConfigurations = messageQueueConfigurations;
 			_connectionStrings = connectionStrings;
 			_messageProcessor = messageProcessor;
 			_appConfig = appConfig;
+			_signalRQueue = signalRQueue;
 		}
 
 		/// <summary>
@@ -73,7 +75,7 @@ namespace CodeProject.MessageQueueing
 
 			string url = _appConfig.SignalRHubUrl;
 
-			Console.WriteLine("CONNECTING TO SIGNAL R INVENTORY MANAGEMENT " + url);
+			Console.WriteLine("CONNECTING TO SIGNAL R  " + url);
 
 			Boolean connected = false;
 			while (connected == false)
@@ -91,7 +93,7 @@ namespace CodeProject.MessageQueueing
 
 			}
 			
-			_signalRHubConnection.On<string>(MessageQueueEndpoints.InventoryQueue, (message) =>
+			_signalRHubConnection.On<string>(_signalRQueue, (message) =>
 			{
 				this.GetMessagesInQueue(null);
 
@@ -112,13 +114,13 @@ namespace CodeProject.MessageQueueing
 				{
 					Console.WriteLine("CONNECTING TO SIGNARL R");
 					await _signalRHubConnection.StartAsync();
-					Console.WriteLine("CONNECTED TO SIGNAL R INVENTORY MANAGEMENT " + url);
+					Console.WriteLine("CONNECTED TO SIGNAL R " + url);
 					connected = true;
 
 				}
 				catch (Exception ex)
 				{
-					Console.WriteLine("ERROR CONNECTING TO SIGNAL R INVENTORY MANAGEMENT " + ex.Message);
+					Console.WriteLine("ERROR CONNECTING TO SIGNAL R " + ex.Message);
 					await Task.Delay(10000);
 				}
 			}

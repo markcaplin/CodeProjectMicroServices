@@ -237,6 +237,11 @@ namespace CodeProject.SalesOrderManagement.Business.MessageService
 						await ProductUpdated(transactionQueueItem);
 						await _salesOrderManagementDataService.DeleteInboundTransactionQueueEntry(transactionQueueItem.TransactionQueueInboundId);
 					}
+					else if (transactionCode == TransactionQueueTypes.InventoryReceived)
+					{
+						await InventoryReceived(transactionQueueItem);
+						await _salesOrderManagementDataService.DeleteInboundTransactionQueueEntry(transactionQueueItem.TransactionQueueInboundId);
+					}
 
 				}
 
@@ -298,7 +303,27 @@ namespace CodeProject.SalesOrderManagement.Business.MessageService
 			await LogSuccessfullyProcessed(transaction);
 		}
 
+		/// <summary>
+		/// Inventory Received
+		/// </summary>
+		/// <param name="transaction"></param>
+		/// <returns></returns>
+		private async Task InventoryReceived(TransactionQueueInbound transaction)
+		{
+			InventoryTransactionPayload payload = JsonConvert.DeserializeObject<InventoryTransactionPayload>(transaction.Payload);
 
+			int productMasterId = payload.ProductId;
+
+			Product product = await _salesOrderManagementDataService.GetProductInformationByProductMasterForUpdate(productMasterId);
+			if (product != null)
+			{
+				product.OnHandQuantity = product.OnHandQuantity + payload.Quantity;
+				
+				await _salesOrderManagementDataService.UpdateProduct(product);
+			}
+
+			await LogSuccessfullyProcessed(transaction);
+		}
 
 		/// <summary>
 		/// Log Successfully Processed

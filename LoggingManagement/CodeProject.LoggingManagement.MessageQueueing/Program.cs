@@ -55,8 +55,8 @@ namespace CodeProject.LoggingManagement.MessageQueueing
 			ILoggingManagementDataService loggingManagementDataService = new LoggingManagementDataService();
 			IMessageQueueProcessing messageProcessing = new MessageProcessing(loggingManagementDataService);
 
-			IHostedService sendLoggingManagementMessages = new SendMessages(sendingQueueConnection, messageProcessing, messageQueueAppConfig, connectionStrings, messageQueueConfigurations);
-
+			IHostedService sendLoggingManagementMessages = new SendMessages(sendingQueueConnection, messageProcessing, messageQueueAppConfig, connectionStrings, messageQueueConfigurations, string.Empty);
+			
 			//
 			//	set up receiving queue
 			//

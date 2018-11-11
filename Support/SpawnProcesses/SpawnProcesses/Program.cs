@@ -61,6 +61,17 @@ namespace SpawnProcesses
 				process3.Start();
 			}
 
+			if (startUpProcesses.PurchaseOrderManagementWebApi == true)
+			{
+				Console.WriteLine("Starting Purchase Order Management Web Api");
+				Process process3 = new Process();
+				process3.StartInfo.CreateNoWindow = false;
+				process3.StartInfo.UseShellExecute = false;
+				process3.StartInfo.RedirectStandardOutput = false;
+				process3.StartInfo.FileName = @"C:\MyFiles\_CodeProjectMicroServices\Support\StartPurchaseOrderManagementWebApi.bat";
+				process3.Start();
+			}
+
 			if (startUpProcesses.InventoryManagementMessageQueue == true)
 			{
 				Console.WriteLine("Starting Inventory Management Message Queue");
@@ -102,7 +113,7 @@ namespace SpawnProcesses
 
 			if (startUpProcesses.PurchaseOrderManagementMessageQueue == true)
 			{
-				Console.WriteLine("Starting Purchae Order Management Message Queue");
+				Console.WriteLine("Starting Purchase Order Management Message Queue");
 
 				Process process5 = new Process();
 				process5.StartInfo.CreateNoWindow = false;

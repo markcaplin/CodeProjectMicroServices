@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Data.SqlClient;
 using System.Data.Common;
+using System.Linq.Dynamic.Core;
+using CodeProject.Shared.Common.Models;
 
 namespace CodeProject.InventoryManagement.Data.EntityFramework
 {
@@ -249,6 +251,214 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 
 			await dbConnection.TransactionQueueSemaphores.AddAsync(transactionQueueSemaphore);
 		}
+
+
+		/// <summary>
+		///  Create Inbound Transaction Queue History
+		/// </summary>
+		/// <param name="transactionQueue"></param>
+		/// <returns></returns>
+		public async Task CreateInboundTransactionQueueHistory(TransactionQueueInboundHistory transactionQueue)
+		{
+			DateTime dateCreated = DateTime.UtcNow;
+			transactionQueue.DateCreated = dateCreated;
+
+			await dbConnection.TransactionQueueInboundHistory.AddAsync(transactionQueue);
+		}
+
+		/// <summary>
+		/// Create Purchase Order
+		/// </summary>
+		/// <param name="purchaseOrder"></param>
+		/// <returns></returns>
+		public async Task CreatePurchaseOrder(PurchaseOrder purchaseOrder)
+		{
+			DateTime dateCreated = DateTime.UtcNow;
+			purchaseOrder.DateCreated = dateCreated;
+			purchaseOrder.DateUpdated = dateCreated;
+
+			await dbConnection.PurchaseOrders.AddAsync(purchaseOrder);
+		}
+
+		/// <summary>
+		/// Create Purchase Order Detail
+		/// </summary>
+		/// <param name="purchaseOrderDetail"></param>
+		/// <returns></returns>
+		public async Task CreatePurchaseOrderDetail(PurchaseOrderDetail purchaseOrderDetail)
+		{
+			DateTime dateCreated = DateTime.UtcNow;
+			purchaseOrderDetail.DateCreated = dateCreated;
+			purchaseOrderDetail.DateUpdated = dateCreated;
+
+			await dbConnection.PurchaseOrderDetails.AddAsync(purchaseOrderDetail);
+		}
+
+		/// <summary>
+		/// Purchase Order Inquiry
+		/// </summary>
+		/// <param name="accountId"></param>
+		/// <param name="supplierName"></param>
+		/// <param name="paging"></param>
+		/// <returns></returns>
+		public async Task<List<PurchaseOrder>> PurchaseOrderInquiry(int accountId, string supplierName, DataGridPagingInformation paging)
+		{
+			string sortExpression = paging.SortExpression;
+			string sortDirection = paging.SortDirection;
+
+			if (string.IsNullOrEmpty(sortExpression))
+			{
+				sortExpression = "PurchaseOrderNumber";
+			}
+
+			if (paging.SortDirection != string.Empty)
+				sortExpression = sortExpression + " " + paging.SortDirection;
+
+			int numberOfRows = 0;
+
+			var query = dbConnection.PurchaseOrders
+				.Include(x => x.PurchaseOrderStatus).AsQueryable();
+
+			if (supplierName.Trim().Length > 0)
+			{
+				query = query.Where(p => p.SupplierName.Contains(supplierName));
+			}
+
+			query = query.Where(p => p.AccountId == accountId);
+
+			var purchaseOrderResults = from p in query select p;
+
+			numberOfRows = await purchaseOrderResults.CountAsync();
+
+			List<PurchaseOrder> purchaseOrders = await purchaseOrderResults.OrderBy(sortExpression).Skip((paging.CurrentPageNumber - 1) * paging.PageSize).Take(paging.PageSize).ToListAsync();
+
+			paging.TotalRows = numberOfRows;
+			paging.TotalPages = CodeProject.Shared.Common.Utilties.Functions.CalculateTotalPages(numberOfRows, paging.PageSize);
+
+			return purchaseOrders;
+		}
+
+		/// <summary>
+		/// Get Purchase Order
+		/// </summary>
+		/// <param name="accountId"></param>
+		/// <param name="purchaseOrderId"></param>
+		/// <returns></returns>
+		public async Task<PurchaseOrder> GetPurchaseOrder(int accountId, int purchaseOrderId)
+		{
+			PurchaseOrder purchaseOrder = await dbConnection.PurchaseOrders
+				.Include(x => x.PurchaseOrderStatus)
+				.Include(x => x.PurchaseOrderDetails).ThenInclude(p => p.Product)
+				.Where(x => x.AccountId == accountId && x.PurchaseOrderId == purchaseOrderId).FirstOrDefaultAsync();
+
+			return purchaseOrder;
+		}
+
+		/// <summary>
+		/// Get Purchase Order Header
+		/// </summary>
+		/// <param name="accountId"></param>
+		/// <param name="purchaseOrderId"></param>
+		/// <returns></returns>
+		public async Task<PurchaseOrder> GetPurchaseOrderHeader(int accountId, int purchaseOrderId)
+		{
+			PurchaseOrder purchaseOrder = await dbConnection.PurchaseOrders
+				.Where(x => x.AccountId == accountId && x.PurchaseOrderId == purchaseOrderId).FirstOrDefaultAsync();
+
+			return purchaseOrder;
+		}
+
+
+		/// <summary>
+		/// Get Purchase Order Detail For Update
+		/// </summary>
+		/// <param name="purchaseOrderDetailId"></param>
+		/// <returns></returns>
+		public async Task<PurchaseOrderDetail> GetPurchaseOrderDetailForUpdate(int purchaseOrderDetailId)
+		{
+			PurchaseOrderDetail purchaseOrderDetail = await dbConnection.PurchaseOrderDetails
+				.Where(x => x.PurchaseOrderDetailId == purchaseOrderDetailId).FirstOrDefaultAsync();
+
+			return purchaseOrderDetail;
+		}
+
+		/// <summary>
+		/// Update Purchase Order Detail
+		/// </summary>
+		/// <param name="purchaseOrderDetail"></param>
+		/// <returns></returns>
+		public async Task UpdatePurchaseOrderDetail(PurchaseOrderDetail purchaseOrderDetail)
+		{
+			await Task.Delay(0);
+			DateTime dateUpdated = DateTime.UtcNow;
+			purchaseOrderDetail.DateUpdated = dateUpdated;
+		}
+
+		/// <summary>
+		/// Create Inventory Transaction
+		/// </summary>
+		/// <param name="inventoryTransaction"></param>
+		/// <returns></returns>
+		public async Task CreateInventoryTransaction(InventoryTransaction inventoryTransaction)
+		{
+			await dbConnection.InventoryTransactions.AddAsync(inventoryTransaction);
+		}
+
+		/// <summary>
+		/// Product Inquiry
+		/// </summary>
+		/// <param name="accountId"></param>
+		/// <param name="productNumber"></param>
+		/// <param name="paging"></param>
+		/// <returns></returns>
+		public async Task<List<Product>> ProductInquiry(int accountId, string productNumber, DataGridPagingInformation paging)
+		{
+			string sortExpression = paging.SortExpression;
+			string sortDirection = paging.SortDirection;
+
+			if (string.IsNullOrEmpty(sortExpression))
+			{
+				sortExpression = "ProductNumber";
+			}
+
+			if (paging.SortDirection != string.Empty)
+				sortExpression = sortExpression + " " + paging.SortDirection;
+
+			int numberOfRows = 0;
+
+			var query = dbConnection.Products.AsQueryable();
+
+			if (productNumber.Trim().Length > 0)
+			{
+				query = query.Where(p => p.ProductNumber.Contains(productNumber));
+			}
+
+			query = query.Where(p => p.AccountId == accountId);
+
+			var productsResults = from p in query select p;
+
+			numberOfRows = await productsResults.CountAsync();
+
+			List<Product> products = await productsResults.OrderBy(sortExpression).Skip((paging.CurrentPageNumber - 1) * paging.PageSize).Take(paging.PageSize).ToListAsync();
+
+			paging.TotalRows = numberOfRows;
+			paging.TotalPages = CodeProject.Shared.Common.Utilties.Functions.CalculateTotalPages(numberOfRows, paging.PageSize);
+
+			return products;
+		}
+
+		/// <summary>
+		/// Get Product
+		/// </summary>
+		/// <param name="accountId"></param>
+		/// <param name="productId"></param>
+		/// <returns></returns>
+		public async Task<Product> GetProduct(int accountId, int productId)
+		{
+			Product product = await dbConnection.Products.Where(x => x.AccountId == accountId && x.ProductId == productId).FirstOrDefaultAsync();
+			return product;
+		}
+
 
 	}
 }

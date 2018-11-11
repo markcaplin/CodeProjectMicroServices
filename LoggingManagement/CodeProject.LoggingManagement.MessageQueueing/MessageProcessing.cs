@@ -174,6 +174,16 @@ namespace CodeProject.LoggingManagement.Business.MessageService
 						messageSent.AcknowledgementsRequired = MessageExchangeFanouts.ProductUpdated;
 						messageSent.AcknowledgementsReceived = 0;
 					}
+					else if (messageSent.TransactionCode == MessageQueueExchanges.PurchaseOrderSubmitted)
+					{
+						messageSent.AcknowledgementsRequired = MessageExchangeFanouts.PurchaseOrderSubmitted;
+						messageSent.AcknowledgementsReceived = 0;
+					}
+					else if (messageSent.TransactionCode == MessageQueueExchanges.InventoryReceived)
+					{
+						messageSent.AcknowledgementsRequired = MessageExchangeFanouts.InventoryReceived;
+						messageSent.AcknowledgementsReceived = 0;
+					}
 
 					if (messageQueue.QueueName != string.Empty && messageQueue.QueueName != null)
 					{
@@ -208,6 +218,14 @@ namespace CodeProject.LoggingManagement.Business.MessageService
 						acknowledgementsQueue.TransactionCode = messageQueue.TransactionCode;
 
 						if (acknowledgementsQueue.TransactionCode == MessageQueueExchanges.ProductUpdated)
+						{
+							acknowledgementsQueue.AcknowledgementQueue = MessageQueueEndpoints.InventoryQueue;
+						}
+						else if (acknowledgementsQueue.TransactionCode == MessageQueueExchanges.PurchaseOrderSubmitted)
+						{
+							acknowledgementsQueue.AcknowledgementQueue = MessageQueueEndpoints.PurchaseOrderQueue;
+						}
+						else if (acknowledgementsQueue.TransactionCode == MessageQueueExchanges.InventoryReceived)
 						{
 							acknowledgementsQueue.AcknowledgementQueue = MessageQueueEndpoints.InventoryQueue;
 						}

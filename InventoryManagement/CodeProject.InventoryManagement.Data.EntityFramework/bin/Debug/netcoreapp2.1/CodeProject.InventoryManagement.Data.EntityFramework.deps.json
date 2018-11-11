@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.1",
-    "signature": "59e229fa0d2b6ea5d330fbd6206b87d9343624e4"
+    "signature": "f54c916320658d6704d1145b7bfe61bbababa1b2"
   },
   "compilationOptions": {},
   "targets": {
@@ -13,7 +13,8 @@
           "CodeProject.Shared.Common.Interfaces": "1.0.0",
           "CodeProject.Shared.Common.Models": "1.0.0",
           "CodeProject.Shared.Common.Utilities": "1.0.0",
-          "Microsoft.EntityFrameworkCore.SqlServer": "2.1.2"
+          "Microsoft.EntityFrameworkCore.SqlServer": "2.1.2",
+          "System.Linq.Dynamic.Core": "1.0.9"
         },
         "runtime": {
           "CodeProject.InventoryManagement.Data.EntityFramework.dll": {}
@@ -696,6 +697,17 @@
           "System.Resources.ResourceManager": "4.3.0",
           "System.Runtime": "4.3.0",
           "System.Runtime.Extensions": "4.3.0"
+        }
+      },
+      "System.Linq.Dynamic.Core/1.0.9": {
+        "dependencies": {
+          "System.Reflection.Emit": "4.3.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Linq.Dynamic.Core.dll": {
+            "assemblyVersion": "1.0.9.0",
+            "fileVersion": "1.0.9.0"
+          }
         }
       },
       "System.Linq.Expressions/4.1.0": {
@@ -1944,6 +1956,13 @@
       "sha512": "sha512-5DbqIUpsDp0dFftytzuMmc0oeMdQwjcP/EWxsksIz/w1TcFRkZ3yKKz0PqiYFMmEwPSWw+qNVqD7PJ889JzHbw==",
       "path": "system.linq/4.3.0",
       "hashPath": "system.linq.4.3.0.nupkg.sha512"
+    },
+    "System.Linq.Dynamic.Core/1.0.9": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-I0r3JnfbgfOJtdh1TzhJWC/FOvZ+NRr0KfXK7L7AAO+1Pb7YNNWceqN3OC0/BXbBmLBjvqOq2rqrDJqfmtGzww==",
+      "path": "system.linq.dynamic.core/1.0.9",
+      "hashPath": "system.linq.dynamic.core.1.0.9.nupkg.sha512"
     },
     "System.Linq.Expressions/4.1.0": {
       "type": "package",

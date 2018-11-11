@@ -181,7 +181,7 @@ var LoginComponent = /** @class */ (function () {
         localStorage.removeItem('token');
         var user = new _shared_view_models_user_viewmodel__WEBPACK_IMPORTED_MODULE_4__["UserViewModel"]();
         user = this.userViewModel;
-        var url = 'https://localhost:44303/api/authorization/login';
+        var url = this.sessionService.appSettings.accountManagementWebApiUrl + 'authorization/login';
         this.httpService.HttpPost(url, user).subscribe(function (response) {
             _this.loginSuccess(response);
         }, function (response) { return _this.loginFailed(response); });
@@ -291,7 +291,7 @@ var RegisterComponent = /** @class */ (function () {
         var _this = this;
         var user = new _shared_view_models_user_viewmodel__WEBPACK_IMPORTED_MODULE_3__["UserViewModel"]();
         user = this.userViewModel;
-        var url = 'https://localhost:44303/api/authorization/register';
+        var url = this.sessionService.appSettings.accountManagementWebApiUrl + 'authorization/register';
         this.httpService.HttpPost(url, user).subscribe(function (response) {
             _this.registerSuccess(response);
         }, function (response) { return _this.registerFailed(response); });

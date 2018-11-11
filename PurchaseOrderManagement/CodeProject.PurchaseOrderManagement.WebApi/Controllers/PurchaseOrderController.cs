@@ -316,6 +316,48 @@ namespace CodeProject.PurchaseOrderManagement.WebApi.Controllers
 
 		}
 
+		/// <summary>
+		/// Submit Purchase Order
+		/// </summary>
+		/// <param name="purchaseOrderDataTransformation"></param>
+		/// <returns></returns>
+		[HttpPost]
+		[Route("SubmitPurchaseOrder")]
+		public async Task<IActionResult> SubmitPurchaseOrder([FromBody] PurchaseOrderDataTransformation purchaseOrderDataTransformation)
+		{
+
+			SecurityModel securityModel = (SecurityModel)(HttpContext.Items["SecurityModel"]);
+
+			int accountId = securityModel.AccountId;
+
+			purchaseOrderDataTransformation.AccountId = accountId;
+
+			ResponseModel<PurchaseOrderDataTransformation> returnResponse = new ResponseModel<PurchaseOrderDataTransformation>();
+
+			try
+			{
+				returnResponse = await _purchaseOrderManagementBusinessService.SubmitPurchaseOrder(purchaseOrderDataTransformation);
+				returnResponse.Token = securityModel.Token;
+				if (returnResponse.ReturnStatus == false)
+				{
+					return BadRequest(returnResponse);
+				}
+
+				await _messageQueueContext.Clients.All.SendAsync(MessageQueueEndpoints.PurchaseOrderQueue, string.Empty);
+
+				return Ok(returnResponse);
+
+			}
+			catch (Exception ex)
+			{
+				returnResponse.ReturnStatus = false;
+				returnResponse.ReturnMessage.Add(ex.Message);
+				return BadRequest(returnResponse);
+			}
+
+		}
+
+
 
 	}
 }

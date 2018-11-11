@@ -236,6 +236,16 @@ namespace CodeProject.PurchaseOrderManagement.Business.MessageService
 						await ProductUpdated(transactionQueueItem);
 						await _purchaseOrderManagementDataService.DeleteInboundTransactionQueueEntry(transactionQueueItem.TransactionQueueInboundId);
 					}
+					else if (transactionCode == TransactionQueueTypes.InventoryReceived)
+					{
+						await InventoryReceived(transactionQueueItem);
+						await _purchaseOrderManagementDataService.DeleteInboundTransactionQueueEntry(transactionQueueItem.TransactionQueueInboundId);
+					}
+					else if (transactionCode == TransactionQueueTypes.Acknowledgement)
+					{
+						await ProcessAcknowledgement(transactionQueueItem);
+						await _purchaseOrderManagementDataService.DeleteInboundTransactionQueueEntry(transactionQueueItem.TransactionQueueInboundId);
+					}
 
 				}
 
@@ -297,6 +307,27 @@ namespace CodeProject.PurchaseOrderManagement.Business.MessageService
 			await LogSuccessfullyProcessed(transaction);
 		}
 
+		/// <summary>
+		/// Inventory Received
+		/// </summary>
+		/// <param name="transaction"></param>
+		private async Task InventoryReceived(TransactionQueueInbound transaction)
+		{
+
+			InventoryTransactionPayload payload = JsonConvert.DeserializeObject<InventoryTransactionPayload>(transaction.Payload);
+
+			int purchaseOrderDetailId = payload.MasterEntityId;
+
+			PurchaseOrderDetail purchaseOrderDetail = await _purchaseOrderManagementDataService.GetPurchaseOrderDetailForUpdate(purchaseOrderDetailId);
+			if (purchaseOrderDetail != null)
+			{
+				purchaseOrderDetail.ReceiviedQuantity = purchaseOrderDetail.ReceiviedQuantity + payload.Quantity;
+
+				await _purchaseOrderManagementDataService.UpdatePurchaseOrderDetail(purchaseOrderDetail);
+			}
+		
+			await LogSuccessfullyProcessed(transaction);
+		}
 
 
 		/// <summary>
@@ -342,6 +373,46 @@ namespace CodeProject.PurchaseOrderManagement.Business.MessageService
 
 			await _purchaseOrderManagementDataService.CreateInboundTransactionQueueHistory(transactionHistory);
 			
+		}
+
+		/// <summary>
+		/// Process Acknowledgement
+		/// </summary>
+		/// <param name="transaction"></param>
+		private async Task ProcessAcknowledgement(TransactionQueueInbound transaction)
+		{
+
+			int transactionId = transaction.SenderTransactionQueueId;
+
+			TransactionQueueOutbound transactionQueueItem = await _purchaseOrderManagementDataService.GetOutboundTransactionQueueItemById(transactionId);
+			if (transactionQueueItem != null)
+			{
+				await LogOutboundTransactionToHistory(transactionQueueItem);
+
+			}
+
+		}
+
+		/// <summary>
+		/// Log Outbound Transaction To History
+		/// </summary>
+		/// <param name="transactionQueueItem"></param>
+		/// <returns></returns>
+		private async Task LogOutboundTransactionToHistory(TransactionQueueOutbound transactionQueueItem)
+		{
+			TransactionQueueOutboundHistory transactionHistory = new TransactionQueueOutboundHistory();
+			transactionHistory.TransactionQueueOutboundId = transactionQueueItem.TransactionQueueOutboundId;
+			transactionHistory.TransactionCode = transactionQueueItem.TransactionCode;
+			transactionHistory.Payload = transactionQueueItem.Payload;
+			transactionHistory.ExchangeName = transactionQueueItem.ExchangeName;
+			transactionHistory.SentToExchange = transactionQueueItem.SentToExchange;
+			transactionHistory.DateOutboundTransactionCreated = transactionQueueItem.DateCreated;
+			transactionHistory.DateSentToExchange = transactionQueueItem.DateSentToExchange;
+			transactionHistory.DateToResendToExchange = transactionQueueItem.DateToResendToExchange;
+
+			await _purchaseOrderManagementDataService.CreateOutboundTransactionQueueHistory(transactionHistory);
+			await _purchaseOrderManagementDataService.DeleteOutboundTransactionQueueEntry(transactionQueueItem.TransactionQueueOutboundId);
+
 		}
 	}
 

@@ -19,6 +19,29 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("CodeProject.InventoryManagement.Data.Entities.InventoryTransaction", b =>
+                {
+                    b.Property<int>("InventoryTransactionId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("EntityId");
+
+                    b.Property<int>("MasterEntityId");
+
+                    b.Property<int>("ProductId");
+
+                    b.Property<int>("Quantity");
+
+                    b.Property<DateTime>("TransactionDate");
+
+                    b.Property<double>("UnitCost");
+
+                    b.HasKey("InventoryTransactionId");
+
+                    b.ToTable("InventoryTransactions");
+                });
+
             modelBuilder.Entity("CodeProject.InventoryManagement.Data.Entities.Product", b =>
                 {
                     b.Property<int>("ProductId")
@@ -52,6 +75,103 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework.Migrations
                     b.HasIndex("ProductNumber");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("CodeProject.InventoryManagement.Data.Entities.PurchaseOrder", b =>
+                {
+                    b.Property<int>("PurchaseOrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AccountId");
+
+                    b.Property<string>("AddressLine1");
+
+                    b.Property<string>("AddressLine2");
+
+                    b.Property<string>("City");
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<DateTime>("DateUpdated");
+
+                    b.Property<int>("MasterPurchaseOrderId");
+
+                    b.Property<double>("OrderTotal");
+
+                    b.Property<string>("PostalCode");
+
+                    b.Property<int>("PurchaseOrderNumber");
+
+                    b.Property<int>("PurchaseOrderStatusId");
+
+                    b.Property<string>("Region");
+
+                    b.Property<string>("SupplierName");
+
+                    b.HasKey("PurchaseOrderId");
+
+                    b.HasIndex("PurchaseOrderStatusId");
+
+                    b.ToTable("PurchaseOrders");
+                });
+
+            modelBuilder.Entity("CodeProject.InventoryManagement.Data.Entities.PurchaseOrderDetail", b =>
+                {
+                    b.Property<int>("PurchaseOrderDetailId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AccountId");
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<DateTime>("DateUpdated");
+
+                    b.Property<int>("MasterPurchaseOrderDetailId");
+
+                    b.Property<int>("OrderQuantity");
+
+                    b.Property<double>("OrderTotal");
+
+                    b.Property<string>("ProductDescription");
+
+                    b.Property<int>("ProductId");
+
+                    b.Property<string>("ProductNumber");
+
+                    b.Property<int>("PurchaseOrderId");
+
+                    b.Property<int>("ReceivedQuantity");
+
+                    b.Property<double>("UnitPrice");
+
+                    b.HasKey("PurchaseOrderDetailId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("PurchaseOrderId");
+
+                    b.ToTable("PurchaseOrderDetails");
+                });
+
+            modelBuilder.Entity("CodeProject.InventoryManagement.Data.Entities.PurchaseOrderStatus", b =>
+                {
+                    b.Property<int>("PurchaseOrderStatusId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Description");
+
+                    b.HasKey("PurchaseOrderStatusId");
+
+                    b.ToTable("PurchaseOrderStatuses");
+
+                    b.HasData(
+                        new { PurchaseOrderStatusId = 1, Description = "Open" },
+                        new { PurchaseOrderStatusId = 2, Description = "Submitted" },
+                        new { PurchaseOrderStatusId = 3, Description = "Completed" }
+                    );
                 });
 
             modelBuilder.Entity("CodeProject.InventoryManagement.Data.Entities.TransactionQueueInbound", b =>
@@ -179,6 +299,27 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework.Migrations
                         .HasFilter("[SemaphoreKey] IS NOT NULL");
 
                     b.ToTable("TransactionQueueSemaphores");
+                });
+
+            modelBuilder.Entity("CodeProject.InventoryManagement.Data.Entities.PurchaseOrder", b =>
+                {
+                    b.HasOne("CodeProject.InventoryManagement.Data.Entities.PurchaseOrderStatus", "PurchaseOrderStatus")
+                        .WithMany()
+                        .HasForeignKey("PurchaseOrderStatusId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CodeProject.InventoryManagement.Data.Entities.PurchaseOrderDetail", b =>
+                {
+                    b.HasOne("CodeProject.InventoryManagement.Data.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CodeProject.InventoryManagement.Data.Entities.PurchaseOrder", "PurchaseOrder")
+                        .WithMany("PurchaseOrderDetails")
+                        .HasForeignKey("PurchaseOrderId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

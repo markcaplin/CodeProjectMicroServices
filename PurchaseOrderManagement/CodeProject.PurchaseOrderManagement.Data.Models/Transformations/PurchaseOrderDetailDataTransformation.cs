@@ -15,6 +15,8 @@ namespace CodeProject.PurchaseOrderManagement.Data.Transformations
 		public string ProductDescription { get; set; }
 		public double UnitPrice { get; set; }
 		public int OrderQuantity { get; set; }
+		public int ReceivedQuantity { get; set; }
+		public double OrderTotal { get; set; }
 		public DateTime DateCreated { get; set; }
 		public DateTime DateUpdated { get; set; }
 	}

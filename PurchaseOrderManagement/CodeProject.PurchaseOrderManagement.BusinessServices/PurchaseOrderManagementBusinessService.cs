@@ -209,6 +209,8 @@ namespace CodeProject.PurchaseOrderManagement.BusinessServices
 
 				await _purchaseOrderManagementDataService.UpdateDatabase();
 
+				purchaseOrder = await _purchaseOrderManagementDataService.GetPurchaseOrder(accountId, purchaseOrderId);
+
 				TransactionQueueOutbound transactionQueue = new TransactionQueueOutbound();
 				transactionQueue.Payload = GeneratePurchaseOrderSubmittedPayload(purchaseOrder);
 				transactionQueue.TransactionCode = TransactionQueueTypes.PurchaseOrderSubmitted;
@@ -290,6 +292,8 @@ namespace CodeProject.PurchaseOrderManagement.BusinessServices
 				double lineItemAmount = purchaseOrderDetailDataTransformation.UnitPrice * purchaseOrderDetailDataTransformation.OrderQuantity;
 
 				purchaseOrder.OrderTotal = purchaseOrder.OrderTotal + lineItemAmount;
+
+				purchaseOrderDetailDataTransformation.OrderTotal = purchaseOrder.OrderTotal;
 
 				await _purchaseOrderManagementDataService.UpdatePurchaseOrderHeader(purchaseOrder);
 
@@ -398,6 +402,8 @@ namespace CodeProject.PurchaseOrderManagement.BusinessServices
 
 				purchaseOrder.OrderTotal = purchaseOrder.OrderTotal + newLineItemAmount - originalLineItemAmount;
 
+				purchaseOrderDetailDataTransformation.OrderTotal = purchaseOrder.OrderTotal;
+
 				await _purchaseOrderManagementDataService.UpdatePurchaseOrderHeader(purchaseOrder);
 
 				purchaseOrderDetail.UnitPrice = purchaseOrderDetailDataTransformation.UnitPrice;
@@ -451,7 +457,6 @@ namespace CodeProject.PurchaseOrderManagement.BusinessServices
 				_purchaseOrderManagementDataService.OpenConnection(_connectionStrings.PrimaryDatabaseConnectionString);
 				_purchaseOrderManagementDataService.BeginTransaction((int)IsolationLevel.ReadCommitted);
 
-
 				PurchaseOrder purchaseOrder = await _purchaseOrderManagementDataService.GetPurchaseOrderHeader(accountId, purchaseOrderId);
 				if (purchaseOrder == null)
 				{
@@ -479,6 +484,8 @@ namespace CodeProject.PurchaseOrderManagement.BusinessServices
 				await _purchaseOrderManagementDataService.DeletePurchaseOrderDetail(purchaseOrderDetailId);
 
 				purchaseOrder.OrderTotal = purchaseOrder.OrderTotal - originalLineItemAmount;
+
+				purchaseOrderDetailDataTransformation.OrderTotal = purchaseOrder.OrderTotal;
 
 				await _purchaseOrderManagementDataService.UpdatePurchaseOrderHeader(purchaseOrder);
 
@@ -885,15 +892,45 @@ namespace CodeProject.PurchaseOrderManagement.BusinessServices
 		/// <returns></returns>
 		private string GeneratePurchaseOrderSubmittedPayload(PurchaseOrder purchaseOrder)
 		{
-			ProductUpdatePayload productUpdatePayload = new ProductUpdatePayload();
-			productUpdatePayload.AccountId = product.AccountId;
-			productUpdatePayload.ProductId = product.ProductId;
-			productUpdatePayload.BinLocation = product.BinLocation;
-			productUpdatePayload.Description = product.Description;
-			productUpdatePayload.ProductNumber = product.ProductNumber;
-			productUpdatePayload.UnitPrice = product.UnitPrice;
+			
+			PurchaseOrderUpdatePayload purchaseOrderUpdatePayload = new PurchaseOrderUpdatePayload();
 
-			string payload = SerializationFunction<ProductUpdatePayload>.ReturnStringFromObject(productUpdatePayload);
+			purchaseOrderUpdatePayload.AccountId = purchaseOrder.AccountId;
+			purchaseOrderUpdatePayload.PurchaseOrderId = purchaseOrder.PurchaseOrderId;
+			purchaseOrderUpdatePayload.PurchaseOrderNumber = purchaseOrder.PurchaseOrderNumber;
+			purchaseOrderUpdatePayload.PurchaseOrderStatusId = purchaseOrder.PurchaseOrderStatusId;
+			purchaseOrderUpdatePayload.SupplierId = purchaseOrder.Supplier.SupplierId;
+			purchaseOrderUpdatePayload.SupplierName = purchaseOrder.Supplier.Name;
+			purchaseOrderUpdatePayload.AddressLine1 = purchaseOrder.Supplier.AddressLine1;
+			purchaseOrderUpdatePayload.AddressLine2 = purchaseOrder.Supplier.AddressLine2;
+			purchaseOrderUpdatePayload.City = purchaseOrder.Supplier.City;
+			purchaseOrderUpdatePayload.Region = purchaseOrder.Supplier.Region;
+			purchaseOrderUpdatePayload.PostalCode = purchaseOrder.Supplier.PostalCode;
+			purchaseOrderUpdatePayload.OrderTotal = purchaseOrder.OrderTotal;
+			purchaseOrderUpdatePayload.PurchaseOrderStatusDescription = purchaseOrder.PurchaseOrderStatus.Description;
+			purchaseOrderUpdatePayload.DateCreated = purchaseOrder.DateCreated;
+			purchaseOrderUpdatePayload.DateUpdated = purchaseOrder.DateUpdated;
+			purchaseOrderUpdatePayload.PurchaseOrderDetails = new List<PurchaseOrderDetailUpdatePayload>();
+
+			foreach (PurchaseOrderDetail purchaseOrderDetail in purchaseOrder.PurchaseOrderDetails)
+			{
+				PurchaseOrderDetailUpdatePayload purchaseOrderDetailUpdatePayload = new PurchaseOrderDetailUpdatePayload();
+				purchaseOrderDetailUpdatePayload.PurchaseOrderDetailId = purchaseOrderDetail.PurchaseOrderDetailId;
+				purchaseOrderDetailUpdatePayload.PurchaseOrderId = purchaseOrderDetail.PurchaseOrderId;
+				purchaseOrderDetailUpdatePayload.ProductId = purchaseOrderDetail.ProductId;
+				purchaseOrderDetailUpdatePayload.ProductMasterId = purchaseOrderDetail.Product.ProductMasterId;
+				purchaseOrderDetailUpdatePayload.ProductNumber = purchaseOrderDetail.Product.ProductNumber;
+				purchaseOrderDetailUpdatePayload.ProductDescription = purchaseOrderDetail.Product.Description;
+				purchaseOrderDetailUpdatePayload.UnitPrice = purchaseOrderDetail.UnitPrice;
+				purchaseOrderDetailUpdatePayload.OrderQuantity = purchaseOrderDetail.OrderQuantity;
+				purchaseOrderDetailUpdatePayload.DateCreated = purchaseOrderDetail.DateCreated;
+				purchaseOrderDetailUpdatePayload.DateUpdated = purchaseOrderDetail.DateUpdated;
+
+				purchaseOrderUpdatePayload.PurchaseOrderDetails.Add(purchaseOrderDetailUpdatePayload);
+
+			}
+
+			string payload = SerializationFunction<PurchaseOrderUpdatePayload>.ReturnStringFromObject(purchaseOrderUpdatePayload);
 
 			return payload;
 

@@ -4,6 +4,7 @@ using System.Text;
 using CodeProject.InventoryManagement.Data.Entities;
 using System.Threading.Tasks;
 using CodeProject.Shared.Common.Interfaces;
+using CodeProject.Shared.Common.Models;
 
 namespace CodeProject.InventoryManagement.Interfaces
 {
@@ -13,6 +14,7 @@ namespace CodeProject.InventoryManagement.Interfaces
 		Task CreateOutboundTransactionQueue(TransactionQueueOutbound transactionQueue);
 		Task CreateOutboundTransactionQueueHistory(TransactionQueueOutboundHistory transactionQueueItem);
 		Task CreateInboundTransactionQueue(TransactionQueueInbound transactionQueue);
+		Task CreateInboundTransactionQueueHistory(TransactionQueueInboundHistory transactionQueueHistory);
 		Task<Product> GetProductInformation(int productId);
 		Task<Product> GetProductInformationForUpdate(int productId);
 		Task<Product> GetProductInformationByProductNumber(string productNumber, int accountId);
@@ -27,5 +29,15 @@ namespace CodeProject.InventoryManagement.Interfaces
 		Task<TransactionQueueSemaphore> GetTransactionQueueSemaphore(string semaphoreKey);
 		Task UpdateTransactionQueueSemaphore(TransactionQueueSemaphore transactionQueueSemaphore);
 		Task CreateTransactionQueueSemaphore(TransactionQueueSemaphore transactionQueueSemaphore);
+		Task CreatePurchaseOrder(PurchaseOrder purchaseOrder);
+		Task CreatePurchaseOrderDetail(PurchaseOrderDetail purchaseOrderDetail);
+		Task<List<PurchaseOrder>> PurchaseOrderInquiry(int accountId, string supplierName, DataGridPagingInformation paging);
+		Task<PurchaseOrder> GetPurchaseOrder(int accountId, int purchaseOrderId);
+		Task<PurchaseOrder> GetPurchaseOrderHeader(int accountId, int purchaseOrderId);
+		Task<PurchaseOrderDetail> GetPurchaseOrderDetailForUpdate(int purchaseOrderDetailId);
+		Task UpdatePurchaseOrderDetail(PurchaseOrderDetail purchaseOrderDetail);
+		Task CreateInventoryTransaction(InventoryTransaction inventoryTransaction);
+		Task<List<Product>> ProductInquiry(int accountId, string productNumber, DataGridPagingInformation paging);
+		Task<Product> GetProduct(int accountId, int productId);
 	}
 }

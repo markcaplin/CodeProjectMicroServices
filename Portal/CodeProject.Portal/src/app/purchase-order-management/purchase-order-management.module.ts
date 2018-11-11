@@ -1,8 +1,3 @@
-
-
-
-
-
 import { SupplierMaintenanceComponent } from './supplier-maintenance/supplier-maintenance.component';
 import { SupplierInquiryComponent } from './supplier-inquiry/supplier-inquiry.component';
 import { PurchaseOrderMaintenanceComponent } from './purchase-order-maintenance/purchase-order-maintenance.component';
@@ -14,6 +9,7 @@ import { MaterialModule } from '../material.module';
 import { PurchaseOrderManagementRoutingModule } from './purchase-order-management.routing';
 import { PurchaseOrderManagementNavBarComponent } from './purchase-order-management-nav-bar/purchase-order-management-nav-bar.component';
 import { DeletePurchaseOrderLineItemDialogComponent } from './purchase-order-maintenance/purchase-order-maintenance.component';
+import { SubmitPurchaseOrderDialogComponent } from './purchase-order-maintenance/purchase-order-maintenance.component';
 
 @NgModule({
     imports: [
@@ -22,10 +18,10 @@ import { DeletePurchaseOrderLineItemDialogComponent } from './purchase-order-mai
         FormsModule,
         MaterialModule
     ],
-    entryComponents: [DeletePurchaseOrderLineItemDialogComponent],
+    entryComponents: [DeletePurchaseOrderLineItemDialogComponent, SubmitPurchaseOrderDialogComponent],
     declarations: [SupplierInquiryComponent, SupplierMaintenanceComponent,
         PurchaseOrderInquiryComponent, PurchaseOrderMaintenanceComponent,
-        PurchaseOrderManagementNavBarComponent, DeletePurchaseOrderLineItemDialogComponent]
+        PurchaseOrderManagementNavBarComponent, DeletePurchaseOrderLineItemDialogComponent, SubmitPurchaseOrderDialogComponent]
 })
 export class PurchaseOrderManagementModule {
 }

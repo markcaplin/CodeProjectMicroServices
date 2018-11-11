@@ -95,6 +95,8 @@ namespace CodeProject.PurchaseOrderManagement.Data.EntityFramework.Migrations
 
                     b.Property<int>("PurchaseOrderId");
 
+                    b.Property<int>("ReceiviedQuantity");
+
                     b.Property<double>("UnitPrice");
 
                     b.HasKey("PurchaseOrderDetailId");
@@ -250,6 +252,35 @@ namespace CodeProject.PurchaseOrderManagement.Data.EntityFramework.Migrations
                     b.ToTable("TransactionQueueOutbound");
                 });
 
+            modelBuilder.Entity("CodeProject.PurchaseOrderManagement.Data.Entities.TransactionQueueOutboundHistory", b =>
+                {
+                    b.Property<int>("TransactionQueueOutboundHistoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<DateTime>("DateOutboundTransactionCreated");
+
+                    b.Property<DateTime>("DateSentToExchange");
+
+                    b.Property<DateTime>("DateToResendToExchange");
+
+                    b.Property<string>("ExchangeName");
+
+                    b.Property<string>("Payload");
+
+                    b.Property<bool>("SentToExchange");
+
+                    b.Property<string>("TransactionCode");
+
+                    b.Property<int>("TransactionQueueOutboundId");
+
+                    b.HasKey("TransactionQueueOutboundHistoryId");
+
+                    b.ToTable("TransactionQueueOutboundHistory");
+                });
+
             modelBuilder.Entity("CodeProject.PurchaseOrderManagement.Data.Entities.TransactionQueueSemaphore", b =>
                 {
                     b.Property<int>("TransactionQueueSemaphoreId")
@@ -292,7 +323,7 @@ namespace CodeProject.PurchaseOrderManagement.Data.EntityFramework.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("CodeProject.PurchaseOrderManagement.Data.Entities.PurchaseOrder", "PurchaseOrder")
-                        .WithMany()
+                        .WithMany("PurchaseOrderDetails")
                         .HasForeignKey("PurchaseOrderId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

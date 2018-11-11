@@ -121,6 +121,88 @@ namespace CodeProject.InventoryManagement.WebApi.Controllers
 
 		}
 
+		/// <summary>
+		/// Purchase Order Inquiry
+		/// </summary>
+		/// <param name="productInquiryDataTransformation"></param>
+		/// <returns></returns>
+		[HttpPost]
+		[Route("ProductInquiry")]
+		public async Task<IActionResult> ProductInquiry([FromBody] ProductInquiryDataTransformation productInquiryDataTransformation)
+		{
+
+			SecurityModel securityModel = (SecurityModel)(HttpContext.Items["SecurityModel"]);
+
+			int accountId = securityModel.AccountId;
+			string productNumber = productInquiryDataTransformation.ProductNumber;
+			int pageSize = productInquiryDataTransformation.PageSize;
+			int currentPageNumber = productInquiryDataTransformation.CurrentPageNumber;
+			string sortDirection = productInquiryDataTransformation.SortDirection;
+			string sortExpression = productInquiryDataTransformation.SortExpression;
+
+			ResponseModel<List<ProductDataTransformation>> returnResponse = new ResponseModel<List<ProductDataTransformation>>();
+
+			try
+			{
+				returnResponse = await _inventoryManagementBusinessService.ProductInquiry(accountId, productNumber, currentPageNumber, pageSize, sortExpression, sortDirection);
+				returnResponse.Token = securityModel.Token;
+				if (returnResponse.ReturnStatus == false)
+				{
+					return BadRequest(returnResponse);
+				}
+
+				return Ok(returnResponse);
+
+			}
+			catch (Exception ex)
+			{
+				returnResponse.ReturnStatus = false;
+				returnResponse.ReturnMessage.Add(ex.Message);
+				return BadRequest(returnResponse);
+			}
+
+		}
+
+		/// <summary>
+		/// Get Product
+		/// </summary>
+		/// <param name="productDataTransformation"></param>
+		/// <returns></returns>
+		[HttpPost]
+		[Route("GetProduct")]
+		public async Task<IActionResult> GetProduct([FromBody] ProductDataTransformation productDataTransformation)
+		{
+
+			SecurityModel securityModel = (SecurityModel)(HttpContext.Items["SecurityModel"]);
+
+			int accountId = securityModel.AccountId;
+			int productId = productDataTransformation.ProductId;
+
+			ResponseModel<ProductDataTransformation> returnResponse = new ResponseModel<ProductDataTransformation>();
+
+			try
+			{
+				returnResponse = await _inventoryManagementBusinessService.GetProduct(accountId, productId);
+				returnResponse.Token = securityModel.Token;
+				if (returnResponse.ReturnStatus == false)
+				{
+					return BadRequest(returnResponse);
+				}
+
+				return Ok(returnResponse);
+
+			}
+			catch (Exception ex)
+			{
+				returnResponse.ReturnStatus = false;
+				returnResponse.ReturnMessage.Add(ex.Message);
+				return BadRequest(returnResponse);
+			}
+
+		}
+
+
+
 
 	}
 }

@@ -16,6 +16,10 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 		public DbSet<TransactionQueueInboundHistory> TransactionQueueInboundHistory { get; set; }
 		public DbSet<TransactionQueueOutboundHistory> TransactionQueueOutboundHistory { get; set; }
 		public DbSet<TransactionQueueSemaphore> TransactionQueueSemaphores { get; set; }
+		public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
+		public DbSet<PurchaseOrderStatus> PurchaseOrderStatuses { get; set; }
+		public DbSet<PurchaseOrderDetail> PurchaseOrderDetails { get; set; }
+		public DbSet<InventoryTransaction> InventoryTransactions { get; set; }
 
 		private readonly string _connectionString;
 
@@ -47,6 +51,11 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 			
 			modelBuilder.Entity<Product>().HasIndex(u=> u.ProductNumber);
 			modelBuilder.Entity<TransactionQueueSemaphore>().HasIndex(u => u.SemaphoreKey).IsUnique();
+
+			modelBuilder.Entity<PurchaseOrderStatus>().HasData(
+				new { PurchaseOrderStatusId = 1, Description = "Open" },
+				new { PurchaseOrderStatusId = 2, Description = "Submitted" },
+				new { PurchaseOrderStatusId = 3, Description = "Completed" });
 
 		}
 

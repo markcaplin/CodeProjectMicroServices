@@ -14,7 +14,6 @@ import { distinctUntilChanged } from 'rxjs/operators';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 
-
 @Component({
   selector: 'app-supplier-inquiry',
   templateUrl: './supplier-inquiry.component.html',

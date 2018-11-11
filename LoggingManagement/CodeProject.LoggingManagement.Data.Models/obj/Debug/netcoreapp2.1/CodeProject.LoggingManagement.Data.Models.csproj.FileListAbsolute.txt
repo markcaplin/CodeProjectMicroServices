@@ -6,4 +6,3 @@ C:\MyFiles\_CodeProjectMicroServices\LoggingManagement\CodeProject.LoggingManage
 C:\MyFiles\_CodeProjectMicroServices\LoggingManagement\CodeProject.LoggingManagement.Data.Models\obj\Debug\netcoreapp2.1\CodeProject.LoggingManagement.Data.Models.AssemblyInfo.cs
 C:\MyFiles\_CodeProjectMicroServices\LoggingManagement\CodeProject.LoggingManagement.Data.Models\obj\Debug\netcoreapp2.1\CodeProject.LoggingManagement.Data.Models.dll
 C:\MyFiles\_CodeProjectMicroServices\LoggingManagement\CodeProject.LoggingManagement.Data.Models\obj\Debug\netcoreapp2.1\CodeProject.LoggingManagement.Data.Models.pdb
-C:\MyFiles\_CodeProjectMicroServices\LoggingManagement\CodeProject.LoggingManagement.Data.Models\obj\Debug\netcoreapp2.1\CodeProject.LoggingManagement.Data.Models.csprojAssemblyReference.cache

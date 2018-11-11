@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.1",
-    "signature": "1bfe04a4ef85f75271047af664893f15abba5b8a"
+    "signature": "021923c51ccc339ea4d28a3904929248b7823aa9"
   },
   "compilationOptions": {},
   "targets": {
@@ -926,6 +926,25 @@
           "System.Runtime.Extensions": "4.3.0"
         }
       },
+      "System.Linq.Dynamic/1.0.7": {
+        "runtime": {
+          "lib/net40/System.Linq.Dynamic.dll": {
+            "assemblyVersion": "1.0.6132.35681",
+            "fileVersion": "1.0.6132.35681"
+          }
+        }
+      },
+      "System.Linq.Dynamic.Core/1.0.8.18": {
+        "dependencies": {
+          "System.Reflection.Emit": "4.3.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Linq.Dynamic.Core.dll": {
+            "assemblyVersion": "1.0.8.18",
+            "fileVersion": "1.0.8.18"
+          }
+        }
+      },
       "System.Linq.Expressions/4.1.0": {
         "dependencies": {
           "System.Collections": "4.3.0",
@@ -1667,7 +1686,9 @@
           "CodeProject.Shared.Common.Models": "1.0.0",
           "CodeProject.Shared.Common.Utilities": "1.0.0",
           "Microsoft.EntityFrameworkCore.SqlServer": "2.1.2",
-          "Microsoft.EntityFrameworkCore.Tools": "2.1.2"
+          "Microsoft.EntityFrameworkCore.Tools": "2.1.2",
+          "System.Linq.Dynamic": "1.0.7",
+          "System.Linq.Dynamic.Core": "1.0.8.18"
         },
         "runtime": {
           "CodeProject.PurchaseOrderManagement.Data.EntityFramework.dll": {}
@@ -2355,6 +2376,20 @@
       "sha512": "sha512-5DbqIUpsDp0dFftytzuMmc0oeMdQwjcP/EWxsksIz/w1TcFRkZ3yKKz0PqiYFMmEwPSWw+qNVqD7PJ889JzHbw==",
       "path": "system.linq/4.3.0",
       "hashPath": "system.linq.4.3.0.nupkg.sha512"
+    },
+    "System.Linq.Dynamic/1.0.7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-BxEYab1SCgaqElLv57DrfPyi3ksK1Pbk5eXfwkXRZOdlC4aFT03QRkPEbYFBnFPnxhoLlc/Rg2b8vL0ffYSYWA==",
+      "path": "system.linq.dynamic/1.0.7",
+      "hashPath": "system.linq.dynamic.1.0.7.nupkg.sha512"
+    },
+    "System.Linq.Dynamic.Core/1.0.8.18": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Ti7yhula15jyfG/S2RoSmAgXwOltY1ILSef+SSCfTjq6GiOZNqhESRrXS2Aflq2ico++TOFg05rWTWShdVLtOQ==",
+      "path": "system.linq.dynamic.core/1.0.8.18",
+      "hashPath": "system.linq.dynamic.core.1.0.8.18.nupkg.sha512"
     },
     "System.Linq.Expressions/4.1.0": {
       "type": "package",

@@ -558,6 +558,39 @@ namespace CodeProject.PurchaseOrderManagement.Data.EntityFramework
 			return purchaseOrders;
 		}
 
+		/// <summary>
+		/// Create Outbound Transaction Queue History
+		/// </summary>
+		/// <param name="transactionQueueItem"></param>
+		/// <returns></returns>
+		public async Task CreateOutboundTransactionQueueHistory(TransactionQueueOutboundHistory transactionQueueItem)
+		{
+			DateTime dateCreated = DateTime.UtcNow;
+			transactionQueueItem.DateCreated = dateCreated;
 
+			await dbConnection.TransactionQueueOutboundHistory.AddAsync(transactionQueueItem);
+		}
+
+		/// <summary>
+		/// Delete Outbound Transaction Queue Entry
+		/// </summary>
+		/// <param name="transactionQueueId"></param>
+		/// <returns></returns>
+		public async Task DeleteOutboundTransactionQueueEntry(int transactionQueueId)
+		{
+			TransactionQueueOutbound transactionQueue = await dbConnection.TransactionQueueOutbound.Where(x => x.TransactionQueueOutboundId == transactionQueueId).FirstOrDefaultAsync();
+			dbConnection.TransactionQueueOutbound.Remove(transactionQueue);
+		}
+
+		/// <summary>
+		/// Get Outbound Transaction Queue Item By Id
+		/// </summary>
+		/// <param name="transactionQueueId"></param>
+		/// <returns></returns>
+		public async Task<TransactionQueueOutbound> GetOutboundTransactionQueueItemById(int transactionQueueId)
+		{
+			TransactionQueueOutbound transactionQueueItem = await dbConnection.TransactionQueueOutbound.Where(x => x.TransactionQueueOutboundId == transactionQueueId).FirstOrDefaultAsync();
+			return transactionQueueItem;
+		}
 	}
 }

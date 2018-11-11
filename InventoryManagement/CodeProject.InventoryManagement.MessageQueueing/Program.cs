@@ -46,7 +46,20 @@ namespace CodeProject.InventoryManagement.MessageQueueing
 			sendingQueueConnection.CreateConnection();
 
 			List<IMessageQueueConfiguration> messageQueueConfigurations = new List<IMessageQueueConfiguration>();
+			//
+			//	Inventory Received Transactions
+			//
+			IMessageQueueConfiguration inventoryReceivedConfiguration = new MessageQueueConfiguration(MessageQueueExchanges.InventoryReceived, messageQueueAppConfig, sendingQueueConnection);
 
+			inventoryReceivedConfiguration.AddQueue(MessageQueueEndpoints.SalesOrderQueue);
+			inventoryReceivedConfiguration.AddQueue(MessageQueueEndpoints.PurchaseOrderQueue);
+			inventoryReceivedConfiguration.AddQueue(MessageQueueEndpoints.LoggingQueue);
+
+			inventoryReceivedConfiguration.InitializeOutboundMessageQueueing();
+			messageQueueConfigurations.Add(inventoryReceivedConfiguration);
+			//
+			//	Product Creation and Updates
+			//
 			IMessageQueueConfiguration productUpdatedConfiguration = new MessageQueueConfiguration(MessageQueueExchanges.ProductUpdated, messageQueueAppConfig, sendingQueueConnection);
 
 			productUpdatedConfiguration.AddQueue(MessageQueueEndpoints.SalesOrderQueue);
@@ -55,7 +68,9 @@ namespace CodeProject.InventoryManagement.MessageQueueing
 
 			productUpdatedConfiguration.InitializeOutboundMessageQueueing();
 			messageQueueConfigurations.Add(productUpdatedConfiguration);
-
+			//
+			//	Order Shipped Transactions
+			//
 			IMessageQueueConfiguration orderShippedConfiguration = new MessageQueueConfiguration(MessageQueueExchanges.OrderShipped, messageQueueAppConfig, sendingQueueConnection);
 
 			orderShippedConfiguration.AddQueue(MessageQueueEndpoints.SalesOrderQueue);
@@ -67,7 +82,8 @@ namespace CodeProject.InventoryManagement.MessageQueueing
 			IInventoryManagementDataService inventoryManagementDataService = new InventoryManagementDataService();
 			IMessageQueueProcessing messageProcessing = new MessageProcessing(inventoryManagementDataService);
 
-			IHostedService sendInventoryManagementMessages = new SendMessages(sendingQueueConnection, messageProcessing, messageQueueAppConfig, connectionStrings, messageQueueConfigurations);
+			IHostedService sendInventoryManagementMessages = new SendMessages(sendingQueueConnection, messageProcessing,
+				messageQueueAppConfig, connectionStrings, messageQueueConfigurations, MessageQueueEndpoints.InventoryQueue);
 			//
 			//	set up receiving queue
 			//

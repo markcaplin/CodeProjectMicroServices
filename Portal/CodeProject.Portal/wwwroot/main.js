@@ -15,6 +15,10 @@ var map = {
 	"../app/inventory-management/inventory-management.module": [
 		"./src/app/inventory-management/inventory-management.module.ts",
 		"app-inventory-management-inventory-management-module"
+	],
+	"../app/purchase-order-management/purchase-order-management.module": [
+		"./src/app/purchase-order-management/purchase-order-management.module.ts",
+		"app-purchase-order-management-purchase-order-management-module"
 	]
 };
 function webpackAsyncContext(req) {
@@ -57,7 +61,7 @@ module.exports = ""
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<mat-toolbar color=\"primary\">\r\n  <mat-toolbar-row>\r\n\r\n    <mat-toolbar color=\"primary\" class=\"example-toolbar\">\r\n      <div [hidden]=\"!isAuthenicated\">\r\n          <button mat-icon-button (click)=\"toggleNavBar()\">\r\n              <mat-icon>apps</mat-icon>\r\n            </button>\r\n      </div>\r\n      <h1 class=\"example-app-name\">Micro Services, Inc.</h1>\r\n    </mat-toolbar>\r\n\r\n    <span class=\"spacer\"></span>\r\n\r\n    <a mat-list-item [routerLink]=\"['/home/home']\">\r\n      <mat-icon class=\"icon\">home</mat-icon>\r\n      <span class=\"label\">Home</span>\r\n    </a>\r\n\r\n    <a mat-list-item [routerLink]=\"['home/contact']\">\r\n      <mat-icon class=\"icon\">dashboard</mat-icon>\r\n      <span class=\"label\">Contact</span>\r\n    </a>\r\n\r\n    <a mat-list-item [routerLink]=\"['home/about']\">\r\n      <mat-icon class=\"icon\">home</mat-icon>\r\n      <span class=\"label\">About</span>\r\n    </a>\r\n\r\n    <span class=\"spacer\"></span>\r\n\r\n    <div [hidden]=\"isAuthenicated\">\r\n      <a mat-list-item [routerLink]=\"['/accountmanagement/account-register']\">\r\n        <mat-icon class=\"icon\">input</mat-icon>\r\n        <span class=\"label\">Register</span>\r\n      </a>\r\n\r\n      <a mat-list-item [routerLink]=\"['/accountmanagement/account-login']\">\r\n        <mat-icon class=\"icon\">input</mat-icon>\r\n        <span class=\"label\">Login</span>\r\n      </a>\r\n\r\n    </div>\r\n\r\n    <div [hidden]=\"!isAuthenicated\">\r\n\r\n      <a mat-list-item [routerLink]=\"['/accountmanagement/user-profile']\">\r\n        {{firstName}}&nbsp;{{lastName}}&nbsp;\r\n      </a>\r\n\r\n      <a mat-list-item style=\"cursor:pointer\" (click)=\"logout()\">Logout</a>\r\n\r\n    </div>\r\n\r\n  </mat-toolbar-row>\r\n</mat-toolbar>\r\n\r\n<div  [hidden]=\"hideMenuBar || !isAuthenicated\">\r\n    <mat-toolbar color=\"accent\">\r\n\r\n        <div style=\"margin-right:20px;\">\r\n          <a mat-list-item  [routerLink]=\"['/inventorymanagement/product-inquiry']\">\r\n            <mat-icon class=\"icon\">dashboard</mat-icon>\r\n            <span class=\"label\">Inventory Management</span>\r\n          </a>\r\n        </div>\r\n      \r\n        <div style=\"margin-right:20px;\">\r\n          <a mat-list-item [routerLink]=\"['home/contact']\">\r\n            <mat-icon class=\"icon\">dashboard</mat-icon>\r\n            <span class=\"label\">Sales Order Management</span>\r\n          </a>\r\n        </div>\r\n      \r\n        <div style=\"margin-right:20px;\">\r\n          <a mat-list-item [routerLink]=\"['home/contact']\">\r\n            <mat-icon class=\"icon\">dashboard</mat-icon>\r\n            <span class=\"label\">Purchase Order Management</span>\r\n          </a>\r\n        </div>\r\n      \r\n      </mat-toolbar>\r\n</div>\r\n\r\n\r\n\r\n<div [hidden]=\"!showProgressBar\" style=\"height:25px; padding-top:10px; width:300px;position: fixed; bottom: 0;right:0;margin:25px;\">\r\n  <mat-progress-bar mode=\"buffer\"></mat-progress-bar>\r\n</div>\r\n\r\n<div [hidden]=\"!hideMenuBar\" style=\"margin:0px;margin-top:0px;\">\r\n  <router-outlet></router-outlet>\r\n</div>\r\n\r\n\r\n<div>\r\n  {{hideMenuBar}}  Token Expiration Date: {{tokenExpirationDate | date:'medium' }} - {{iterations}} {{isAuthenicated}} {{sessionId}}\r\n  </div>"
+module.exports = "<mat-toolbar color=\"primary\">\r\n  <mat-toolbar-row>\r\n\r\n    <mat-toolbar color=\"primary\" class=\"example-toolbar\">\r\n      <div [hidden]=\"!isAuthenicated\">\r\n          <button mat-icon-button (click)=\"toggleNavBar()\">\r\n              <mat-icon>apps</mat-icon>\r\n            </button>\r\n      </div>\r\n      <h1 class=\"example-app-name\">Micro Services, Inc.</h1>\r\n    </mat-toolbar>\r\n\r\n    <span class=\"spacer\"></span>\r\n\r\n    <a mat-list-item [routerLink]=\"['/home/home']\">\r\n      <mat-icon class=\"icon\">home</mat-icon>\r\n      <span class=\"label\">Home</span>\r\n    </a>\r\n\r\n    <a mat-list-item [routerLink]=\"['home/contact']\">\r\n      <mat-icon class=\"icon\">dashboard</mat-icon>\r\n      <span class=\"label\">Contact</span>\r\n    </a>\r\n\r\n    <a mat-list-item [routerLink]=\"['home/about']\">\r\n      <mat-icon class=\"icon\">home</mat-icon>\r\n      <span class=\"label\">About</span>\r\n    </a>\r\n\r\n    <span class=\"spacer\"></span>\r\n\r\n    <div [hidden]=\"isAuthenicated\">\r\n      <a mat-list-item [routerLink]=\"['/accountmanagement/account-register']\">\r\n        <mat-icon class=\"icon\">input</mat-icon>\r\n        <span class=\"label\">Register</span>\r\n      </a>\r\n\r\n      <a mat-list-item [routerLink]=\"['/accountmanagement/account-login']\">\r\n        <mat-icon class=\"icon\">input</mat-icon>\r\n        <span class=\"label\">Login</span>\r\n      </a>\r\n\r\n    </div>\r\n\r\n    <div [hidden]=\"!isAuthenicated\">\r\n\r\n      <a mat-list-item [routerLink]=\"['/accountmanagement/user-profile']\">\r\n        {{firstName}}&nbsp;{{lastName}}&nbsp;\r\n      </a>\r\n\r\n      <a mat-list-item style=\"cursor:pointer\" (click)=\"logout()\">Logout</a>\r\n\r\n    </div>\r\n\r\n  </mat-toolbar-row>\r\n</mat-toolbar>\r\n\r\n<div  [hidden]=\"hideMenuBar || !isAuthenicated\">\r\n    <mat-toolbar color=\"accent\">\r\n\r\n        <div style=\"margin-right:20px;\">\r\n          <a mat-list-item  [routerLink]=\"['/inventorymanagement/product-inquiry']\">\r\n            <mat-icon class=\"icon\">dashboard</mat-icon>\r\n            <span class=\"label\">Inventory Management</span>\r\n          </a>\r\n        </div>\r\n      \r\n        <div style=\"margin-right:20px;\">\r\n          <a mat-list-item [routerLink]=\"['home/contact']\">\r\n            <mat-icon class=\"icon\">dashboard</mat-icon>\r\n            <span class=\"label\">Sales Order Management</span>\r\n          </a>\r\n        </div>\r\n      \r\n        <div style=\"margin-right:20px;\">\r\n          <a mat-list-item [routerLink]=\"['purchaseordermanagement/supplier-inquiry']\">\r\n            <mat-icon class=\"icon\">dashboard</mat-icon>\r\n            <span class=\"label\">Purchase Order Management</span>\r\n          </a>\r\n        </div>\r\n      \r\n      </mat-toolbar>\r\n</div>\r\n\r\n\r\n\r\n<div [hidden]=\"!showProgressBar\" style=\"height:25px; padding-top:10px; width:300px;position: fixed; bottom: 200;right:0;margin:25px;\">\r\n  <mat-spinner></mat-spinner>\r\n</div>\r\n\r\n<div [hidden]=\"!hideMenuBar\" style=\"margin:0px;margin-top:0px;\">\r\n  <router-outlet></router-outlet>\r\n</div>\r\n"
 
 /***/ }),
 
@@ -109,8 +113,11 @@ var AppComponent = /** @class */ (function () {
         // const native = this.elementRef.nativeElement;
         // const settings = native.getAttribute('settings');
         var appSettings = new _shared_models_appsettings_model__WEBPACK_IMPORTED_MODULE_2__["AppSettings"]();
+        appSettings.accountManagementWebApiUrl = 'https://localhost:44303/api/';
+        appSettings.inventoryManagementWebApiUrl = 'https://localhost:44340/api/';
+        appSettings.purchaseOrderManagementWebApiUrl = 'https://localhost:44327/api/';
         // appSettings = JSON.parse(settings);
-        // sessionService.setAppSettings(appSettings);
+        sessionService.setAppSettings(appSettings);
         this.isAuthenicated = sessionService.isAuthenicated;
         sessionService.startSession();
     }
@@ -314,6 +321,9 @@ var ApplicationRoutes = [
     },
     {
         path: 'inventorymanagement', loadChildren: '../app/inventory-management/inventory-management.module#InventoryManagementModule'
+    },
+    {
+        path: 'purchaseordermanagement', loadChildren: '../app/purchase-order-management/purchase-order-management.module#PurchaseOrderManagementModule'
     }
 ];
 
@@ -589,12 +599,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MaterialModule", function() { return MaterialModule; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_material__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/material */ "./node_modules/@angular/material/esm5/material.es5.js");
+/* harmony import */ var _angular_material_sort__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/material/sort */ "./node_modules/@angular/material/esm5/sort.es5.js");
+/* harmony import */ var _angular_material_menu__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/material/menu */ "./node_modules/@angular/material/esm5/menu.es5.js");
+/* harmony import */ var _angular_material_progress_spinner__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/material/progress-spinner */ "./node_modules/@angular/material/esm5/progress-spinner.es5.js");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
+
+
 
 
 var MaterialModule = /** @class */ (function () {
@@ -616,7 +632,14 @@ var MaterialModule = /** @class */ (function () {
                 _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatToolbarModule"],
                 _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatSnackBarModule"],
                 _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatProgressBarModule"],
-                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatListModule"]
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatListModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatCardModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatTableModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatPaginatorModule"],
+                _angular_material_sort__WEBPACK_IMPORTED_MODULE_2__["MatSortModule"],
+                _angular_material_menu__WEBPACK_IMPORTED_MODULE_3__["MatMenuModule"],
+                _angular_material_progress_spinner__WEBPACK_IMPORTED_MODULE_4__["MatProgressSpinnerModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatDialogModule"]
             ],
             exports: [
                 _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatButtonModule"],
@@ -633,6 +656,13 @@ var MaterialModule = /** @class */ (function () {
                 _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatSnackBarModule"],
                 _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatProgressBarModule"],
                 _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatListModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatCardModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatTableModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatPaginatorModule"],
+                _angular_material_sort__WEBPACK_IMPORTED_MODULE_2__["MatSortModule"],
+                _angular_material_menu__WEBPACK_IMPORTED_MODULE_3__["MatMenuModule"],
+                _angular_material_progress_spinner__WEBPACK_IMPORTED_MODULE_4__["MatProgressSpinnerModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatDialogModule"]
             ]
         })
     ], MaterialModule);
@@ -845,8 +875,6 @@ var HttpService = /** @class */ (function () {
         var _this = this;
         this.alertService.startProgressBar();
         var tokenString = '';
-        var basePath = this.sessionService.appSettings.webApiUrl;
-        var absoluteUrl = basePath + url;
         var httpHeaders = new _angular_common_http__WEBPACK_IMPORTED_MODULE_3__["HttpHeaders"]();
         var securityToken = localStorage.getItem('token');
         if (securityToken != null) {
@@ -867,7 +895,7 @@ var HttpService = /** @class */ (function () {
         // headers.append('Accept', 'q=0.8;application/json;q=0.9');
         // console.log('token=' + tokenString);
         console.log('url=' + url);
-        return this.httpClient.get(absoluteUrl, { headers: httpHeaders })
+        return this.httpClient.get(url, { headers: httpHeaders })
             .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["catchError"])(function (err) { return _this.handleError(err); }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["finalize"])(function () {
             _this.alertService.stopProgressBar();
         }));
@@ -896,10 +924,8 @@ var HttpService = /** @class */ (function () {
         // headers.append('Accept', 'q=0.8;application/json;q=0.9');
         console.log('token=' + tokenString);
         // const basePath = this.sessionService.appSettings.webApiUrl;
-        var basePath = '';
-        var absoluteUrl = basePath + url;
         console.log('url=' + url);
-        return this.httpClient.post(absoluteUrl, data, { headers: httpHeaders })
+        return this.httpClient.post(url, data, { headers: httpHeaders })
             .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["catchError"])(function (err) { return _this.handleError(err); }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["finalize"])(function () {
             _this.alertService.stopProgressBar();
         }));

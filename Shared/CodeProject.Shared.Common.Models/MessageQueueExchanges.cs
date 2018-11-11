@@ -10,6 +10,8 @@ namespace CodeProject.Shared.Common.Models
 		public static string InventoryManagement = "InventoryManagement";
 		public static string SalesOrderManagement = "SalesOrderManagement";
 		public static string ProductUpdated = "ProductUpdated";
+		public static string InventoryReceived = "InventoryReceived";
+		public static string PurchaseOrderSubmitted = "PurchaseOrderSubmitted";
 		public static string OrderShipped = "OrderShipped";
 		public static string Logging = "Logging";
 	}

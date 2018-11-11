@@ -8,6 +8,7 @@ export class PurchaseOrderDetailViewModel {
     public unitPrice: number;
     public unitPriceFormatted: string;
     public orderQuantity: number;
+    public orderTotal: number;
     public orderQuantityFormatted: string;
     public dateCreated: Date;
     public dateUpdated: Date;
