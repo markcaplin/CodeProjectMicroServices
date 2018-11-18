@@ -8,7 +8,7 @@ using CodeProject.Shared.Common.Models;
 
 namespace CodeProject.InventoryManagement.Interfaces
 {
-    public interface IInventoryManagementDataService : IDataRepository, IDisposable
+	public interface IInventoryManagementDataService : IDataRepository, IDisposable
 	{
 		Task CreateProduct(Product product);
 		Task CreateOutboundTransactionQueue(TransactionQueueOutbound transactionQueue);
@@ -39,5 +39,14 @@ namespace CodeProject.InventoryManagement.Interfaces
 		Task CreateInventoryTransaction(InventoryTransaction inventoryTransaction);
 		Task<List<Product>> ProductInquiry(int accountId, string productNumber, DataGridPagingInformation paging);
 		Task<Product> GetProduct(int accountId, int productId);
+		Task CreateSalesOrder(SalesOrder salesOrder);
+		Task CreateSalesOrderDetail(SalesOrderDetail salesOrderDetail);
+		Task<SalesOrder> GetSalesOrder(int accountId, int salesOrderId);
+		Task UpdateSalesOrderDetail(SalesOrderDetail salesOrderDetail);
+		Task<SalesOrder> GetSalesOrderHeader(int accountId, int salesOrderId);
+		Task<SalesOrderDetail> GetSalesOrderDetailForUpdate(int salesOrderDetailId);
+		Task<List<SalesOrder>> SalesOrderInquiry(int accountId, string customerName, DataGridPagingInformation paging);
+
 	}
+
 }

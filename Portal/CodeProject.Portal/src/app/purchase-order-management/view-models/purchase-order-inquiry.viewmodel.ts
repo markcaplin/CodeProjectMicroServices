@@ -1,3 +1,4 @@
+
 import { PurchaseOrderViewModel } from '../view-models/purchase-order.viewmodel';
 
 export class PurchaseOrderInquiryViewModel {

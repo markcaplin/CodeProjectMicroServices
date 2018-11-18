@@ -20,6 +20,10 @@ export const ApplicationRoutes: Routes = [
     {
         path: 'purchaseordermanagement', loadChildren:
             '../app/purchase-order-management/purchase-order-management.module#PurchaseOrderManagementModule'
+    },
+    {
+        path: 'salesordermanagement', loadChildren:
+            '../app/sales-order-management/sales-order-management.module#SalesOrderManagementModule'
     }
 ];
 

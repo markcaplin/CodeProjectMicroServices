@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using CodeProject.SalesOrderManagement.WebApi.ActionFilters;
 using CodeProject.SalesOrderManagement.Interfaces;
 using CodeProject.SalesOrderManagement.BusinessServices;
+using CodeProject.SalesOrderManagement.WebApi.SignalRHub;
 
 namespace CodeProject.SalesOrderManagement.WebApi
 {
@@ -79,6 +80,8 @@ namespace CodeProject.SalesOrderManagement.WebApi
 
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+			services.AddSignalR();
+
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -99,6 +102,11 @@ namespace CodeProject.SalesOrderManagement.WebApi
 			app.UseHttpsRedirection();
 
 			app.UseMvc();
+
+			app.UseSignalR(routes =>
+			{
+				routes.MapHub<MessageQueueHub>("/messageQueueHub");
+			});
 		}
 	}
 }

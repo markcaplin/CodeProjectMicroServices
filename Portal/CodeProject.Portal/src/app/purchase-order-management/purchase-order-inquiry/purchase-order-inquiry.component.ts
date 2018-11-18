@@ -27,6 +27,7 @@ export class PurchaseOrderInquiryComponent implements OnInit {
 
   public purchaseOrderInquiryViewModel: PurchaseOrderInquiryViewModel;
   public selectedRowIndex = -1;
+  private lastSearchValue: string;
 
   constructor(private router: Router, private sessionService: SessionService, private httpService: HttpService, 
     private alertService: AlertService) {
@@ -50,7 +51,9 @@ export class PurchaseOrderInquiryComponent implements OnInit {
       changes => {
           this.purchaseOrderInquiryViewModel.currentPageNumber = 1;
           this.purchaseOrderInquiryViewModel.currentPageIndex = 0;
-          this.executeSearch();
+          if (this.lastSearchValue !== this.purchaseOrderInquiryViewModel.supplierName) {
+            this.executeSearch();
+          }
         }
       );
 
@@ -114,7 +117,10 @@ export class PurchaseOrderInquiryComponent implements OnInit {
   }
 
   public resetSearch() {
+    this.lastSearchValue = '';
+    this.purchaseOrderInquiryViewModel.supplierName = '';
     this.initializeSearch();
+    this.executeSearch();
   }
 
   public selectPurchaseOrder(row) {

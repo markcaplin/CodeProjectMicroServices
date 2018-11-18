@@ -12,7 +12,8 @@ namespace CodeProject.Shared.Common.Models
 		public static string ProductUpdated = "ProductUpdated";
 		public static string InventoryReceived = "InventoryReceived";
 		public static string PurchaseOrderSubmitted = "PurchaseOrderSubmitted";
-		public static string OrderShipped = "OrderShipped";
+		public static string SalesOrderSubmitted = "SalesOrderSubmitted";
+		public static string InventoryShipped = "InventoryShipped";
 		public static string Logging = "Logging";
 	}
 }

@@ -20,6 +20,9 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 		public DbSet<PurchaseOrderStatus> PurchaseOrderStatuses { get; set; }
 		public DbSet<PurchaseOrderDetail> PurchaseOrderDetails { get; set; }
 		public DbSet<InventoryTransaction> InventoryTransactions { get; set; }
+		public DbSet<SalesOrder> SalesOrders { get; set; }
+		public DbSet<SalesOrderStatus> SalesOrderStatuses { get; set; }
+		public DbSet<SalesOrderDetail> SalesOrderDetails { get; set; }
 
 		private readonly string _connectionString;
 
@@ -56,6 +59,11 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 				new { PurchaseOrderStatusId = 1, Description = "Open" },
 				new { PurchaseOrderStatusId = 2, Description = "Submitted" },
 				new { PurchaseOrderStatusId = 3, Description = "Completed" });
+
+			modelBuilder.Entity<SalesOrderStatus>().HasData(
+				new { SalesOrderStatusId = 1, Description = "Open" },
+				new { SalesOrderStatusId = 2, Description = "Submitted" },
+				new { SalesOrderStatusId = 3, Description = "Completed" });
 
 		}
 

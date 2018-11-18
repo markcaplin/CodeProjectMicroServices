@@ -164,6 +164,7 @@ namespace CodeProject.LoggingManagement.Business.MessageService
 				if (existingMessageSent == null)
 				{
 					MessagesSent messageSent = new MessagesSent();
+
 					messageSent.ExchangeName = messageQueue.ExchangeName;
 					messageSent.SenderTransactionQueueId = messageQueue.TransactionQueueId;
 					messageSent.TransactionCode = messageQueue.TransactionCode;
@@ -179,9 +180,19 @@ namespace CodeProject.LoggingManagement.Business.MessageService
 						messageSent.AcknowledgementsRequired = MessageExchangeFanouts.PurchaseOrderSubmitted;
 						messageSent.AcknowledgementsReceived = 0;
 					}
+					else if (messageSent.TransactionCode == MessageQueueExchanges.SalesOrderSubmitted)
+					{
+						messageSent.AcknowledgementsRequired = MessageExchangeFanouts.SalesOrderSubmitted;
+						messageSent.AcknowledgementsReceived = 0;
+					}
 					else if (messageSent.TransactionCode == MessageQueueExchanges.InventoryReceived)
 					{
 						messageSent.AcknowledgementsRequired = MessageExchangeFanouts.InventoryReceived;
+						messageSent.AcknowledgementsReceived = 0;
+					}
+					else if (messageSent.TransactionCode == MessageQueueExchanges.InventoryShipped)
+					{
+						messageSent.AcknowledgementsRequired = MessageExchangeFanouts.InventoryShipped;
 						messageSent.AcknowledgementsReceived = 0;
 					}
 
@@ -225,7 +236,15 @@ namespace CodeProject.LoggingManagement.Business.MessageService
 						{
 							acknowledgementsQueue.AcknowledgementQueue = MessageQueueEndpoints.PurchaseOrderQueue;
 						}
+						else if (acknowledgementsQueue.TransactionCode == MessageQueueExchanges.SalesOrderSubmitted)
+						{
+							acknowledgementsQueue.AcknowledgementQueue = MessageQueueEndpoints.SalesOrderQueue;
+						}
 						else if (acknowledgementsQueue.TransactionCode == MessageQueueExchanges.InventoryReceived)
+						{
+							acknowledgementsQueue.AcknowledgementQueue = MessageQueueEndpoints.InventoryQueue;
+						}
+						else if (acknowledgementsQueue.TransactionCode == MessageQueueExchanges.InventoryShipped)
 						{
 							acknowledgementsQueue.AcknowledgementQueue = MessageQueueEndpoints.InventoryQueue;
 						}

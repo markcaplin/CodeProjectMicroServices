@@ -19,6 +19,7 @@ namespace CodeProject.SalesOrderManagement.Data.Entities
 		public int SalesOrderStatusId { get; set; }
 		public Customer Customer { get; set; }
 		public SalesOrderStatus SalesOrderStatus { get; set; }
+		public List<SalesOrderDetail> SalesOrderDetails { get; set; }
 		public DateTime DateCreated { get; set; }
 		public DateTime DateUpdated { get; set; }
 	}

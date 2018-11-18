@@ -62,30 +62,6 @@ namespace CodeProject.PurchaseOrderManagement.MessageQueueing
 				new SendMessages(sendingQueueConnection, messageProcessing, messageQueueAppConfig,
 				connectionStrings, messageQueueConfigurations, MessageQueueEndpoints.PurchaseOrderQueue);
 
-
-			/*IMessageQueueConfiguration productUpdatedConfiguration = new MessageQueueConfiguration(MessageQueueExchanges.ProductUpdated, messageQueueAppConfig, sendingQueueConnection);
-
-			productUpdatedConfiguration.AddQueue(MessageQueueEndpoints.SalesOrderQueue);
-			productUpdatedConfiguration.AddQueue(MessageQueueEndpoints.PurchaseOrderQueue);
-			productUpdatedConfiguration.AddQueue(MessageQueueEndpoints.LoggingQueue);
-
-			productUpdatedConfiguration.InitializeOutboundMessageQueueing();
-			messageQueueConfigurations.Add(productUpdatedConfiguration);
-
-			IMessageQueueConfiguration orderShippedConfiguration = new MessageQueueConfiguration(MessageQueueExchanges.OrderShipped, messageQueueAppConfig, sendingQueueConnection);
-
-			orderShippedConfiguration.AddQueue(MessageQueueEndpoints.SalesOrderQueue);
-			orderShippedConfiguration.AddQueue(MessageQueueEndpoints.LoggingQueue);
-
-			orderShippedConfiguration.InitializeOutboundMessageQueueing();
-			messageQueueConfigurations.Add(orderShippedConfiguration);
-
-			IPurchaseOrderManagementDataService purchaseOrderManagementDataService = new PurchaseOrderManagementDataService();
-			IMessageQueueProcessing messageProcessing = new MessageProcessing(purchaseOrderManagementDataService);
-
-			IHostedService sendPurchaseOrderManagementMessages = new SendMessages(sendingQueueConnection, messageProcessing, messageQueueAppConfig, connectionStrings, messageQueueConfigurations);
-			*/
-
 			//
 			//	set up receiving queue
 			//

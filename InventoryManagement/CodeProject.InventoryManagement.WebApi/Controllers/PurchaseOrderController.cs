@@ -17,7 +17,7 @@ using Microsoft.Extensions.Options;
 using CodeProject.InventoryManagement.WebApi.SignalRHub;
 using Microsoft.AspNetCore.SignalR;
 
-namespace CodeProject.PurchaseOrderManagement.WebApi.Controllers
+namespace CodeProject.InventoryManagementManagement.WebApi.Controllers
 {
 	[ServiceFilter(typeof(SecurityFilter))]
 	[Authorize]

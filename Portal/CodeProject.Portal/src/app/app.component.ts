@@ -44,6 +44,7 @@ export class AppComponent {
         appSettings.accountManagementWebApiUrl = 'https://localhost:44303/api/';
         appSettings.inventoryManagementWebApiUrl = 'https://localhost:44340/api/';
         appSettings.purchaseOrderManagementWebApiUrl = 'https://localhost:44327/api/';
+        appSettings.salesOrderManagementWebApiUrl = 'https://localhost:44396/api/';
 
         // appSettings = JSON.parse(settings);
 
@@ -69,8 +70,6 @@ export class AppComponent {
         this.lastName = userViewModel.lastName;
 
         this.tokenExpirationDate = userViewModel.tokenExpirationDate;
-
-        console.log('session id = ' + this.sessionId + ' ' + this.isAuthenicated + ' ' + this.runningMonitor);
 
         if (this.isAuthenicated === true && this.runningMonitor === false) {
             this.runningMonitor = true;
@@ -98,6 +97,7 @@ export class AppComponent {
         if (isExpiredSession) {
             this.isAuthenicated = false;
             this.clearSessionInterval();
+            this.logout();
         } else {
             this.isAuthenicated = true;
         }

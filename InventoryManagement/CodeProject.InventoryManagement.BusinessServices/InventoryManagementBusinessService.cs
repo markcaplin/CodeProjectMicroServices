@@ -36,6 +36,129 @@ namespace CodeProject.InventoryManagement.BusinessServices
 			_inventoryManagementDataService = inventoryManagementDataService;
 			_connectionStrings = connectionStrings;
 		}
+
+		/// <summary>
+		/// Upload Products
+		/// </summary>
+		/// <param name="products"></param>
+		/// <returns></returns>
+		public async Task<ResponseModel<List<ProductDataTransformation>>> UploadProducts(int accountId, List<ProductDataTransformation> products)
+		{
+			ResponseModel<List<ProductDataTransformation>> returnResponse = new ResponseModel<List<ProductDataTransformation>>();
+
+			try
+			{
+				_inventoryManagementDataService.OpenConnection(_connectionStrings.PrimaryDatabaseConnectionString);
+
+				List<Product> productsAdded = new List<Product>();
+
+				foreach (ProductDataTransformation productItem in products)
+				{
+					_inventoryManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
+
+					ProductBusinessRules<ProductDataTransformation> productBusinessRules = new ProductBusinessRules<ProductDataTransformation>(productItem, _inventoryManagementDataService);
+					ValidationResult validationResult = await productBusinessRules.Validate();
+					if (validationResult.ValidationStatus == false)
+					{
+						_inventoryManagementDataService.RollbackTransaction();
+						continue;
+					}
+
+					Product product = new Product();
+					product.AccountId = accountId;
+					product.ProductNumber = productItem.ProductNumber;
+					product.Description = productItem.Description;
+					product.UnitPrice = productItem.UnitPrice;
+					product.BinLocation = productItem.BinLocation;
+
+					await _inventoryManagementDataService.CreateProduct(product);
+
+					await _inventoryManagementDataService.UpdateDatabase();
+
+					TransactionQueueOutbound transactionQueue = new TransactionQueueOutbound();
+					transactionQueue.Payload = GenerateProductUpdatePayload(product);
+					transactionQueue.TransactionCode = TransactionQueueTypes.ProductUpdated;
+					transactionQueue.ExchangeName = MessageQueueExchanges.InventoryManagement;
+
+					await _inventoryManagementDataService.CreateOutboundTransactionQueue(transactionQueue);
+
+					await _inventoryManagementDataService.UpdateDatabase();
+
+					_inventoryManagementDataService.CommitTransaction();
+
+					productsAdded.Add(product);
+
+				}
+
+				foreach (ProductDataTransformation productItem in products)
+				{
+					Product product = productsAdded.Where(x => x.ProductNumber == productItem.ProductNumber).FirstOrDefault();
+					if (product != null)
+					{
+						continue;
+					}
+
+					product = await _inventoryManagementDataService.GetProductInformationByProductNumber(productItem.ProductNumber, accountId);
+					if (product == null)
+					{
+						continue;
+					}
+
+					productItem.ProductId = product.ProductId;
+
+					ProductBusinessRules<ProductDataTransformation> productBusinessRules = new ProductBusinessRules<ProductDataTransformation>(productItem, _inventoryManagementDataService);
+					ValidationResult validationResult = await productBusinessRules.Validate();
+					if (validationResult.ValidationStatus == false)
+					{
+						_inventoryManagementDataService.RollbackTransaction();
+
+						returnResponse.ReturnMessage = validationResult.ValidationMessages;
+						returnResponse.ReturnStatus = validationResult.ValidationStatus;
+
+						return returnResponse;
+					}
+
+					_inventoryManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
+
+					product = await _inventoryManagementDataService.GetProductInformationForUpdate(productItem.ProductId);
+
+					product.ProductNumber = productItem.ProductNumber;
+					product.Description = productItem.Description;
+					product.UnitPrice = productItem.UnitPrice;
+					product.BinLocation = productItem.BinLocation;
+
+					await _inventoryManagementDataService.UpdateProduct(product);
+
+					TransactionQueueOutbound transactionQueue = new TransactionQueueOutbound();
+					transactionQueue.Payload = GenerateProductUpdatePayload(product);
+					transactionQueue.TransactionCode = TransactionQueueTypes.ProductUpdated;
+					transactionQueue.ExchangeName = MessageQueueExchanges.InventoryManagement;
+
+					await _inventoryManagementDataService.CreateOutboundTransactionQueue(transactionQueue);
+
+					await _inventoryManagementDataService.UpdateDatabase();
+
+					_inventoryManagementDataService.CommitTransaction();
+				}
+
+				returnResponse.ReturnStatus = true;
+
+			}
+			catch (Exception ex)
+			{
+				_inventoryManagementDataService.RollbackTransaction();
+				returnResponse.ReturnStatus = false;
+				returnResponse.ReturnMessage.Add(ex.Message);
+			}
+			finally
+			{
+				_inventoryManagementDataService.CloseConnection();
+			}
+
+			return returnResponse;
+		}
+
+
 		/// <summary>
 		/// Create Product
 		/// </summary>
@@ -291,6 +414,76 @@ namespace CodeProject.InventoryManagement.BusinessServices
 
 		}
 
+
+		/// <summary>
+		/// Sales Order Inquiry
+		/// </summary>
+		/// <param name="accountId"></param>
+		/// <param name="customerName"></param>
+		/// <param name="currentPageNumber"></param>
+		/// <param name="pageSize"></param>
+		/// <param name="sortExpression"></param>
+		/// <param name="sortDirection"></param>
+		/// <returns></returns>
+		public async Task<ResponseModel<List<SalesOrderDataTransformation>>> SalesOrderInquiry(int accountId, string customerName, int currentPageNumber, int pageSize, string sortExpression, string sortDirection)
+		{
+
+			ResponseModel<List<SalesOrderDataTransformation>> returnResponse = new ResponseModel<List<SalesOrderDataTransformation>>();
+
+			List<SalesOrderDataTransformation> salesOrders = new List<SalesOrderDataTransformation>();
+
+			try
+			{
+				_inventoryManagementDataService.OpenConnection(_connectionStrings.PrimaryDatabaseConnectionString);
+
+				DataGridPagingInformation dataGridPagingInformation = new DataGridPagingInformation();
+				dataGridPagingInformation.CurrentPageNumber = currentPageNumber;
+				dataGridPagingInformation.PageSize = pageSize;
+				dataGridPagingInformation.SortDirection = sortDirection;
+				dataGridPagingInformation.SortExpression = sortExpression;
+
+				List<SalesOrder> salesOrderList = await _inventoryManagementDataService.SalesOrderInquiry(accountId, customerName, dataGridPagingInformation);
+				foreach (SalesOrder salesOrder in salesOrderList)
+				{
+					SalesOrderDataTransformation salesOrderDataTransformation = new SalesOrderDataTransformation();
+					salesOrderDataTransformation.AddressLine1 = salesOrder.AddressLine1;
+					salesOrderDataTransformation.AddressLine2 = salesOrder.AddressLine2;
+					salesOrderDataTransformation.City = salesOrder.City;
+					salesOrderDataTransformation.Region = salesOrder.Region;
+					salesOrderDataTransformation.PostalCode = salesOrder.PostalCode;
+					salesOrderDataTransformation.CustomerName = salesOrder.CustomerName;
+					salesOrderDataTransformation.DateCreated = salesOrder.DateCreated;
+					salesOrderDataTransformation.OrderTotal = salesOrder.OrderTotal;
+					salesOrderDataTransformation.AccountId = salesOrder.AccountId;
+					salesOrderDataTransformation.SalesOrderId = salesOrder.SalesOrderId;
+					salesOrderDataTransformation.SalesOrderNumber = salesOrder.SalesOrderNumber;
+					salesOrderDataTransformation.SalesOrderStatusId = salesOrder.SalesOrderStatusId;
+					salesOrderDataTransformation.SalesOrderStatusDescription = salesOrder.SalesOrderStatus.Description;
+					salesOrders.Add(salesOrderDataTransformation);
+				}
+
+				returnResponse.Entity = salesOrders;
+				returnResponse.TotalRows = dataGridPagingInformation.TotalRows;
+				returnResponse.TotalPages = dataGridPagingInformation.TotalPages;
+
+				returnResponse.ReturnStatus = true;
+
+			}
+			catch (Exception ex)
+			{
+
+				returnResponse.ReturnStatus = false;
+				returnResponse.ReturnMessage.Add(ex.Message);
+			}
+			finally
+			{
+				_inventoryManagementDataService.CloseConnection();
+			}
+
+			return returnResponse;
+
+		}
+
 		/// <summary>
 		/// Update Purchase Order Detail
 		/// </summary>
@@ -408,6 +601,117 @@ namespace CodeProject.InventoryManagement.BusinessServices
 		}
 
 		/// <summary>
+		/// Update Sales Order Detail
+		/// </summary>
+		/// <param name="salesOrderDetailDataTransformation"></param>
+		/// <returns></returns>
+		public async Task<ResponseModel<SalesOrderDetailDataTransformation>> UpdateSalesOrderDetail(SalesOrderDetailDataTransformation salesOrderDetailDataTransformation)
+		{
+
+			ResponseModel<SalesOrderDetailDataTransformation> returnResponse = new ResponseModel<SalesOrderDetailDataTransformation>();
+
+			SalesOrderDetail salesOrderDetail = new SalesOrderDetail();
+
+			try
+			{
+				int accountId = salesOrderDetailDataTransformation.AccountId;
+				int salesOrderId = salesOrderDetailDataTransformation.SalesOrderId;
+				int salesOrderDetailId = salesOrderDetailDataTransformation.SalesOrderDetailId;
+
+				if (salesOrderDetailDataTransformation.CurrentShippedQuantity == 0)
+				{
+					returnResponse.ReturnMessage.Add("Invalid Shipped Quantity");
+					returnResponse.ReturnStatus = false;
+
+					return returnResponse;
+				}
+
+				_inventoryManagementDataService.OpenConnection(_connectionStrings.PrimaryDatabaseConnectionString);
+				_inventoryManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
+
+				SalesOrder salesOrder = await _inventoryManagementDataService.GetSalesOrderHeader(accountId, salesOrderId);
+				if (salesOrder == null)
+				{
+					_inventoryManagementDataService.RollbackTransaction();
+
+					returnResponse.ReturnMessage.Add("Sales Order not found");
+					returnResponse.ReturnStatus = false;
+
+					return returnResponse;
+				}
+
+				salesOrderDetail = await _inventoryManagementDataService.GetSalesOrderDetailForUpdate(salesOrderDetailId);
+				if (salesOrderDetail == null)
+				{
+					_inventoryManagementDataService.RollbackTransaction();
+
+					returnResponse.ReturnMessage.Add("Sales Order Detail not found");
+					returnResponse.ReturnStatus = false;
+
+					return returnResponse;
+				}
+
+				salesOrderDetail.ShippedQuantity = salesOrderDetail.ShippedQuantity + salesOrderDetailDataTransformation.CurrentShippedQuantity;
+
+				await _inventoryManagementDataService.UpdateSalesOrderDetail(salesOrderDetail);
+
+				Product product = await _inventoryManagementDataService.GetProductInformationForUpdate(salesOrderDetail.ProductId);
+				if (product == null)
+				{
+					_inventoryManagementDataService.RollbackTransaction();
+
+					returnResponse.ReturnMessage.Add("Product not found");
+					returnResponse.ReturnStatus = false;
+
+					return returnResponse;
+				}
+
+				product.OnHandQuantity = product.OnHandQuantity - salesOrderDetailDataTransformation.CurrentShippedQuantity;
+
+				await _inventoryManagementDataService.UpdateProduct(product);
+
+				InventoryTransaction inventoryTransaction = new InventoryTransaction();
+				inventoryTransaction.EntityId = salesOrderDetail.SalesOrderDetailId;
+				inventoryTransaction.MasterEntityId = salesOrderDetail.MasterSalesOrderDetailId;
+				inventoryTransaction.ProductId = salesOrderDetail.ProductId;
+				inventoryTransaction.UnitCost = product.AverageCost;
+				inventoryTransaction.Quantity = salesOrderDetailDataTransformation.CurrentShippedQuantity;
+				inventoryTransaction.TransactionDate = DateTime.UtcNow;
+
+				await _inventoryManagementDataService.CreateInventoryTransaction(inventoryTransaction);
+
+				TransactionQueueOutbound transactionQueue = new TransactionQueueOutbound();
+				transactionQueue.Payload = GenerateInventoryTransactionPayload(inventoryTransaction);
+				transactionQueue.TransactionCode = TransactionQueueTypes.InventoryShipped;
+				transactionQueue.ExchangeName = MessageQueueExchanges.InventoryManagement;
+
+				await _inventoryManagementDataService.CreateOutboundTransactionQueue(transactionQueue);
+
+				await _inventoryManagementDataService.UpdateDatabase();
+
+				_inventoryManagementDataService.CommitTransaction();
+
+				returnResponse.ReturnStatus = true;
+
+			}
+			catch (Exception ex)
+			{
+				_inventoryManagementDataService.RollbackTransaction();
+				returnResponse.ReturnStatus = false;
+				returnResponse.ReturnMessage.Add(ex.Message);
+			}
+			finally
+			{
+				_inventoryManagementDataService.CloseConnection();
+			}
+
+			returnResponse.Entity = salesOrderDetailDataTransformation;
+
+			return returnResponse;
+
+		}
+
+		/// <summary>
 		/// Calculate Average Cost
 		/// </summary>
 		/// <param name="onHandQuantity"></param>
@@ -492,6 +796,74 @@ namespace CodeProject.InventoryManagement.BusinessServices
 			}
 
 			returnResponse.Entity = purchaseOrderDataTransformation;
+
+			return returnResponse;
+
+		}
+
+		/// <summary>
+		/// Get Sales Order
+		/// </summary>
+		/// <param name="accountId"></param>
+		/// <param name="salesOrderId"></param>
+		/// <returns></returns>
+		public async Task<ResponseModel<SalesOrderDataTransformation>> GetSalesOrder(int accountId, int salesOrderId)
+		{
+			ResponseModel<SalesOrderDataTransformation> returnResponse = new ResponseModel<SalesOrderDataTransformation>();
+			SalesOrderDataTransformation salesOrderDataTransformation = new SalesOrderDataTransformation();
+
+			try
+			{
+				_inventoryManagementDataService.OpenConnection(_connectionStrings.PrimaryDatabaseConnectionString);
+
+				SalesOrder salesOrder = await _inventoryManagementDataService.GetSalesOrder(accountId, salesOrderId);
+
+				salesOrderDataTransformation.SalesOrderId = salesOrderId;
+				salesOrderDataTransformation.SalesOrderNumber = salesOrder.SalesOrderNumber;
+				salesOrderDataTransformation.SalesOrderStatusId = salesOrder.SalesOrderStatusId;
+				salesOrderDataTransformation.CustomerName = salesOrder.CustomerName;
+				salesOrderDataTransformation.AddressLine1 = salesOrder.AddressLine1;
+				salesOrderDataTransformation.AddressLine2 = salesOrder.AddressLine2;
+				salesOrderDataTransformation.City = salesOrder.City;
+				salesOrderDataTransformation.Region = salesOrder.Region;
+				salesOrderDataTransformation.PostalCode = salesOrder.PostalCode;
+				salesOrderDataTransformation.OrderTotal = salesOrder.OrderTotal;
+				salesOrderDataTransformation.SalesOrderStatusDescription = salesOrder.SalesOrderStatus.Description;
+				salesOrderDataTransformation.DateCreated = salesOrder.DateCreated;
+				salesOrderDataTransformation.DateUpdated = salesOrder.DateUpdated;
+				salesOrderDataTransformation.SalesOrderDetails = new List<SalesOrderDetailDataTransformation>();
+
+				foreach (SalesOrderDetail salesOrderDetail in salesOrder.SalesOrderDetails)
+				{
+					SalesOrderDetailDataTransformation salesOrderDetailDataTransformation = new SalesOrderDetailDataTransformation();
+					salesOrderDetailDataTransformation.SalesOrderDetailId = salesOrderDetail.SalesOrderDetailId;
+					salesOrderDetailDataTransformation.SalesOrderId = salesOrderDetail.SalesOrderId;
+					salesOrderDetailDataTransformation.ProductId = salesOrderDetail.ProductId;
+					salesOrderDetailDataTransformation.ProductNumber = salesOrderDetail.Product.ProductNumber;
+					salesOrderDetailDataTransformation.ProductDescription = salesOrderDetail.Product.Description;
+					salesOrderDetailDataTransformation.UnitPrice = salesOrderDetail.UnitPrice;
+					salesOrderDetailDataTransformation.OrderQuantity = salesOrderDetail.OrderQuantity;
+					salesOrderDetailDataTransformation.ShippedQuantity = salesOrderDetail.ShippedQuantity;
+					salesOrderDetailDataTransformation.DateCreated = salesOrderDetail.DateCreated;
+					salesOrderDetailDataTransformation.DateUpdated = salesOrderDetail.DateUpdated;
+
+					salesOrderDataTransformation.SalesOrderDetails.Add(salesOrderDetailDataTransformation);
+				}
+
+				returnResponse.ReturnStatus = true;
+
+			}
+			catch (Exception ex)
+			{
+				returnResponse.ReturnStatus = false;
+				returnResponse.ReturnMessage.Add(ex.Message);
+			}
+			finally
+			{
+				_inventoryManagementDataService.CloseConnection();
+			}
+
+			returnResponse.Entity = salesOrderDataTransformation;
 
 			return returnResponse;
 

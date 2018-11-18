@@ -37,6 +37,30 @@ namespace CodeProject.SalesOrderManagement.MessageQueueing
 			configuration.GetSection("ConnectionStrings").Bind(connectionStrings);
 
 			//
+			//	set up sending queue
+			//
+			IMessageQueueConnection sendingQueueConnection = new MessageQueueConnection(messageQueueAppConfig);
+			sendingQueueConnection.CreateConnection();
+
+			List<IMessageQueueConfiguration> messageQueueConfigurations = new List<IMessageQueueConfiguration>();
+
+			IMessageQueueConfiguration salesOrderSubmittedConfiguration = new MessageQueueConfiguration(MessageQueueExchanges.SalesOrderSubmitted, messageQueueAppConfig, sendingQueueConnection);
+
+			salesOrderSubmittedConfiguration.AddQueue(MessageQueueEndpoints.InventoryQueue);
+			salesOrderSubmittedConfiguration.AddQueue(MessageQueueEndpoints.LoggingQueue);
+
+			salesOrderSubmittedConfiguration.InitializeOutboundMessageQueueing();
+			messageQueueConfigurations.Add(salesOrderSubmittedConfiguration);
+
+			ISalesOrderManagementDataService salesOrderManagementDataService = new SalesOrderManagementDataService();
+			IMessageQueueProcessing messageProcessing = new MessageProcessing(salesOrderManagementDataService);
+
+			IHostedService sendSalesOrderManagementMessages =
+				new SendMessages(sendingQueueConnection, messageProcessing, messageQueueAppConfig,
+				connectionStrings, messageQueueConfigurations, MessageQueueEndpoints.SalesOrderQueue);
+
+
+			//
 			//	set up receiving queue
 			//
 			IMessageQueueConnection receivingConnection = new MessageQueueConnection(messageQueueAppConfig);
@@ -62,68 +86,11 @@ namespace CodeProject.SalesOrderManagement.MessageQueueing
 
 			var builder = new HostBuilder().ConfigureAppConfiguration((hostingContext, config) =>
 			{
-				//string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-				//string jsonFile = $"appsettings.{environment}.json";
-				//config.AddJsonFile(jsonFile, optional: true);
-				//config.AddEnvironmentVariables();
-
-				//if (args != null)
-				//{
-				//	config.AddCommandLine(args);
-				//}
-
+				
 			})
 			.ConfigureServices((hostContext, services) =>
 			{
-				/*services.AddDbContext<SalesOrderManagementDatabase>(options => options.UseSqlServer(hostContext.Configuration.GetConnectionString("PrimaryDatabaseConnectionString")));
-
-				services.AddTransient<ISalesOrderManagementDataService, SalesOrderManagementDataService>();
-				services.AddTransient<IMessageQueueing, CodeProject.MessageQueueing.MessageQueueing>();
-
-				services.AddTransient<IMessageQueueProcessing>(provider =>
-				new MessageProcessing(provider.GetRequiredService<ISalesOrderManagementDataService>()));
-
-				services.AddOptions();
-				services.Configure<MessageQueueAppConfig>(hostContext.Configuration.GetSection("MessageQueueAppConfig"));
-				services.Configure<ConnectionStrings>(hostContext.Configuration.GetSection("ConnectionStrings"));
-
-				services.AddSingleton<IHostedService, SendMessages>();*/
-
-
-			})
-			.ConfigureServices((hostContext, services) =>
-			{
-				/*services.AddDbContext<SalesOrderManagementDatabase>(options => options.UseSqlServer(hostContext.Configuration.GetConnectionString("PrimaryDatabaseConnectionString")));
-
-				services.AddTransient<ISalesOrderManagementDataService, SalesOrderManagementDataService>();
-				services.AddTransient<IMessageQueueing, CodeProject.MessageQueueing.MessageQueueing>();
-
-				services.AddTransient<IMessageQueueProcessing>(provider =>
-				new MessageProcessing(provider.GetRequiredService<ISalesOrderManagementDataService>()));
-
-				services.AddOptions();
-				services.Configure<MessageQueueAppConfig>(hostContext.Configuration.GetSection("MessageQueueAppConfig"));
-				services.Configure<ConnectionStrings>(hostContext.Configuration.GetSection("ConnectionStrings"));
-
-				services.AddSingleton<IHostedService, ReceiveMessages>();*/
-
-			})
-			.ConfigureServices((hostContext, services) =>
-			{
-				/*services.AddDbContext<SalesOrderManagementDatabase>(options => options.UseSqlServer(hostContext.Configuration.GetConnectionString("PrimaryDatabaseConnectionString")));
-
-				services.AddTransient<ISalesOrderManagementDataService, SalesOrderManagementDataService>();
-				services.AddTransient<IMessageQueueing, CodeProject.MessageQueueing.MessageQueueing>();
-
-				services.AddTransient<IMessageQueueProcessing>(provider =>
-				new MessageProcessing(provider.GetRequiredService<ISalesOrderManagementDataService>()));
-
-				services.AddOptions();
-				services.Configure<MessageQueueAppConfig>(hostContext.Configuration.GetSection("MessageQueueAppConfig"));
-				services.Configure<ConnectionStrings>(hostContext.Configuration.GetSection("ConnectionStrings"));
-
-				services.AddSingleton<IHostedService, ProcessMessages>();*/
-
+				services.AddTransient<IHostedService>(provider => sendSalesOrderManagementMessages);
 			})
 			.ConfigureServices((hostContext, services) =>
 			{
@@ -131,12 +98,7 @@ namespace CodeProject.SalesOrderManagement.MessageQueueing
 			})
 			.ConfigureServices((hostContext, services) =>
 			{
-					services.AddTransient<IHostedService>(provider => receiveSalesOrderManagementMessages);
-			})
-			.ConfigureLogging((hostingContext, logging) =>
-			{
-				//logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-				//logging.AddConsole();
+				services.AddTransient<IHostedService>(provider => receiveSalesOrderManagementMessages);
 			});
 
 			await builder.RunConsoleAsync();

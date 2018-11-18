@@ -6,3 +6,17 @@ C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrder
 C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.BusinessRules\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.BusinessRules.AssemblyInfo.cs
 C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.BusinessRules\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.BusinessRules.dll
 C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.BusinessRules\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.BusinessRules.pdb
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.BusinessRules\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.BusinessRules.csprojAssemblyReference.cache
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.BusinessRules\bin\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.Data.EntityFramework.dll
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.BusinessRules\bin\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.Data.Models.dll
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.BusinessRules\bin\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.Interfaces.dll
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.BusinessRules\bin\Debug\netcoreapp2.1\CodeProject.Shared.Common.Interfaces.dll
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.BusinessRules\bin\Debug\netcoreapp2.1\CodeProject.Shared.Common.Models.dll
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.BusinessRules\bin\Debug\netcoreapp2.1\CodeProject.Shared.Common.Utilities.dll
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.BusinessRules\bin\Debug\netcoreapp2.1\CodeProject.Shared.Common.Interfaces.pdb
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.BusinessRules\bin\Debug\netcoreapp2.1\CodeProject.Shared.Common.Models.pdb
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.BusinessRules\bin\Debug\netcoreapp2.1\CodeProject.Shared.Common.Utilities.pdb
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.BusinessRules\bin\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.Data.EntityFramework.pdb
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.BusinessRules\bin\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.Data.Models.pdb
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.BusinessRules\bin\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.Interfaces.pdb
+C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.BusinessRules\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.BusinessRules.csproj.CopyComplete

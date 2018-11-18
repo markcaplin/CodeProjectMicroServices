@@ -15,10 +15,12 @@ namespace CodeProject.SalesOrderManagement.Data.EntityFramework
 		public DbSet<TransactionQueueInbound> TransactionQueueInbound { get; set; }
 		public DbSet<TransactionQueueInboundHistory> TransactionQueueInboundHistory { get; set; }
 		public DbSet<TransactionQueueOutbound> TransactionQueueOutbound { get; set; }
+		public DbSet<TransactionQueueOutboundHistory> TransactionQueueOutboundHistory { get; set; }
 		public DbSet<SalesOrder> SalesOrders { get; set; }
 		public DbSet<SalesOrderStatus> SalesOrderStatuses { get; set; }
 		public DbSet<SalesOrderDetail> SalesOrderDetails { get; set; }
 		public DbSet<TransactionQueueSemaphore> TransactionQueueSemaphores { get; set; }
+		public DbSet<SalesOrderNumberSequence> SalesOrderNumberSequences { get; set; }
 
 		private string _connectionString;
 
@@ -51,6 +53,11 @@ namespace CodeProject.SalesOrderManagement.Data.EntityFramework
 			
 			modelBuilder.Entity<Product>().HasIndex(u=> u.ProductNumber);
 			modelBuilder.Entity<TransactionQueueSemaphore>().HasIndex(u => u.SemaphoreKey).IsUnique();
+
+			modelBuilder.Entity<SalesOrderStatus>().HasData(
+			new { SalesOrderStatusId = 1, Description = "Open" },
+			new { SalesOrderStatusId = 2, Description = "Submitted" },
+			new { SalesOrderStatusId = 3, Description = "Completed" });
 
 		}
 

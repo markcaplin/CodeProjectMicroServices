@@ -29,12 +29,12 @@ export class SupplierMaintenanceComponent implements OnInit, OnDestroy {
     private alertService: AlertService, private httpService: HttpService) {
 
     this.supplierViewModel = new SupplierViewModel();
-    this.supplierViewModel.supplierName = 'Caplin Systems, Inc.';
-    this.supplierViewModel.addressLine1 = '17615 SW 6 Street';
-    this.supplierViewModel.addressLine2 = 'Silverlakes';
-    this.supplierViewModel.city = 'Pembroke Pines';
-    this.supplierViewModel.region = 'FL';
-    this.supplierViewModel.postalCode = '33029';
+    this.supplierViewModel.supplierName = '';
+    this.supplierViewModel.addressLine1 = '';
+    this.supplierViewModel.addressLine2 = '';
+    this.supplierViewModel.city = '';
+    this.supplierViewModel.region = '';
+    this.supplierViewModel.postalCode = '';
     this.supplierViewModel.supplierId = 0;
 
     this.createMode = true;

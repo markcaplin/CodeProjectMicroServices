@@ -1,3 +1,4 @@
+
 import { SupplierViewModel } from '../view-models/supplier.viewmodel';
 
 export class SupplierInquiryViewModel {

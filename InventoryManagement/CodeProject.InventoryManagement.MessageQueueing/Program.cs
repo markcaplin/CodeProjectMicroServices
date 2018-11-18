@@ -69,16 +69,19 @@ namespace CodeProject.InventoryManagement.MessageQueueing
 			productUpdatedConfiguration.InitializeOutboundMessageQueueing();
 			messageQueueConfigurations.Add(productUpdatedConfiguration);
 			//
-			//	Order Shipped Transactions
+			//	Inventory Shipped Transactions
 			//
-			IMessageQueueConfiguration orderShippedConfiguration = new MessageQueueConfiguration(MessageQueueExchanges.OrderShipped, messageQueueAppConfig, sendingQueueConnection);
+			IMessageQueueConfiguration inventoryShippedConfiguration = new MessageQueueConfiguration(MessageQueueExchanges.InventoryShipped, messageQueueAppConfig, sendingQueueConnection);
 
-			orderShippedConfiguration.AddQueue(MessageQueueEndpoints.SalesOrderQueue);
-			orderShippedConfiguration.AddQueue(MessageQueueEndpoints.LoggingQueue);
+			inventoryShippedConfiguration.AddQueue(MessageQueueEndpoints.SalesOrderQueue);
+			inventoryShippedConfiguration.AddQueue(MessageQueueEndpoints.LoggingQueue);
 
-			orderShippedConfiguration.InitializeOutboundMessageQueueing();
-			messageQueueConfigurations.Add(orderShippedConfiguration);
+			inventoryShippedConfiguration.InitializeOutboundMessageQueueing();
+			messageQueueConfigurations.Add(inventoryShippedConfiguration);
 
+			//
+			//	initialize Sending Messages
+			//
 			IInventoryManagementDataService inventoryManagementDataService = new InventoryManagementDataService();
 			IMessageQueueProcessing messageProcessing = new MessageProcessing(inventoryManagementDataService);
 

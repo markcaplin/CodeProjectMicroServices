@@ -26,6 +26,7 @@ export class SupplierInquiryComponent implements OnInit {
 
   public supplierInquiryViewModel: SupplierInquiryViewModel;
   public selectedRowIndex = -1;
+  private lastSearchValue: string;
 
   constructor(private router: Router, private sessionService: SessionService, private httpService: HttpService,
      private alertService: AlertService) {
@@ -47,7 +48,9 @@ export class SupplierInquiryComponent implements OnInit {
       changes => {
           this.supplierInquiryViewModel.currentPageNumber = 1;
           this.supplierInquiryViewModel.currentPageIndex = 0;
-          this.executeSearch();
+          if (this.lastSearchValue !== this.supplierInquiryViewModel.supplierName) {
+            this.executeSearch();
+          }
         }
       );
 
@@ -107,7 +110,10 @@ export class SupplierInquiryComponent implements OnInit {
   }
 
   public resetSearch() {
+    this.lastSearchValue = '';
+    this.supplierInquiryViewModel.supplierName = '';
     this.initializeSearch();
+    this.executeSearch();
   }
 
   public selectSupplier(row){

@@ -338,6 +338,52 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 			return purchaseOrders;
 		}
 
+
+		/// <summary>
+		/// Sales Order Inquiry
+		/// </summary>
+		/// <param name="accountId"></param>
+		/// <param name="supplierName"></param>
+		/// <param name="paging"></param>
+		/// <returns></returns>
+		public async Task<List<SalesOrder>> SalesOrderInquiry(int accountId, string customerName, DataGridPagingInformation paging)
+		{
+			string sortExpression = paging.SortExpression;
+			string sortDirection = paging.SortDirection;
+
+			if (string.IsNullOrEmpty(sortExpression))
+			{
+				sortExpression = "SalesOrderNumber";
+			}
+
+			if (paging.SortDirection != string.Empty)
+				sortExpression = sortExpression + " " + paging.SortDirection;
+
+			int numberOfRows = 0;
+
+			var query = dbConnection.SalesOrders
+				.Include(x => x.SalesOrderStatus).AsQueryable();
+
+			if (customerName.Trim().Length > 0)
+			{
+				query = query.Where(p => p.CustomerName.Contains(customerName));
+			}
+
+			query = query.Where(p => p.AccountId == accountId);
+
+			var salesOrderResults = from p in query select p;
+
+			numberOfRows = await salesOrderResults.CountAsync();
+
+			List<SalesOrder> salesOrders = await salesOrderResults.OrderBy(sortExpression).Skip((paging.CurrentPageNumber - 1) * paging.PageSize).Take(paging.PageSize).ToListAsync();
+
+			paging.TotalRows = numberOfRows;
+			paging.TotalPages = CodeProject.Shared.Common.Utilties.Functions.CalculateTotalPages(numberOfRows, paging.PageSize);
+
+			return salesOrders;
+		}
+
+
 		/// <summary>
 		/// Get Purchase Order
 		/// </summary>
@@ -355,6 +401,22 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 		}
 
 		/// <summary>
+		/// Get Sales Order
+		/// </summary>
+		/// <param name="accountId"></param>
+		/// <param name="salesOrderId"></param>
+		/// <returns></returns>
+		public async Task<SalesOrder> GetSalesOrder(int accountId, int salesOrderId)
+		{
+			SalesOrder salesOrder = await dbConnection.SalesOrders
+				.Include(x => x.SalesOrderStatus)
+				.Include(x => x.SalesOrderDetails).ThenInclude(p => p.Product)
+				.Where(x => x.AccountId == accountId && x.SalesOrderId == salesOrderId).FirstOrDefaultAsync();
+
+			return salesOrder;
+		}
+
+		/// <summary>
 		/// Get Purchase Order Header
 		/// </summary>
 		/// <param name="accountId"></param>
@@ -366,6 +428,20 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 				.Where(x => x.AccountId == accountId && x.PurchaseOrderId == purchaseOrderId).FirstOrDefaultAsync();
 
 			return purchaseOrder;
+		}
+
+		/// <summary>
+		/// Get Sales Order Header
+		/// </summary>
+		/// <param name="accountId"></param>
+		/// <param name="salesOrderId"></param>
+		/// <returns></returns>
+		public async Task<SalesOrder> GetSalesOrderHeader(int accountId, int salesOrderId)
+		{
+			SalesOrder salesOrder = await dbConnection.SalesOrders
+				.Where(x => x.AccountId == accountId && x.SalesOrderId == salesOrderId).FirstOrDefaultAsync();
+
+			return salesOrder;
 		}
 
 
@@ -383,6 +459,20 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 		}
 
 		/// <summary>
+		/// Get Sales Order Detail For Update
+		/// </summary>
+		/// <param name="salesOrderDetailId"></param>
+		/// <returns></returns>
+		public async Task<SalesOrderDetail> GetSalesOrderDetailForUpdate(int salesOrderDetailId)
+		{
+			SalesOrderDetail salesOrderDetail = await dbConnection.SalesOrderDetails
+				.Where(x => x.SalesOrderDetailId == salesOrderDetailId).FirstOrDefaultAsync();
+
+			return salesOrderDetail;
+		}
+
+
+		/// <summary>
 		/// Update Purchase Order Detail
 		/// </summary>
 		/// <param name="purchaseOrderDetail"></param>
@@ -392,6 +482,19 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 			await Task.Delay(0);
 			DateTime dateUpdated = DateTime.UtcNow;
 			purchaseOrderDetail.DateUpdated = dateUpdated;
+		}
+
+
+		/// <summary>
+		/// Update Sales Order Detail
+		/// </summary>
+		/// <param name="salesOrderDetail"></param>
+		/// <returns></returns>
+		public async Task UpdateSalesOrderDetail(SalesOrderDetail salesOrderDetail)
+		{
+			await Task.Delay(0);
+			DateTime dateUpdated = DateTime.UtcNow;
+			salesOrderDetail.DateUpdated = dateUpdated;
 		}
 
 		/// <summary>
@@ -457,6 +560,34 @@ namespace CodeProject.InventoryManagement.Data.EntityFramework
 		{
 			Product product = await dbConnection.Products.Where(x => x.AccountId == accountId && x.ProductId == productId).FirstOrDefaultAsync();
 			return product;
+		}
+
+		/// <summary>
+		/// Create Sales Order
+		/// </summary>
+		/// <param name="salesOrder"></param>
+		/// <returns></returns>
+		public async Task CreateSalesOrder(SalesOrder salesOrder)
+		{
+			DateTime dateCreated = DateTime.UtcNow;
+			salesOrder.DateCreated = dateCreated;
+			salesOrder.DateUpdated = dateCreated;
+
+			await dbConnection.SalesOrders.AddAsync(salesOrder);
+		}
+
+		/// <summary>
+		/// Create Sales Order Detail
+		/// </summary>
+		/// <param name="salesOrderDetail"></param>
+		/// <returns></returns>
+		public async Task CreateSalesOrderDetail(SalesOrderDetail salesOrderDetail)
+		{
+			DateTime dateCreated = DateTime.UtcNow;
+			salesOrderDetail.DateCreated = dateCreated;
+			salesOrderDetail.DateUpdated = dateCreated;
+
+			await dbConnection.SalesOrderDetails.AddAsync(salesOrderDetail);
 		}
 
 

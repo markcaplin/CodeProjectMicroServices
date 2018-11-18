@@ -16,6 +16,7 @@ using CodeProject.Shared.Common.Interfaces;
 using Microsoft.Extensions.Options;
 using CodeProject.InventoryManagement.WebApi.SignalRHub;
 using Microsoft.AspNetCore.SignalR;
+using System.IO;
 
 namespace CodeProject.InventoryManagement.WebApi.Controllers
 {
@@ -201,6 +202,70 @@ namespace CodeProject.InventoryManagement.WebApi.Controllers
 
 		}
 
+		/// <summary>
+		/// Upload Product Master
+		/// </summary>
+		/// <returns></returns>
+		[HttpPost, DisableRequestSizeLimit]
+		[Route("UploadProductMasterFile")]
+		public async Task<IActionResult> UploadProductMasterFile()
+		{
+			ResponseModel<List<ProductDataTransformation>> returnResponse = new ResponseModel<List<ProductDataTransformation>>();
+
+			try
+			{
+				SecurityModel securityModel = (SecurityModel)(HttpContext.Items["SecurityModel"]);
+
+				int accountId = securityModel.AccountId;
+
+				var file = Request.Form.Files[0];
+
+				List<ProductDataTransformation> products = new List<ProductDataTransformation>();
+
+				using (var reader = new StreamReader(file.OpenReadStream()))
+				{
+					var fileContent = reader.ReadToEnd();
+					string[] rows = fileContent.Split(Environment.NewLine.ToCharArray());
+					int counter = 0;
+					foreach(string row in rows)
+					{
+						if (counter > 0)
+						{
+							string[] columns = row.Split('\t');
+							if (columns.Length == 4)
+							{
+								ProductDataTransformation product = new ProductDataTransformation();
+								product.ProductNumber = Convert.ToString(columns[0]);
+								product.Description = Convert.ToString(columns[1]);
+								product.BinLocation = Convert.ToString(columns[2]);
+								product.UnitPrice = Convert.ToDouble(columns[3]);
+								products.Add(product);
+							}
+							
+						}
+						counter++;
+					}
+				}
+
+				returnResponse = await _inventoryManagementBusinessService.UploadProducts(accountId, products);
+				returnResponse.Token = securityModel.Token;
+				if (returnResponse.ReturnStatus == false)
+				{
+					return BadRequest(returnResponse);
+				}
+
+				return Ok(returnResponse);
+
+			
+			}
+			catch (Exception ex)
+			{
+				returnResponse.ReturnStatus = false;
+				returnResponse.ReturnMessage.Add(ex.Message);
+				return BadRequest(returnResponse);
+			}
+		
+		}
 
 
 

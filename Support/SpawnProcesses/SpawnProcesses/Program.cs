@@ -14,6 +14,28 @@ namespace SpawnProcesses
 
 		static void Main(string[] args)
         {
+
+			string path = Directory.GetCurrentDirectory();
+			Console.WriteLine("The current directory is {0}", path);
+		
+			char delimiter = '\\';
+
+			string[] paths = path.Split(delimiter);
+
+			int parts = paths.Length;
+			string runningPath = string.Empty;
+		
+			foreach(string filePath in paths)
+			{
+				if (filePath.ToLower() == "support")
+				{
+					break;
+				}
+
+				runningPath = runningPath + filePath + @"\";
+
+			}
+
 			StartUpProcesses startUpProcesses = new StartUpProcesses();
 
 			string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
@@ -34,7 +56,7 @@ namespace SpawnProcesses
 				process1.StartInfo.CreateNoWindow = false;
 				process1.StartInfo.UseShellExecute = false;
 				process1.StartInfo.RedirectStandardOutput = false;
-				process1.StartInfo.FileName = @"C:\MyFiles\_CodeProjectMicroServices\Support\StartAccountManagementWebApi.bat";
+				process1.StartInfo.FileName = runningPath + @"Support\StartAccountManagementWebApi.bat";
 				process1.Start();
 			}
 
@@ -45,7 +67,7 @@ namespace SpawnProcesses
 				process2.StartInfo.CreateNoWindow = false;
 				process2.StartInfo.UseShellExecute = false;
 				process2.StartInfo.RedirectStandardOutput = false;
-				process2.StartInfo.FileName = @"C:\MyFiles\_CodeProjectMicroServices\Support\StartInventoryManagementWebApi.bat";
+				process2.StartInfo.FileName = runningPath + @"Support\StartInventoryManagementWebApi.bat";
 				process2.Start();
 
 			}
@@ -57,7 +79,7 @@ namespace SpawnProcesses
 				process3.StartInfo.CreateNoWindow = false;
 				process3.StartInfo.UseShellExecute = false;
 				process3.StartInfo.RedirectStandardOutput = false;
-				process3.StartInfo.FileName = @"C:\MyFiles\_CodeProjectMicroServices\Support\StartSalesOrderManagementWebApi.bat";
+				process3.StartInfo.FileName = runningPath + @"Support\StartSalesOrderManagementWebApi.bat";
 				process3.Start();
 			}
 
@@ -68,7 +90,7 @@ namespace SpawnProcesses
 				process3.StartInfo.CreateNoWindow = false;
 				process3.StartInfo.UseShellExecute = false;
 				process3.StartInfo.RedirectStandardOutput = false;
-				process3.StartInfo.FileName = @"C:\MyFiles\_CodeProjectMicroServices\Support\StartPurchaseOrderManagementWebApi.bat";
+				process3.StartInfo.FileName = runningPath + @"Support\StartPurchaseOrderManagementWebApi.bat";
 				process3.Start();
 			}
 
@@ -80,7 +102,7 @@ namespace SpawnProcesses
 				process4.StartInfo.CreateNoWindow = false;
 				process4.StartInfo.UseShellExecute = false;
 				process4.StartInfo.RedirectStandardOutput = false;
-				process4.StartInfo.FileName = @"C:\MyFiles\_CodeProjectMicroServices\Support\StartInventoryManagementMessageQueue.bat";
+				process4.StartInfo.FileName = runningPath + @"Support\StartInventoryManagementMessageQueue.bat";
 				process4.Start();
 			}
 
@@ -92,7 +114,7 @@ namespace SpawnProcesses
 				process5.StartInfo.CreateNoWindow = false;
 				process5.StartInfo.UseShellExecute = false;
 				process5.StartInfo.RedirectStandardOutput = false;
-				process5.StartInfo.FileName = @"C:\MyFiles\_CodeProjectMicroServices\Support\StartSalesOrderManagementMessageQueue.bat";
+				process5.StartInfo.FileName = runningPath + @"Support\StartSalesOrderManagementMessageQueue.bat";
 				process5.Start();
 			}
 
@@ -105,7 +127,7 @@ namespace SpawnProcesses
 				process5.StartInfo.CreateNoWindow = false;
 				process5.StartInfo.UseShellExecute = false;
 				process5.StartInfo.RedirectStandardOutput = false;
-				process5.StartInfo.FileName = @"C:\MyFiles\_CodeProjectMicroServices\Support\StartPurchaseOrderManagementMessageQueue.bat";
+				process5.StartInfo.FileName = runningPath + @"Support\StartPurchaseOrderManagementMessageQueue.bat";
 				process5.Start();
 			}
 
@@ -119,7 +141,7 @@ namespace SpawnProcesses
 				process5.StartInfo.CreateNoWindow = false;
 				process5.StartInfo.UseShellExecute = false;
 				process5.StartInfo.RedirectStandardOutput = false;
-				process5.StartInfo.FileName = @"C:\MyFiles\_CodeProjectMicroServices\Support\StartPurchaseOrderManagementMessageQueue.bat";
+				process5.StartInfo.FileName = runningPath + @"Support\StartPurchaseOrderManagementMessageQueue.bat";
 				process5.Start();
 			}
 
@@ -131,7 +153,7 @@ namespace SpawnProcesses
 				process6.StartInfo.CreateNoWindow = false;
 				process6.StartInfo.UseShellExecute = false;
 				process6.StartInfo.RedirectStandardOutput = false;
-				process6.StartInfo.FileName = @"C:\MyFiles\_CodeProjectMicroServices\Support\StartLoggingManagementMessageQueue.bat";
+				process6.StartInfo.FileName = runningPath + @"Support\StartLoggingManagementMessageQueue.bat";
 				process6.Start();
 			}
 

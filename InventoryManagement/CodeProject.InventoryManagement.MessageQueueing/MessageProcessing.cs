@@ -282,6 +282,11 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 						await PurchaseOrderSubmitted(transactionQueueItem);
 						await _inventoryManagementDataService.DeleteInboundTransactionQueueEntry(transactionQueueItem.TransactionQueueInboundId);
 					}
+					else if (transactionCode == TransactionQueueTypes.SalesOrderSubmitted)
+					{
+						await SalesOrderSubmitted(transactionQueueItem);
+						await _inventoryManagementDataService.DeleteInboundTransactionQueueEntry(transactionQueueItem.TransactionQueueInboundId);
+					}
 					else if (transactionCode == TransactionQueueTypes.Acknowledgement)
 					{
 						await ProcessAcknowledgement(transactionQueueItem);
@@ -439,6 +444,54 @@ namespace CodeProject.InventoryManagement.Business.MessageService
 				purchaseOrderDetail.OrderTotal = detail.UnitPrice * detail.OrderQuantity;
 
 				await _inventoryManagementDataService.CreatePurchaseOrderDetail(purchaseOrderDetail);
+
+			}
+
+			await LogSuccessfullyProcessed(transaction);
+		}
+
+
+		/// <summary>
+		/// Sales Order Submitted
+		/// </summary>
+		/// <param name=""></param>
+		private async Task SalesOrderSubmitted(TransactionQueueInbound transaction)
+		{
+			SalesOrderUpdatePayload payload = JsonConvert.DeserializeObject<SalesOrderUpdatePayload>(transaction.Payload);
+
+			SalesOrder salesOrder = new SalesOrder();
+			salesOrder.AccountId = payload.AccountId;
+			salesOrder.AddressLine1 = payload.AddressLine1;
+			salesOrder.AddressLine2 = payload.AddressLine2;
+			salesOrder.City = payload.City;
+			salesOrder.Region = payload.Region;
+			salesOrder.PostalCode = payload.PostalCode;
+			salesOrder.CustomerName = payload.CustomerName;
+			salesOrder.SalesOrderStatusId = SalesOrderStatuses.Open;
+			salesOrder.SalesOrderNumber = payload.SalesOrderNumber;
+			salesOrder.MasterSalesOrderId = payload.SalesOrderId;
+			salesOrder.OrderTotal = payload.OrderTotal;
+
+			await _inventoryManagementDataService.CreateSalesOrder(salesOrder);
+
+			await _inventoryManagementDataService.UpdateDatabase();
+
+			foreach (SalesOrderDetailUpdatePayload detail in payload.SalesOrderDetails)
+			{
+				SalesOrderDetail salesOrderDetail = new SalesOrderDetail();
+
+				salesOrderDetail.AccountId = payload.AccountId;
+				salesOrderDetail.MasterSalesOrderDetailId = detail.SalesOrderDetailId;
+				salesOrderDetail.SalesOrderId = salesOrder.SalesOrderId;
+				salesOrderDetail.ProductId = detail.ProductMasterId;
+				salesOrderDetail.ProductNumber = detail.ProductNumber;
+				salesOrderDetail.ProductDescription = detail.ProductDescription;
+				salesOrderDetail.UnitPrice = detail.UnitPrice;
+				salesOrderDetail.OrderQuantity = detail.OrderQuantity;
+				salesOrderDetail.ShippedQuantity= 0;
+				salesOrderDetail.OrderTotal = detail.UnitPrice * detail.OrderQuantity;
+
+				await _inventoryManagementDataService.CreateSalesOrderDetail(salesOrderDetail);
 
 			}
 
