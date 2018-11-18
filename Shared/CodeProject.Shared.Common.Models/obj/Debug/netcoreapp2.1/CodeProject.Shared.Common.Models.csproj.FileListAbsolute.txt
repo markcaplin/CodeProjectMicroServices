@@ -6,4 +6,3 @@ C:\MyFiles\_CodeProjectMicroServices\Shared\CodeProject.Shared.Common.Models\obj
 C:\MyFiles\_CodeProjectMicroServices\Shared\CodeProject.Shared.Common.Models\obj\Debug\netcoreapp2.1\CodeProject.Shared.Common.Models.AssemblyInfo.cs
 C:\MyFiles\_CodeProjectMicroServices\Shared\CodeProject.Shared.Common.Models\obj\Debug\netcoreapp2.1\CodeProject.Shared.Common.Models.dll
 C:\MyFiles\_CodeProjectMicroServices\Shared\CodeProject.Shared.Common.Models\obj\Debug\netcoreapp2.1\CodeProject.Shared.Common.Models.pdb
-C:\MyFiles\_CodeProjectMicroServices\Shared\CodeProject.Shared.Common.Models\obj\Debug\netcoreapp2.1\CodeProject.Shared.Common.Models.csprojAssemblyReference.cache
