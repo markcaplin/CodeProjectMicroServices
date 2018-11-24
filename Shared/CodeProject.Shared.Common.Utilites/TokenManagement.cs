@@ -40,7 +40,7 @@ namespace CodeProject.Shared.Common
 			{
 				Subject = new ClaimsIdentity(claims),
 				NotBefore = DateTime.Now,
-				Expires = DateTime.Now.AddMinutes(5),
+				Expires = DateTime.Now.AddMinutes(60),
 				SigningCredentials = signinCredentials
 			};
 

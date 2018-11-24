@@ -267,7 +267,6 @@ export class PurchaseOrderMaintenanceComponent implements OnInit, OnDestroy {
     purchaseOrderDetailViewModel.disableDeleteButton = false;
     purchaseOrderDetailViewModel.disableEditButton = false;
 
-
     let purchaseOrderDetailViewModelOriginalValues = new PurchaseOrderDetailViewModel();
     purchaseOrderDetailViewModelOriginalValues.unitPrice = response.entity.unitPrice;
     purchaseOrderDetailViewModelOriginalValues.orderQuantity = response.entity.orderQuantity;
@@ -488,12 +487,13 @@ export class PurchaseOrderMaintenanceComponent implements OnInit, OnDestroy {
 
   private setEnableSubmitButton() {
     this.disableSubmitButton = true;
-    if (this.purchaseOrderViewModel.orderTotal > 0 && this.purchaseOrderViewModel.purchaseOrderStatusDescription === 'Open') {
+    if (this.purchaseOrderViewModel.purchaseOrderDetails.length > 0 && this.purchaseOrderViewModel.purchaseOrderStatusDescription === 'Open') {
       this.disableSubmitButton = false;
     }
   }
 
   private submitPurchaseOrder() {
+
     let purchaseOrderViewModel = new PurchaseOrderViewModel();
 
     purchaseOrderViewModel.purchaseOrderId = this.purchaseOrderViewModel.purchaseOrderId;

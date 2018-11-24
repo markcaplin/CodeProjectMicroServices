@@ -9,9 +9,7 @@ namespace CodeProject.MessageQueueing
 {
     public class MessageQueueConnection  : IMessageQueueConnection
     {
-		//private int _counter = 0;
-		//private readonly object _sendingLock = new object();
-
+	
 		private ConnectionFactory _connectionFactory;
 		private MessageQueueAppConfig _messageQueueAppConfig;
 		private IConnection _connection;
@@ -21,6 +19,9 @@ namespace CodeProject.MessageQueueing
 			_messageQueueAppConfig = messageQueueAppConfig;
 		}
 
+		/// <summary>
+		/// Create RabbitMQ Connection
+		/// </summary>
 		public void CreateConnection()
 		{
 			_connectionFactory = new ConnectionFactory();
@@ -31,10 +32,6 @@ namespace CodeProject.MessageQueueing
 
 			_connection = _connectionFactory.CreateConnection();
 
-			//_channel = _connection.CreateModel();
-
-			//_basicProperties = _channel.CreateBasicProperties();
-			//_basicProperties.Persistent = true;
 		}
 
 		public IConnection GetConnection()
@@ -42,13 +39,5 @@ namespace CodeProject.MessageQueueing
 			return _connection;
 		}
 
-		//public void IncrementCounter(string queueName)
-		//{
-		//	lock (_sendingLock)
-		//	{
-		//		_counter++;
-		//		Console.WriteLine("Counter updated by " + queueName + " = " + _counter);
-		//	}
-		//}
     }
 }

@@ -39,11 +39,7 @@ namespace CodeProject.InventoryManagement.WebApi.ActionFilters
 			context.HttpContext.Items["SecurityModel"] = securityModel;
 
 			var resultContext = await next();
-		
-			//context.HttpContext.Response.Headers.Add("Access-Control-Expose-Headers", "Content-Disposition");
-			//context.HttpContext.Response.Headers.Add("authorization", token);
 			
-
 		}
 	}
 }

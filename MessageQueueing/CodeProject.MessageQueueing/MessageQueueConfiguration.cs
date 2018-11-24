@@ -93,7 +93,7 @@ namespace CodeProject.MessageQueueing
 			string exchangeName = _exchangeName + "_" + _messageQueueAppConfig.MessageQueueEnvironment;
 
 			_channel.ExchangeDeclare(exchangeName, "fanout", true, false);
-
+			
 			foreach (string queueName in _boundedQueues)
 			{
 				string queue = queueName + "_" + _messageQueueAppConfig.MessageQueueEnvironment;

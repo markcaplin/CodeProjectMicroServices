@@ -134,6 +134,8 @@ export class SalesOrderMaintenanceComponent implements OnInit, OnDestroy {
       salesOrderDetailViewModel.orderQuantity = element.orderQuantity;
       salesOrderDetailViewModel.orderQuantityFormatted = element.orderQuantity.toFixed(0);
       salesOrderDetailViewModel.unitPriceFormatted = element.unitPrice.toFixed(2);
+      salesOrderDetailViewModel.shippedQuantityFormatted = element.shippedQuantity.toFixed(0);
+
       salesOrderDetailViewModel.editQuantity = false;
       salesOrderDetailViewModel.editUnitPrice = false;
       salesOrderDetailViewModel.editProductNumber = false;
@@ -157,7 +159,7 @@ export class SalesOrderMaintenanceComponent implements OnInit, OnDestroy {
 
     this.detailDataSource.data = this.salesOrderViewModel.salesOrderDetails;
 
-    this.salesOrderViewModel.displayedColumns = ['productNumber', 'description', 'unitPrice', 'orderQuantity', 'actions'];
+    this.salesOrderViewModel.displayedColumns = ['productNumber', 'description', 'unitPrice', 'orderQuantity', 'shippedQuantity', 'actions'];
 
     if (this.salesOrderViewModel.salesOrderStatusDescription !== 'Open') {
         this.disableSalesOrderButtons();
@@ -488,7 +490,7 @@ export class SalesOrderMaintenanceComponent implements OnInit, OnDestroy {
 
   private setEnableSubmitButton() {
     this.disableSubmitButton = true;
-    if (this.salesOrderViewModel.orderTotal > 0 && this.salesOrderViewModel.salesOrderStatusDescription === 'Open') {
+    if (this.salesOrderViewModel.salesOrderDetails.length > 0 && this.salesOrderViewModel.salesOrderStatusDescription === 'Open') {
       this.disableSubmitButton = false;
     }
   }

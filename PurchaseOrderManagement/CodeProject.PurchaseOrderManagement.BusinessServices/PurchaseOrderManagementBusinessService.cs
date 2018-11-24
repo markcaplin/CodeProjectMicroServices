@@ -320,6 +320,7 @@ namespace CodeProject.PurchaseOrderManagement.BusinessServices
 				purchaseOrderDetailDataTransformation.ProductDescription = updatedPurchaseOrderDetail.Product.Description;
 				purchaseOrderDetailDataTransformation.UnitPrice = updatedPurchaseOrderDetail.UnitPrice;
 				purchaseOrderDetailDataTransformation.OrderQuantity = updatedPurchaseOrderDetail.OrderQuantity;
+				purchaseOrderDetailDataTransformation.OrderTotal = purchaseOrder.OrderTotal;
 
 				returnResponse.ReturnStatus = true;
 

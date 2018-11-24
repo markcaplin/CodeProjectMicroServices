@@ -514,6 +514,7 @@ namespace CodeProject.SalesOrderManagement.BusinessServices
 				salesOrderDetailDataTransformation.UnitPrice = updatedSalesOrderDetail.UnitPrice;
 				salesOrderDetailDataTransformation.OrderQuantity = updatedSalesOrderDetail.OrderQuantity;
 				salesOrderDetailDataTransformation.ShippedQuantity = updatedSalesOrderDetail.ShippedQuantity;
+				salesOrderDetailDataTransformation.OrderTotal = salesOrder.OrderTotal;
 
 				returnResponse.ReturnStatus = true;
 
@@ -628,7 +629,7 @@ namespace CodeProject.SalesOrderManagement.BusinessServices
 
 				salesOrderDetail.UnitPrice = salesOrderDetailDataTransformation.UnitPrice;
 				salesOrderDetail.OrderQuantity = salesOrderDetailDataTransformation.OrderQuantity;
-
+		
 				await _salesOrderManagementDataService.UpdateSalesOrderDetail(salesOrderDetail);
 
 				await _salesOrderManagementDataService.UpdateProduct(product);
@@ -915,6 +916,7 @@ namespace CodeProject.SalesOrderManagement.BusinessServices
 					salesOrderDetailDataTransformation.ProductDescription = salesOrderDetail.Product.Description;
 					salesOrderDetailDataTransformation.UnitPrice = salesOrderDetail.UnitPrice;
 					salesOrderDetailDataTransformation.OrderQuantity = salesOrderDetail.OrderQuantity;
+					salesOrderDetailDataTransformation.ShippedQuantity = salesOrderDetail.ShippedQuantity;
 					salesOrderDetailDataTransformation.DateCreated = salesOrderDetail.DateCreated;
 					salesOrderDetailDataTransformation.DateUpdated = salesOrderDetail.DateUpdated;
 

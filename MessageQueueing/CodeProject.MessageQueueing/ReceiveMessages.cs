@@ -27,43 +27,8 @@ namespace CodeProject.MessageQueueing
 		private readonly MessageQueueAppConfig _appConfig;
 		private readonly ConnectionStrings _connectionStrings;
 
-		//private readonly IMessageQueueProcessing _messageProcessor;
-		//private readonly IMessageQueueing _messageQueueing;
-		//private readonly ILogger _logger;
-		//private readonly IOptions<MessageQueueAppConfig> _appConfig;
-		//private readonly IOptions<ConnectionStrings> _connectionStrings;
-
 		private Timer _timer;
 		private Boolean _running = false;
-
-		//private Subject<MessageQueue> _subject;
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="logger"></param>
-		/// <param name="appConfig"></param>
-		/// <param name="messageQueueing"></param>
-		/// <param name="inventoryManagementBusinessService"></param>
-		//public ReceiveMessages(ILogger<ReceiveMessages> logger, IOptions<ConnectionStrings> connectionStrings, IOptions<MessageQueueAppConfig> appConfig, IMessageQueueing messageQueueing, IMessageQueueProcessing messageProcessor)
-		//{
-		//	_logger = logger;
-		//	_appConfig = appConfig;
-		//	_connectionStrings = connectionStrings;
-		//	_messageProcessor = messageProcessor;
-		//	_messageQueueing = messageQueueing;
-
-		//	_messageQueueing.SetConnectionStrings(_connectionStrings.Value);
-		//	_messageQueueing.InitializeMessageQueueing(appConfig.Value.MessageQueueHostName, appConfig.Value.MessageQueueUserName, appConfig.Value.MessageQueuePassword);
-		//	_messageQueueing.SetInboundSemaphoreKey(appConfig.Value.InboundSemaphoreKey);
-		//	_messageQueueing.SetOutboundSemaphoreKey(appConfig.Value.OutboundSemaphoreKey);
-		//	_messageQueueing.InitializeExchange(appConfig.Value.ExchangeName, appConfig.Value.RoutingKey);
-		//	_messageQueueing.InitializeLogging(appConfig.Value.OriginatingQueueName, appConfig.Value.LoggingMessageQueue, appConfig.Value.SendToLoggingQueue);
-		//	_messageQueueing.InitializeLoggingExchange(appConfig.Value.LoggingExchangeName, appConfig.Value.RoutingKey);
-		//	_messageQueueing.InitializeQueue(appConfig.Value.InboundMessageQueue, appConfig.Value.RoutingKey);
-
-		//	_logger.LogInformation("Receive Messages Constructor ");
-		//}
 
 		public ReceiveMessages(IMessageQueueConnection messageQueueConnection, IMessageQueueProcessing messageProcessor, MessageQueueAppConfig appConfig, ConnectionStrings connectionStrings, List<IMessageQueueConfiguration> messageQueueConfigurations)
 		{

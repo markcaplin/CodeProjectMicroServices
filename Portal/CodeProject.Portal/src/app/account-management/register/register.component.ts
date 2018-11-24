@@ -30,12 +30,12 @@ export class RegisterComponent implements OnInit {
      private alertService: AlertService, private sessionService: SessionService) {
 
     this.userViewModel = new UserViewModel();
-    this.userViewModel.firstName = 'Mark';
-    this.userViewModel.lastName = 'Caplin';
-    this.userViewModel.password = '123456';
-    this.userViewModel.passwordConfirmation = '123456';
-    this.userViewModel.emailAddress = 'markcap@hotmail.com';
-    this.userViewModel.companyName = 'Caplin Systems, Inc.';
+    this.userViewModel.firstName = '';
+    this.userViewModel.lastName = '';
+    this.userViewModel.password = '';
+    this.userViewModel.passwordConfirmation = '';
+    this.userViewModel.emailAddress = '';
+    this.userViewModel.companyName = '';
 
   }
 

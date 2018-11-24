@@ -6,4 +6,3 @@ C:\MyFiles\_CodeProjectMicroServices\PurchaseOrderManagement\CodeProject.Purchas
 C:\MyFiles\_CodeProjectMicroServices\PurchaseOrderManagement\CodeProject.PurchaseOrderManagement.Data.Models\obj\Debug\netcoreapp2.1\CodeProject.PurchaseOrderManagement.Data.Models.AssemblyInfo.cs
 C:\MyFiles\_CodeProjectMicroServices\PurchaseOrderManagement\CodeProject.PurchaseOrderManagement.Data.Models\obj\Debug\netcoreapp2.1\CodeProject.PurchaseOrderManagement.Data.Models.dll
 C:\MyFiles\_CodeProjectMicroServices\PurchaseOrderManagement\CodeProject.PurchaseOrderManagement.Data.Models\obj\Debug\netcoreapp2.1\CodeProject.PurchaseOrderManagement.Data.Models.pdb
-C:\MyFiles\_CodeProjectMicroServices\PurchaseOrderManagement\CodeProject.PurchaseOrderManagement.Data.Models\obj\Debug\netcoreapp2.1\CodeProject.PurchaseOrderManagement.Data.Models.csprojAssemblyReference.cache

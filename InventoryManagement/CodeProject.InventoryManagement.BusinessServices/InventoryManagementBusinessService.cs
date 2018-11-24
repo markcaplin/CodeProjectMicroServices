@@ -617,7 +617,9 @@ namespace CodeProject.InventoryManagement.BusinessServices
 				int accountId = salesOrderDetailDataTransformation.AccountId;
 				int salesOrderId = salesOrderDetailDataTransformation.SalesOrderId;
 				int salesOrderDetailId = salesOrderDetailDataTransformation.SalesOrderDetailId;
-
+				//
+				//	Validate Shipped Quantity
+				//
 				if (salesOrderDetailDataTransformation.CurrentShippedQuantity == 0)
 				{
 					returnResponse.ReturnMessage.Add("Invalid Shipped Quantity");
@@ -625,10 +627,14 @@ namespace CodeProject.InventoryManagement.BusinessServices
 
 					return returnResponse;
 				}
-
+				//
+				//	Begin a Serializable Transaction
+				//
 				_inventoryManagementDataService.OpenConnection(_connectionStrings.PrimaryDatabaseConnectionString);
 				_inventoryManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
-
+				//
+				//	Get Sales Order Header
+				//
 				SalesOrder salesOrder = await _inventoryManagementDataService.GetSalesOrderHeader(accountId, salesOrderId);
 				if (salesOrder == null)
 				{
@@ -639,7 +645,9 @@ namespace CodeProject.InventoryManagement.BusinessServices
 
 					return returnResponse;
 				}
-
+				//
+				//	Get Sales Order Detail
+				//
 				salesOrderDetail = await _inventoryManagementDataService.GetSalesOrderDetailForUpdate(salesOrderDetailId);
 				if (salesOrderDetail == null)
 				{
@@ -650,11 +658,15 @@ namespace CodeProject.InventoryManagement.BusinessServices
 
 					return returnResponse;
 				}
-
+				//
+				//	Update Sales Order Shipped Quantity
+				//
 				salesOrderDetail.ShippedQuantity = salesOrderDetail.ShippedQuantity + salesOrderDetailDataTransformation.CurrentShippedQuantity;
 
 				await _inventoryManagementDataService.UpdateSalesOrderDetail(salesOrderDetail);
-
+				//
+				//	Get Product Record with an exclusive update lock
+				//
 				Product product = await _inventoryManagementDataService.GetProductInformationForUpdate(salesOrderDetail.ProductId);
 				if (product == null)
 				{
@@ -665,11 +677,15 @@ namespace CodeProject.InventoryManagement.BusinessServices
 
 					return returnResponse;
 				}
-
+				//
+				//	Reduce Product OnHand Quantity by the quantity shipped
+				//
 				product.OnHandQuantity = product.OnHandQuantity - salesOrderDetailDataTransformation.CurrentShippedQuantity;
 
 				await _inventoryManagementDataService.UpdateProduct(product);
-
+				//
+				//	Create Inventory Transaction Record
+				//
 				InventoryTransaction inventoryTransaction = new InventoryTransaction();
 				inventoryTransaction.EntityId = salesOrderDetail.SalesOrderDetailId;
 				inventoryTransaction.MasterEntityId = salesOrderDetail.MasterSalesOrderDetailId;
@@ -679,7 +695,9 @@ namespace CodeProject.InventoryManagement.BusinessServices
 				inventoryTransaction.TransactionDate = DateTime.UtcNow;
 
 				await _inventoryManagementDataService.CreateInventoryTransaction(inventoryTransaction);
-
+				//
+				//	Create Transaction Queue record and create inventory transaction payload
+				//
 				TransactionQueueOutbound transactionQueue = new TransactionQueueOutbound();
 				transactionQueue.Payload = GenerateInventoryTransactionPayload(inventoryTransaction);
 				transactionQueue.TransactionCode = TransactionQueueTypes.InventoryShipped;
@@ -688,7 +706,9 @@ namespace CodeProject.InventoryManagement.BusinessServices
 				await _inventoryManagementDataService.CreateOutboundTransactionQueue(transactionQueue);
 
 				await _inventoryManagementDataService.UpdateDatabase();
-
+				//
+				//	Commit Transaction
+				//
 				_inventoryManagementDataService.CommitTransaction();
 
 				returnResponse.ReturnStatus = true;
