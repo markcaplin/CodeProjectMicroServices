@@ -1,0 +1,2052 @@
+<h3><strong>Introduction</strong></h3>
+
+<p>The Monolith. By definition, a&nbsp;<em>monolith</em>&nbsp;is a geological feature consisting of a single massive stone or rock, such as a mountain or a single large piece of rock placed as or within&nbsp;a monument or building. Erosion usually exposes these geological formations, which are often made of very hard and solid&nbsp;metamorphic rock.</p>
+
+<p>As most science-fiction fans know; the term monolith became part of pop culture in 1968 through Stanley Kubrick&rsquo;s movie&nbsp;<strong><em>2001: A Space Odyssey</em>.</strong> Kubrick&#39;s movie introduced a sleek black monolith, one of the most striking icons in film and art history. But what was this black monolith depicted in the movie.&nbsp;</p>
+
+<p>In a moment of the sublime, the black monolith first appears to inspire pre-humans to discover technology and look to the stars. When the apes first see the black monolith, they are experiencing an all-too-human moment of the sublime - the simultaneous feeling of awe, wonder, and terror when gazing upon something majestic and mysterious that seems to overwhelm their reason and sensory perceptions. It&#39;s hard to say what Kubrick was trying to tell us; perhaps the message is simple in that the black monolith represents hope for the human species.</p>
+
+<h3><strong>Software Monoliths</strong></h3>
+
+<p>In software engineering, a&nbsp;monolithic application&nbsp;describes a single or multi-tiered software application in which a large portion of the code base is combined into a single program or component from a single&nbsp;platform. A monolithic application describes a software application which is designed without modularity. Modularity is desirable in general as it supports reuse of parts of the application logic and also facilitates maintenance by allowing repair or replacement of parts of the application without requiring a wholesale replacement.</p>
+
+<p>Monolithic applications are a natural way for an application to evolve. Most applications start out with a single objective, or a small number of related objectives. Over time, features are added to the application to support business needs. Unfortunately, monoliths are imperfect in many ways and eventually they become very large and too expensive to update and become difficult to deploy and ultimately too risky to replace and modernize.</p>
+
+<p>Good examples of monolithic systems can be found at the federal government and at large insurance and banking institutions. Many of these institutions rely on inefficient, costly, fragile, decades-old systems to which more than 75 percent of its total IT budget is allocated. Some agencies have attempted to modernize these massive legacy systems with little or no success.</p>
+
+<p>Of course it didn&#39;t stop there. Through the proliferation of the internet, applications have increasingly been written for the World Wide Web. Unfortunately, the technologies used for web application development through the years have violated well-known software engineering principles in the aftermath of large legacy systems. We now have large legacy web applications that contain&nbsp;mountains of spaghetti code that have been developed over the last fifteen years. Modernization of these systems will be a challenge moving forward.</p>
+
+<h3><strong>Microservices Architecture</strong></h3>
+
+<p>As an alternative to developing&nbsp;monolithic software&nbsp;applications, a new architectural development technique has recently emerged called microservices.&nbsp;Microservices is a software development technique - a variant of the service-orientated architecture (SOA) architectural style that structures an application as a collection of loosely coupled services. In a microservices architecture, services are lightweight. The benefit of decomposing an application into different smaller services is that it improves modularity.&nbsp;This makes the application easier to understand, develop, test, deploy and become more resilient to architecture erosion.</p>
+
+<p>Each microservice is a small application that has its own architecture that can be developed, tested and deployed individually without impacting other parts of the application.</p>
+
+<h3><strong>Microservices Design and Planning </strong></h3>
+
+<p>So the promise of the Microservices architecture sounds great. Unfortunately there is no industry consensus yet regarding the properties of microservices, and an official definition is missing as well. Some of the defining characteristics that are frequently cited include:</p>
+
+<ul>
+	<li>Services in a microservice architecture (MSA) are often&nbsp;processes&nbsp;that communicate over a network to fulfill a goal using technology-agnostic&nbsp;protocols such as HTTP.&nbsp;</li>
+	<li>Services in a microservice architecture are independently deployable.</li>
+	<li>Services are easy to replace.</li>
+	<li>Services are organized around capabilities and functions such as logistic, billing, etc.</li>
+	<li>Services can be implemented using different programming languages, databases, hardware and software environment, depending on what fits best.</li>
+	<li>Services are small in size, messaging enabled, bounded by contexts, autonomously developed, independently deployable, decentralized and built and released with automated processes.</li>
+</ul>
+
+<p>With all this being said, it&#39;s obvious that there are architecture challenges and complexities&nbsp;regarding the development and implementation of a well designed microservices architecture. A good plan and design is needed.</p>
+
+<h3><strong>Sample Application </strong></h3>
+
+<p><img height="1786px" src="customer-inquiry-4.png" width="1920px" /></p>
+
+<p>The sample application for this article is a mini ERP application consisting of several back-end microservices and background message queuing services serving a front-end Angular 6 application. The following microservices make up the sample application:</p>
+
+<ul>
+	<li>Account Management Web API Microservice</li>
+	<li>Inventory Management Web API Microservice</li>
+	<li>Sales Order Management Web API Microservice</li>
+	<li>Purchase Order Management Web API Microservice<br />
+	<br />
+	Additionally, the following message queuing services are also included in the sample application:<br />
+	&nbsp;</li>
+	<li>Inventory Management Message Queuing Service</li>
+	<li>Sales Order Management Message Queuing Service</li>
+	<li>Purchase Order Management Message Queuing Service</li>
+	<li>Logging Management Message Queuing Service</li>
+</ul>
+
+<h3><strong>Microservices of the Sample Application</strong></h3>
+
+<p>Decoupling capabilities from the monolith is hard. Deciding what capability to decouple into a microservice is one of the architectural challenges of decomposing a monolith application to an ecosystem of microservices. One of the most frequent questions with implementation of a microservices architecture is about size and granularity of microservices: how small should microservices be, should a piece of software be split into multiple microservices or built as a single one.</p>
+
+<p>In the microservice design for the Sales Order Management microservice, I combined the functionality of both maintaining customers and entering sales orders.&nbsp; These two pieces of functionality seem to be related. It could be argued that maintaining customers should be a separate microservice from processing sales orders.&nbsp;</p>
+
+<p>Finding the domain boundaries in a legacy monolith is both an art and science. In the grand scheme of things, you have to take every architecture with a grain of salt and create a design that works best for your application. As a general rule applying domain driven design techniques to find the bounded contexts defining microservices boundaries is a good place to start.</p>
+
+<h3><strong>Microservices Inter-Process Communications</strong></h3>
+
+<p>As long as you build a monolith, you don&rsquo;t need to put too much thought into how your modules&nbsp;communicate with each other. On the other hand, the implementation of a microservice&nbsp;might seem easy in the beginning. Its smaller size and focus on one specific task reduces its complexity and makes it a lot simpler to understand than the typical monolith. But that quickly changes when you have to implement multiple services that depend on each other that need to communicate with each other and share data.</p>
+
+<p>There isn&#39;t one solution, but several. A microservices-based application is a distributed system running on multiple processes or services, usually even across multiple servers or hosts. Each service instance is typically a process. Therefore, services must interact using an inter-process communication protocol such as HTTP, AMQP, or a binary protocol like TCP, depending on the nature of each service.</p>
+
+<h3><strong>Messaging Between Microservices with&nbsp;Message Queuing </strong></h3>
+
+<p>Most think that building microservices is based on the same principle as REST with a JSON web service. Of course, this is the most common method. This has some advantages, but it has many drawbacks too. For example, what if the called service has crashed and cannot respond? Your client service has to implement some kind of reconnection or fail over logic, otherwise, you risk to lose requests and pieces of information. A cloud architecture should be resilient and recover gracefully from failures. Also, an HTTP request is a blocking API request, making it asynchronous implies some tricky logic on the client side.</p>
+
+<p>An alternative and complementary to HTTP requests are message queues. Using message queuing is actually a fairly old solution (such as Microsoft&#39;s Message Queuing (MSMQ) technology) when dealing with multiple intercommunicating services. Message queuing is a method by which a process can exchange or pass data using an interface to a system-managed queue of messages. A message queue can be created by one process and used by multiple processes that read and/or write messages to and from the queue.</p>
+
+<p>Message Queuing consists of many components such as:</p>
+
+<ul>
+	<li><strong><em>Message</em>:</strong> a package for information, usually composed of two parts;&nbsp;headers, containing metadata, and a&nbsp;body, containing&nbsp;a&nbsp;binary package containing the actual message itself</li>
+	<li><strong><em>Producer</em></strong>: whoever creates and sends a message</li>
+	<li><strong><em>Consumer</em></strong>: whoever receives and reads a message</li>
+	<li><strong><em>Queue</em></strong>: a communication channel that enqueues messages for later retrieval by one or more consumers</li>
+	<li><strong><em>Exchange</em></strong>: a queue aggregator that routes messages to queues based on some predefined logic</li>
+</ul>
+
+<p>Using message queues, you can send, store, and receive messages between application components at any volume, without losing messages or requiring other services to be always available. Message queues offer several options that allow you to specify how messages are delivered, prioritized, and secured, Queues can also be combined with <em>Publication/Subscription</em> messaging&nbsp;in a <em>fanout </em>design.</p>
+
+<p>With the proliferation of cloud technology there are several design and architectural decisions to choose from. For example, Microsoft offers their Azure Service Bus for highly-reliable cloud messaging service between applications and services. Additionally, Amazon recently launched a new service called <em>Amazon MQ</em>, a managed message broker service for Apache ActiveMQ; an open-sourced, enterprise-grade message broker compatible with most industry standard protocols. Amazon picked ActiveMQ as it supports most industry standard protocols.&nbsp;</p>
+
+<h3><strong>RabbitMQ Message Broker</strong></h3>
+
+<p>The sample ERP application was written using Microsoft .NET Core 2.1 with the idea of developing an application that can be ported across various platforms, including running on both Windows and Linux servers. In adherence to maintaining portability, I was looking for an portable messaging queuing technology. In my search I came across RabbitMQ.</p>
+
+<p>RabbitMQ is an open source message broker<strong> </strong>that<strong> </strong>supports the <strong>Advanced Message Queuing Protocol</strong>&nbsp;(<strong>AMQP</strong>). AMQP is an open standard application layer protocol for message-orientated middleware. The defining features of AMQP are message orientation, queuing, routing (including point-to-point and publish and subscribe), reliability and security.</p>
+
+<p>RabbitMQ is lightweight and easy to deploy on premises and in the cloud. RabbitMQ can also be deployed to meet high-scale, high-availability requirements and runs on many operating systems and cloud environments.</p>
+
+<h3><strong>Message Queuing Architectural Goals and Decisions</strong></h3>
+
+<p>After much research, I came up with the following <strong>microservice design </strong>for the sample application:</p>
+
+<ul>
+	<li>The front-end web application will be a single Angular 6 application with each module&nbsp;lazy loaded as separate Angular modules. When deciding to develop your front-end; an approach of&nbsp;separate front-ends for each service could be chosen.</li>
+	<li>Each microservice will have its own dedicated SQL-Server database with a single Entity Framework Core database context.</li>
+	<li>Each microservice&nbsp;will be self contained and will not cross boundaries or make remote calls into other microservices.</li>
+	<li>Each microservice database will maintain separate copies of database tables where shared data across microservices is needed.</li>
+	<li>Each microservice transaction will follow the Unit-of-Work design pattern with sudatabase ACID (Atomicity, Consistency Isolation, Durability)&nbsp;with each transaction being completely committed or rolled backed in the database within a scope of a database transaction.</li>
+	<li>Each microservice will record both inbound and outbound transactions&nbsp;within each transaction and within each database and message queue payloads will be stored in the inbound and outbound transaction tables.</li>
+	<li>Each microservice will have a separate background process for sending, receiving and processing message queue messages.</li>
+	<li>Each transaction will be processed in sequential order of creation in order to maintain data integrity. Depending on the nature of the transactions of your application, this may not be a requirement.</li>
+	<li>Each background message queuing service&nbsp;will run in a separate multithreaded console application and will interact directly with RabbitMQ.</li>
+	<li>RabbitMQ will be loosely coupled from Web API components and will not be implemented within any&nbsp;Web API processes.</li>
+	<li>A logging message queuing service&nbsp;and logging database will be created. All message queue messages&nbsp; that are sent and received&nbsp;RabbitMQ will also be&nbsp;recorded in a central logging database location for logging, monitoring and acknowledging messages.</li>
+	<li>From the Logging message queuing service, acknowledgement messages will be sent back to originating microservice queues to indicate that messages were successfully processed.</li>
+	<li>Each microservice will process acknowledgement messages and upon receipt&nbsp;both inbound and outbound messages will be archived into message queue history tables within the dedicated SQL-Server microservice database for each microservice.</li>
+	<li>Message queues will be durable and persistent - messages&nbsp;will not get lost on service broker restarts.</li>
+	<li>SignalR will be used for real-time message processing between the background message queueing services&nbsp;and the Web API application.</li>
+</ul>
+
+<p>Now that we will have all this, we can now walk through some of the code of the sample ERP application.</p>
+
+<h3><strong>Account Management Login Web API Endpoint</strong></h3>
+
+<p>Each microservice for the sample application will be secured and protected using a JSON web token. A JSON Web Token&nbsp;(JWT) is an open standard (RFC 7419) that defines a compact and self-contained way for securely transmitting information between parties as a JSON object. This information can be verified and trusted because it is digitally signed. A JWT&nbsp;can be signed using a secret (with the&nbsp;HMAC&nbsp;algorithm) or with a public/private key pair using&nbsp;RSA&nbsp;or&nbsp;ECDSA.</p>
+
+<p>To login to the sample application, the login method&nbsp;of the Account Management Web API will get executed with the user&#39;s credentials (email address and password) being passed into the Account Management Web API&nbsp;Login contoller action method that will proceed to validate the user against the Account Management database.</p>
+
+<p>Upon successful login a JSON web token will be generated and returned back to the client application where it will be persisted and saved in the client&#39;s&nbsp;local storage. The JSON web token will be included in the header of each HTTP&nbsp;request made to any Web API end point of the sample application.</p>
+
+<pre lang="cs">
+    
+/// &lt;summary&gt;
+/// Login
+/// &lt;/summary&gt;
+/// &lt;param name=&quot;accountDataTransformation&quot;&gt;&lt;/param&gt;
+/// &lt;returns&gt;&lt;/returns&gt;
+[HttpPost]
+[Route(&quot;Login&quot;)]
+public async Task&lt;IActionResult&gt; Login([FromBody] AccountDataTransformation accountDataTransformation)
+{
+    ResponseModel&lt;AccountDataTransformation&gt; returnResponse = new ResponseModel&lt;AccountDataTransformation&gt;();
+    try
+    {
+        returnResponse = await _accountBusinessService.Login(accountDataTransformation);
+        if (returnResponse.ReturnStatus == true)
+        {
+            int userId = returnResponse.Entity.UserId;
+            int accountId = returnResponse.Entity.AccountId;
+            string firstName = returnResponse.Entity.FirstName;
+            string lastName = returnResponse.Entity.LastName;
+            string emailAddress = returnResponse.Entity.EmailAddress;
+            string companyName = returnResponse.Entity.CompanyName;
+
+            string tokenString = TokenManagement.CreateToken(userId, firstName, lastName, emailAddress, accountId, companyName);
+            returnResponse.Entity.IsAuthenicated = true;
+            returnResponse.Entity.Token = tokenString;
+            return Ok(returnResponse);
+         }
+         else
+         {
+            return BadRequest(returnResponse);
+         }
+
+    }
+    catch (Exception ex)
+    {
+         returnResponse.ReturnStatus = false;
+         returnResponse.ReturnMessage.Add(ex.Message);
+         return BadRequest(returnResponse);
+    }
+
+}
+
+
+</pre>
+
+<h3><strong>JSON Web Token Generation</strong></h3>
+
+<p>Microsoft .NET Core 2.1 has strong support for generating and validating a&nbsp;JSON web token.&nbsp; The <em>CreateToken </em>method below takes the user&#39;s credentials and account information and creates claim information that will be stored within the token with the user&#39;s&nbsp;account id, user id, first name, last name, and company name. This information will be used to authenticate&nbsp;the user on each HTTP request. Once the claim information is created, the token can be signed and returned as an encrypted string with the web API response.</p>
+
+<pre lang="cs">
+/// &lt;summary&gt;
+/// Create Token
+/// &lt;/summary&gt;
+/// &lt;param name=&quot;userId&quot;&gt;&lt;/param&gt;
+/// &lt;param name=&quot;firstName&quot;&gt;&lt;/param&gt;
+/// &lt;param name=&quot;lastName&quot;&gt;&lt;/param&gt;
+/// &lt;param name=&quot;emailAddress&quot;&gt;&lt;/param&gt;
+/// &lt;param name=&quot;companyName&quot;&gt;&lt;/param&gt;
+/// &lt;returns&gt;&lt;/returns&gt;
+public static string CreateToken(int userId, string firstName, string lastName, string emailAddress, int accountId, string companyName)
+{
+    var sharedKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(&quot;CodeProject.Shared.Common.TokenManagement&quot;));
+
+    List&lt;Claim&gt; claims = new List&lt;Claim&gt;
+    {
+        new Claim(ClaimTypes.Email, emailAddress),
+        new Claim(ClaimTypes.NameIdentifier, lastName),
+        new Claim(ClaimTypes.GivenName, firstName),
+        new Claim(ClaimTypes.Name, companyName),
+        new Claim(ClaimTypes.PrimarySid, userId.ToString()),
+        new Claim(ClaimTypes.PrimaryGroupSid, accountId.ToString())
+    };
+
+    var signinCredentials = new SigningCredentials(sharedKey, SecurityAlgorithms.HmacSha512Signature);
+
+    var tokenDescription = new SecurityTokenDescriptor
+    {
+        Subject = new ClaimsIdentity(claims),
+        NotBefore = DateTime.Now,
+        Expires = DateTime.Now.AddMinutes(60),
+        SigningCredentials = signinCredentials
+    };
+
+    var tokenHandler = new JwtSecurityTokenHandler();
+    var token = tokenHandler.CreateToken(tokenDescription);
+    string tokenString = tokenHandler.WriteToken(token);
+
+    return tokenString;
+
+}
+
+
+</pre>
+
+<h3><strong>ASP.NET Core 2.1 Web&nbsp;API Configuration and Startup</strong></h3>
+
+<p>ASP.NET Core 2.1 applications use a start up class to configure the applications services and it&#39;s&nbsp;HTTP request processing pipeline. The ASP.NET Core 2.1 architecture features a system of&nbsp;middleware, which are pieces of code that handle requests and responses. Middleware components are chained to each other to form a&nbsp;pipeline. Incoming requests are passed through the pipeline, where each middleware has a chance to do something with the request before passing the request to the next middleware component. Outgoing responses are&nbsp;passed through the pipeline, in reverse order.&nbsp;</p>
+
+<p>The middleware architecture is the key foundational piece to making ASP.NET Core 2.1 a lean and composable framework for building web and cloud applications that can work across Windows, Mac, and Linux OS. Essentially you have complete control over what functionality will be included in the configuration of your web application.</p>
+
+<ul>
+</ul>
+
+<pre lang="cs">
+  
+public class Startup
+{
+    public Startup(IConfiguration configuration)
+    {
+        Configuration = configuration;
+    }
+
+    public IConfiguration Configuration { get; }
+
+    /// &lt;summary&gt;
+    /// This method gets called by the runtime. Use this method to add services to the container.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;services&quot;&gt;&lt;/param&gt;
+    public void ConfigureServices(IServiceCollection services)
+    {
+          
+        CorsPolicyBuilder corsBuilder = new CorsPolicyBuilder();
+
+        corsBuilder.AllowAnyHeader();
+        corsBuilder.AllowAnyMethod();
+        corsBuilder.AllowAnyOrigin();
+        corsBuilder.AllowCredentials();
+
+        services.AddCors(options =&gt;
+        {
+            options.AddPolicy(&quot;SiteCorsPolicy&quot;, corsBuilder.Build());
+        });
+
+        ConnectionStrings connectionStrings = new ConnectionStrings();
+        Configuration.GetSection(&quot;ConnectionStrings&quot;).Bind(connectionStrings);
+
+        services.AddDbContext&lt;AccountManagementDatabase&gt;(options =&gt; options.UseSqlServer(Configuration.GetConnectionString(&quot;PrimaryDatabaseConnectionString&quot;)));
+            
+        //
+        //    Built-In Dependency Injection
+        //
+
+        services.AddTransient&lt;IAccountManagementDataService, AccountManagementDataService&gt;();
+        services.AddTransient&lt;IAccountManagementBusinessService&gt;(provider =&gt;
+        new AccountManagementBusinessService(provider.GetRequiredService&lt;IAccountManagementDataService&gt;(), connectionStrings));
+
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =&gt;
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = &quot;https://codeproject.microservices.com&quot;,
+                ValidAudience = &quot;https://codeproject.microservices.com&quot;,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(&quot;CodeProject.Shared.Common.TokenManagement&quot;))
+            };
+        });
+
+        services.AddScoped&lt;SecurityFilter&gt;();
+
+        services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+&nbsp;&nbsp; &nbsp;    services.AddSignalR();
+
+    }
+
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    {
+           
+        app.UseCors(&quot;SiteCorsPolicy&quot;);
+        app.UseAuthentication();
+
+        if (env.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+        }
+        else
+        {
+            app.UseHsts();
+        }
+
+        app.UseHttpsRedirection();
+
+        app.UseMvc();
+    }  
+}
+
+</pre>
+
+<p>In the start up class above&nbsp;for the Account Management Web API application, the following items are being configured:</p>
+
+<ul>
+	<li><strong><em>CORS Policy Configuration&nbsp;</em></strong>- The sample application will make cross-origin web requests. The&nbsp;CORS middleware component is required to handle&nbsp;cross-origin requests to the application.&nbsp;A&nbsp;cross-origin policy&nbsp;can be specified when adding the CORS middleware component.</li>
+	<li><strong><em>Database Configuration</em></strong> - Database connection strings can be retrieved from the application&#39;s JSON configuration settings and injected into the pipeline on startup while also configuring the EF Core&nbsp;DbContext and it&#39;s database provider ( in this case, the SQL Server provider is being configured ).</li>
+	<li><strong><em>Dependency Injection</em>&nbsp;</strong>-&nbsp;ASP.NET Core supports the dependency injection (DI) software design pattern, which is a technique for achieving Inversion of Control (IoC)&nbsp;between classes and their dependencies. The Account Management Web API application is loosely coupled and&nbsp;requires an Account Management Business Service and a Account Management Data Service. Both of these services implement an interface and are automatically&nbsp;injected into the Account Management Web API controller constructor.&nbsp;</li>
+	<li><em><strong>JWT Bearer Token&nbsp;Authentication</strong> -&nbsp;</em>Adding token authentication to your web API in ASP.NET Core is easy thanks to the JwtBearerAuthentication middleware component included in the framework.&nbsp;This allows you to configure how JSON web&nbsp;tokens are authenticated and configured.</li>
+	<li><em><strong>Action Filters </strong>-&nbsp;</em>Filters&nbsp;in ASP.NET Core 2.1 allow you to run code before or after specific stages in the request processing pipeline.&nbsp;For the sample application, the user&#39;s JWT token will be parsed on each web request to extract claim information about the user including account id and other user information.</li>
+	<li><em><strong>Add MVC</strong> - </em>Adding MVC to the request execution pipeline will ensure that all requests to your web application are routable to the MVC framework, meaning you can use controllers, views and anything else contained within the MVC implementation.</li>
+	<li><em><strong>Add SignalR </strong></em>-&nbsp;Adds support for the&nbsp;SignalR&nbsp;framework that makes developing real-time web functionality easy. SignalR allows for bi-directional communication between the server and the client. Servers can push content to connected clients instantly.</li>
+</ul>
+
+<p>ASP.NET Core 2.1 ships with a simple built-in dependency injection container. Dependency injection is at the core of ASP.NET Core 2.1. It allows the components in your application to have improved testability and makes your components loosely coupled and adds extensibility.</p>
+
+<p>When you configure dependency injection, it is critical that you understand the lifetime management of your application&#39;s dependencies. When registering your dependencies with the default ASP.NET Core 2.1 dependency injection container, you need to think about lifetime management. You might have noticed the usage of different methods to register dependencies like&nbsp;<strong>services.AddScoped</strong>&nbsp;and<strong>&nbsp;services.AddTransient </strong>in the start up class above.</p>
+
+<p>There are&nbsp;three services lifetimes in ASP.NET Core 2.1 Dependency Injection:</p>
+
+<ul>
+	<li><strong>Transient&nbsp;</strong>services are created every time they are injected or requested. A new instance of the object will be created on every HTTP request.</li>
+	<li><strong>Scoped&nbsp;</strong>services will be provided every time the dependency is resolved within the same HTTP request. You can think of it as a singleton in the context of one web request.</li>
+	<li><strong>Singleton&nbsp;</strong>services are created per DI container. That generally means that they are created only one time per application and then used for the whole application life time. This is the same as implementing the singleton pattern.</li>
+</ul>
+
+<p>The sample ERP application is a stateless application as threads and objects are created and destroyed on each web request. With this in mind, the application&#39;s business and data access dependencies were created with a transient lifetime.</p>
+
+<h3><strong>Configuring ASP.NET Core 2.1 Web API Endpoints</strong></h3>
+
+<p>With the .NET Core pipeline configured in the start up class, you can now secure the application&#39;s Web API endpoints. In the code below for the Sales Order controller, the following things are configured:</p>
+
+<ul>
+	<li><strong>Action Filter</strong> - The SecurityFilter&nbsp;Action Filter is added to the controller which will execute a piece of code before executing each endpoint method.</li>
+	<li><strong>Authorization </strong>-The Authorize attribute&nbsp;is added that will perform JWT Web Token authentication.</li>
+	<li><em><strong>EnableCors - </strong></em>Enabling CORS will implement the CORS policy as it was configured in the start up class.</li>
+	<li><em><strong>Dependency Injection</strong></em>&nbsp;- Will automatically inject the <em>Inventory Management Business Service</em> through the controller&#39;s constructor. A <em>SignalR context</em> will also be injected through the constructor.</li>
+</ul>
+
+<pre lang="cs">
+    
+[ServiceFilter(typeof(SecurityFilter))]
+[Authorize]
+[Route(&quot;api/[controller]&quot;)]
+[EnableCors(&quot;SiteCorsPolicy&quot;)]
+[ApiController]
+public class SalesOrderController : ControllerBase
+{
+    private readonly IInventoryManagementBusinessService _inventoryManagementBusinessService;
+
+    private IHubContext&lt;MessageQueueHub&gt; _messageQueueContext;
+
+    /// &lt;summary&gt;
+    /// Sales Controller
+    /// &lt;/summary&gt;
+    public SalesOrderController(IInventoryManagementBusinessService inventoryManagementBusinessService, IHubContext&lt;MessageQueueHub&gt; messageQueueContext)
+    {
+        _inventoryManagementBusinessService = inventoryManagementBusinessService;
+        _messageQueueContext = messageQueueContext;
+    }
+
+}
+
+
+</pre>
+
+<h3><strong>Parsing the JSON Web Token</strong></h3>
+
+<p>When you configure ASP.NET Core 2.1 to use <strong>JWT Bearer Token Authentication</strong>, you will have access to the claim information provided in the token on each web request. As previously configured in the start up and at the controller class level, the below <em>ActionFilter </em>will get execute prior to the execution of each web API endpoint method. ASP.NET Core 2.1 exposes the <em>HttpContext</em>.<em>User </em>property as a <em>ClaimsPrincipal </em>object.</p>
+
+<p>The action filter below extracts the claims provided in the JWT token that was included in the header of the HTTP request and writes them to a <em>SecurityModel </em>class. The <em>SecurityModel </em>class is added to the HTTP context so that the Web API endpoint can reference the claim information and forward this information to the business and data access components for filtering and securing data at the user and account level.</p>
+
+<pre lang="cs">
+public class SecurityFilter : IAsyncActionFilter
+{
+    /// &lt;summary&gt;
+    /// Action Filter
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;context&quot;&gt;&lt;/param&gt;
+    /// &lt;param name=&quot;next&quot;&gt;&lt;/param&gt;
+    /// &lt;returns&gt;&lt;/returns&gt;
+    public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+    {
+        string firstName = context.HttpContext.User.FindFirst(ClaimTypes.GivenName).Value;
+        string lastName = context.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+        string emailAddress = context.HttpContext.User.FindFirst(ClaimTypes.Email).Value;
+        string companyName = context.HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+        int userId = int.Parse(context.HttpContext.User.FindFirst(ClaimTypes.PrimarySid).Value);
+        int accountId = int.Parse(context.HttpContext.User.FindFirst(ClaimTypes.PrimaryGroupSid).Value);
+
+        string token = TokenManagement.CreateToken(userId, firstName, lastName, emailAddress, accountId, companyName);
+
+        SecurityModel securityModel = new SecurityModel();
+        securityModel.EmailAddress = emailAddress;
+        securityModel.FirstName = firstName;
+        securityModel.LastName = lastName;
+        securityModel.UserId = userId;
+        securityModel.AccountId = accountId;
+        securityModel.Token = token;
+
+        context.HttpContext.Items[&quot;SecurityModel&quot;] = securityModel;
+
+        var resultContext = await next();
+
+    }
+}
+
+</pre>
+
+<h3 lang="cs"><strong>Sample&nbsp;Application Walkthrough</strong></h3>
+
+<p><img height="1073px" src="shipping-4.png" width="1920px" /></p>
+
+<p>Now that we have everything configured for ASP.NET Core 2.1, we can begin to walk through one of the business transactions of the sample application. In the sample ERP application, a complete&nbsp;end-to-end business process would consist of the following workflow:</p>
+
+<ol>
+	<li>A product is created in the Inventory Management microservice.</li>
+	<li>The product is transmitted to the Sales Order Management and Purchase Order Management microservices through messaging.</li>
+	<li>A purchase order is created in the Purchase Order Management microservice&nbsp;to order the product from the supplier.</li>
+	<li>The purchase order is transmitted to the Inventory Management microservice for receiving product into the warehouse.</li>
+	<li>Product is received in the warehouse and recorded on the purchase order in the Inventory Management microservice&nbsp;and an inventory received transaction is created.</li>
+	<li>The inventory received transaction is transmitted to the Purchase Order Management microservice to update the quantity received on the purchase order.</li>
+	<li>The inventory received transaction is also transmitted to the Sales Order Management microservice so that sales orders can be placed against the available product on hand.</li>
+	<li>A sales order is created in the Sales Order Management microservice for the available product and is transmitted to the Inventory Management microservice so that the product on the sales order can be shipped to the customer.</li>
+	<li>The Inventory Management microservice ships the product on the sales order in the Inventory Management microservice and creates a shipment inventory transaction to reduce the available on hand quantity in the Inventory Management microservice database.</li>
+	<li>The shipment inventory transaction is transmitted to the Sales Order Management microservice to update the shipped quantity on the sales order.</li>
+</ol>
+
+<h3 style="background-color: transparent; color: rgb(255, 153, 0); font-family: &amp;quot; font-size: 19px; font-style: normal; font-variant: normal; font-weight: 400; letter-spacing: normal; line-height: 26.6px; text-align: left; text-decoration: none; text-indent: 0px; text-shadow: none; text-transform: none; word-spacing: 0px"><strong style="background-color: transparent; color: rgb(255, 153, 0); margin-bottom: 0px; margin-left: 0px; margin-right: 0px; margin-top: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; padding-top: 0px; text-shadow: none">Shipping Product&nbsp;</strong></h3>
+
+<p style="background-color: transparent; color: rgb(17, 17, 17); font-family: &amp;quot; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; letter-spacing: normal; line-height: 19.6px; text-align: left; text-decoration: none; text-indent: 0px; text-shadow: none; text-transform: none; word-spacing: 0px">For this article, we will walk through the process of shipping product on a sales order to a customer. The walk through will cover key points of interests from the both the .NET Core 2.1 Web API and the background .NET Core 2.1 Message&nbsp;Queuing Services.</p>
+
+<p style="background-color: transparent; color: rgb(17, 17, 17); font-family: &amp;quot; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; letter-spacing: normal; line-height: 19.6px; text-align: left; text-decoration: none; text-indent: 0px; text-shadow: none; text-transform: none; word-spacing: 0px">The back-end workflow between the Web API and the message queuing services will be as follows:</p>
+
+<ul>
+	<li style="background-color: transparent; color: rgb(17, 17, 17); font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; letter-spacing: normal; line-height: 19.6px; text-align: left; text-decoration: none; text-indent: 0px; text-shadow: none; text-transform: none; word-spacing: 0px">Commit a shipment transaction to the Inventory Management database in the Web API.</li>
+	<li style="background-color: transparent; color: rgb(17, 17, 17); font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; letter-spacing: normal; line-height: 19.6px; text-align: left; text-decoration: none; text-indent: 0px; text-shadow: none; text-transform: none; word-spacing: 0px">Send a SignalR message to the Inventory Management Message Queuing Service from the Web API</li>
+	<li style="background-color: transparent; color: rgb(17, 17, 17); font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; letter-spacing: normal; line-height: 19.6px; text-align: left; text-decoration: none; text-indent: 0px; text-shadow: none; text-transform: none; word-spacing: 0px">Upon receipt of a SignalR message, the Inventory Management Message Queuing Service will read pending shipment transactions from the Inventory Management database</li>
+	<li style="background-color: transparent; color: rgb(17, 17, 17); font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; letter-spacing: normal; line-height: 19.6px; text-align: left; text-decoration: none; text-indent: 0px; text-shadow: none; text-transform: none; word-spacing: 0px">The Inventory Management Message Queuing Service will send shipment messages to the RabbitMQ Inventory Shipped exchange</li>
+	<li style="background-color: transparent; color: rgb(17, 17, 17); font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; letter-spacing: normal; line-height: 19.6px; text-align: left; text-decoration: none; text-indent: 0px; text-shadow: none; text-transform: none; word-spacing: 0px">The RabbitMQ Inventory Shipped exchange will route the shipment messages to the both the RabbitMQ&nbsp;sales order message queue and the RabbitMQ logging message queue</li>
+	<li style="background-color: transparent; color: rgb(17, 17, 17); font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; letter-spacing: normal; line-height: 19.6px; text-align: left; text-decoration: none; text-indent: 0px; text-shadow: none; text-transform: none; word-spacing: 0px">The Sales Order Message Queuing Service will listen for inbound messages and commit the message to an inbound transaction queue table in the Sales Order Management database</li>
+	<li style="background-color: transparent; color: rgb(17, 17, 17); font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; letter-spacing: normal; line-height: 19.6px; text-align: left; text-decoration: none; text-indent: 0px; text-shadow: none; text-transform: none; word-spacing: 0px">The Sales Order Message Queuing Service will acknowledge to RabbitMQ to delete the message from the sales order queue.</li>
+	<li style="background-color: transparent; color: rgb(17, 17, 17); font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; letter-spacing: normal; line-height: 19.6px; text-align: left; text-decoration: none; text-indent: 0px; text-shadow: none; text-transform: none; word-spacing: 0px">The Sales Order Message Queuing Service will process the inbound messages in the Sales Order Management database and update sales order line items with the shipped quantity.</li>
+	<li style="background-color: transparent; color: rgb(17, 17, 17); font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; letter-spacing: normal; line-height: 19.6px; text-align: left; text-decoration: none; text-indent: 0px; text-shadow: none; text-transform: none; word-spacing: 0px">The Logging Message Queuing Service will send an acknowledgement message to the Inventory Management Queue.</li>
+	<li style="background-color: transparent; color: rgb(17, 17, 17); font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; letter-spacing: normal; line-height: 19.6px; text-align: left; text-decoration: none; text-indent: 0px; text-shadow: none; text-transform: none; word-spacing: 0px">The Inventory Management Message Queuing Service will archive outbound transactions to a outbound transaction history table in the Inventory Management database.</li>
+</ul>
+
+<p style="background-color: transparent; color: rgb(17, 17, 17); font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; letter-spacing: normal; line-height: 19.6px; text-decoration: none; text-indent: 0px; text-shadow: none; text-transform: none; word-spacing: 0px">In the sample application, shipping product requires logging into the Angular front-end application and accessing the Inventory Management module&nbsp;and locating the sales order in Sales Order Inquiry and pulling up the details of the order and entering shipment quantities on the sales order line items.</p>
+
+<p>When entering a shipped quantity on a line item and hitting save will trigger the execution of the below <strong>UpdateSalesOrderDetail </strong>controller action&nbsp;in the Inventory Management Web API microservice.</p>
+
+<pre lang="cs">
+    
+/// &lt;summary&gt;
+/// Update Sales Order Detail
+/// &lt;/summary&gt;
+/// &lt;param name=&quot;salesOrderDetailDataTransformation&quot;&gt;&lt;/param&gt;
+/// &lt;returns&gt;&lt;/returns&gt;
+[HttpPost]
+[Route(&quot;UpdateSalesOrderDetail&quot;)]
+public async Task&lt;IActionResult&gt; UpdateSalesOrderDetail([FromBody] SalesOrderDetailDataTransformation salesOrderDetailDataTransformation)
+{
+
+    SecurityModel securityModel = (SecurityModel)(HttpContext.Items[&quot;SecurityModel&quot;]);
+
+    int accountId = securityModel.AccountId;
+    salesOrderDetailDataTransformation.AccountId = accountId;
+
+    ResponseModel&lt;SalesOrderDetailDataTransformation&gt; returnResponse = new ResponseModel&lt;SalesOrderDetailDataTransformation&gt;();
+
+    try
+    {
+        returnResponse = await _inventoryManagementBusinessService.UpdateSalesOrderDetail(salesOrderDetailDataTransformation);
+        returnResponse.Token = securityModel.Token;
+        if (returnResponse.ReturnStatus == false)
+        {
+            return BadRequest(returnResponse);
+        }
+
+        await _messageQueueContext.Clients.All.SendAsync(MessageQueueEndpoints.InventoryQueue, string.Empty);
+
+        return Ok(returnResponse);
+
+    }
+    catch (Exception ex)
+    {
+         returnResponse.ReturnStatus = false;
+         returnResponse.ReturnMessage.Add(ex.Message);
+         return BadRequest(returnResponse);
+    }
+
+}
+
+
+</pre>
+
+<h3 lang="cs"><strong>Async Await - Asynchronous Processing</strong></h3>
+
+<p>The <strong>UpdateSalesOrderDetail </strong>controller action method in the Inventory&nbsp;Management Web API will run asynchronous. Creating asynchronous Web API controller action methods&nbsp;improves server performance dramatically by allowing for an increase in the number of concurrent clients the server can handle.&nbsp;This is achieved because asynchronous controller action methods&nbsp;free up server threads faster by returning threads back into the available thread pool while the method awaits on other asynchronous processes to finish.</p>
+
+<p>ASP.NET Core 2.1 allows Web API controllers and action methods to run&nbsp;asynchronous by using the <em>async await</em> keywords. All the controller&nbsp;action methods in the sample application will use the&nbsp;<em>async&nbsp;</em>keyword in the method signature. All the controller action&nbsp;methods will also return a&nbsp;<em>Task&nbsp;</em>containing&nbsp;<em>IActionResult</em>. The <em>UpdateSalesOrderDetail </em>controller action method also calls the inventory management business service using an <em>await&nbsp;</em>keyword. The business method also implements the <em>async/await </em>pattern all the way to the data access service layer where Entity Framework Core will execute LINQ statements asynchronous.</p>
+
+<p>To properly implement&nbsp;asynchronous processing, each layer of the application must implement&nbsp;asynchronous await functionality all the way through the process.</p>
+
+<h3><strong>Security, Data Transformation Object and Response&nbsp;Models</strong></h3>
+
+<p>Prior to the execution of the&nbsp;<em>UpdateSalesOrderDetail </em>controller action method, the security action filter executed and claim information from the JWT web token was extracted to populate a <em>SecurityModel </em>object that was appended to the <em>HttpContext</em>.<strong>&nbsp;</strong>The controller action method references this object through the HttpContext and passes the user&#39;s account id into the inventory management business service. Using information from the JWT web token is a good way to secure your application&#39;s data.</p>
+
+<p>The&nbsp;<em>UpdateSalesOrderDetail</em><strong> </strong>controller action method will&nbsp;use a Sales Order<b> Data Transformation Object</b> <strong>(DTO)</strong>. A DTO&nbsp;is a design pattern that&nbsp;encapsulates data and is used to transfer data&nbsp;between software application subsystems. In the sample application, A DTO is the middleman between the front-end view models and the back-end database entity models.</p>
+
+<p>Finally the <em>UpdateSalesOrderDetail </em>controller action method will return a <em>ResponseModel </em>object back to the client along with a HTTP response with a HTTP status code of 200 (OK) if the transaction succeeded. If the transaction fails a ResponseModel object is returned with an HTTP status code of 401 (Bad Request).</p>
+
+<h3><b>Inventory Management Business Service&nbsp;</b></h3>
+
+<p>When the controller action method requests the <em>UpdateSalesOrderDetail </em>method in the Inventory Management Business Service, the following will be performed in the business service while supporting and running as an asynchronous task:</p>
+
+<ul>
+	<li>Validate that the quantity shipped does not equal zero</li>
+	<li>Begin a serializable database transaction</li>
+	<li>Update the sales order line item with the quantity shipped</li>
+	<li>Acquire an exclusive update row lock on the product row being updated</li>
+	<li>Update the product row to reduce the quantity on hand by the quantity shipped.</li>
+	<li>Create an inventory transaction record for the quantity shipped</li>
+	<li>Create an outbound queue record with a serialized JSON string to be used as the payload for a message queue message.</li>
+	<li>Commit the database transaction on successful execution</li>
+</ul>
+
+<pre lang="cs">
+        
+/// &lt;summary&gt;
+/// Update Sales Order Detail
+/// &lt;/summary&gt;
+/// &lt;param name=&quot;salesOrderDetailDataTransformation&quot;&gt;&lt;/param&gt;
+/// &lt;returns&gt;&lt;/returns&gt;
+public async Task&lt;ResponseModel&lt;SalesOrderDetailDataTransformation&gt;&gt; UpdateSalesOrderDetail(SalesOrderDetailDataTransformation salesOrderDetailDataTransformation)
+{
+
+    ResponseModel&lt;SalesOrderDetailDataTransformation&gt; returnResponse = new ResponseModel&lt;SalesOrderDetailDataTransformation&gt;();
+
+    SalesOrderDetail salesOrderDetail = new SalesOrderDetail();
+
+    try
+    {
+        int accountId = salesOrderDetailDataTransformation.AccountId;
+        int salesOrderId = salesOrderDetailDataTransformation.SalesOrderId;
+        int salesOrderDetailId = salesOrderDetailDataTransformation.SalesOrderDetailId;
+
+        //
+        //    Validate Shipped Quantity
+        //
+
+        if (salesOrderDetailDataTransformation.CurrentShippedQuantity == 0)
+        {
+            returnResponse.ReturnMessage.Add(&quot;Invalid Shipped Quantity&quot;);
+            returnResponse.ReturnStatus = false;
+
+            return returnResponse;
+        }
+
+        //
+        //    Begin a Serializable Transaction
+        //
+
+        _inventoryManagementDataService.OpenConnection(_connectionStrings.PrimaryDatabaseConnectionString);
+        _inventoryManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
+
+        //
+        //    Get Sales Order Header
+        //
+
+        SalesOrder salesOrder = await _inventoryManagementDataService.GetSalesOrderHeader(accountId, salesOrderId);
+        if (salesOrder == null)
+        {
+            _inventoryManagementDataService.RollbackTransaction();
+
+            returnResponse.ReturnMessage.Add(&quot;Sales Order not found&quot;);
+            returnResponse.ReturnStatus = false;
+
+            return returnResponse;
+        }
+
+        //
+        //    Get Sales Order Detail
+        //
+
+        salesOrderDetail = await _inventoryManagementDataService.GetSalesOrderDetailForUpdate(salesOrderDetailId);
+        if (salesOrderDetail == null)
+        {
+            _inventoryManagementDataService.RollbackTransaction();
+
+            returnResponse.ReturnMessage.Add(&quot;Sales Order Detail not found&quot;);
+            returnResponse.ReturnStatus = false;
+
+            return returnResponse;
+        }
+
+        //
+        //    Update Sales Order Shipped Quantity
+        //
+
+        salesOrderDetail.ShippedQuantity = salesOrderDetail.ShippedQuantity + salesOrderDetailDataTransformation.CurrentShippedQuantity;
+
+        await _inventoryManagementDataService.UpdateSalesOrderDetail(salesOrderDetail);
+
+        //
+        //    Get Product Record with an exclusive update lock
+        //
+
+        Product product = await _inventoryManagementDataService.GetProductInformationForUpdate(salesOrderDetail.ProductId);
+        if (product == null)
+        {
+            _inventoryManagementDataService.RollbackTransaction();
+
+            returnResponse.ReturnMessage.Add(&quot;Product not found&quot;);
+            returnResponse.ReturnStatus = false;
+
+            return returnResponse;
+        }
+
+        //
+        //    Reduce Product OnHand Quantity by the quantity shipped
+        //
+
+        product.OnHandQuantity = product.OnHandQuantity - salesOrderDetailDataTransformation.CurrentShippedQuantity;
+
+        await _inventoryManagementDataService.UpdateProduct(product);
+
+        //
+        //    Create Inventory Transaction Record
+        //
+
+        InventoryTransaction inventoryTransaction = new InventoryTransaction();
+        inventoryTransaction.EntityId = salesOrderDetail.SalesOrderDetailId;
+        inventoryTransaction.MasterEntityId = salesOrderDetail.MasterSalesOrderDetailId;
+        inventoryTransaction.ProductId = salesOrderDetail.ProductId;
+        inventoryTransaction.UnitCost = product.AverageCost;
+        inventoryTransaction.Quantity = salesOrderDetailDataTransformation.CurrentShippedQuantity;
+        inventoryTransaction.TransactionDate = DateTime.UtcNow;
+
+        await _inventoryManagementDataService.CreateInventoryTransaction(inventoryTransaction);
+
+        //
+        //    Create Transaction Queue record and create inventory transaction payload
+        //
+
+        TransactionQueueOutbound transactionQueue = new TransactionQueueOutbound();
+        transactionQueue.Payload = GenerateInventoryTransactionPayload(inventoryTransaction);
+        transactionQueue.TransactionCode = TransactionQueueTypes.InventoryShipped;
+        transactionQueue.ExchangeName = MessageQueueExchanges.InventoryManagement;
+
+        await _inventoryManagementDataService.CreateOutboundTransactionQueue(transactionQueue);
+
+        await _inventoryManagementDataService.UpdateDatabase();
+
+        //
+        //    Commit Transaction
+        //
+
+        _inventoryManagementDataService.CommitTransaction();
+
+        returnResponse.ReturnStatus = true;
+
+    }
+    catch (Exception ex)
+    {
+       _inventoryManagementDataService.RollbackTransaction();
+       returnResponse.ReturnStatus = false;
+       returnResponse.ReturnMessage.Add(ex.Message);
+    }
+    finally
+    {
+       _inventoryManagementDataService.CloseConnection();
+    }
+
+    returnResponse.Entity = salesOrderDetailDataTransformation;
+
+    return returnResponse;
+
+}
+
+</pre>
+
+<h3 lang="cs"><strong>Isolation Levels - Serializable Transactions</strong></h3>
+
+<p>Database transactions specify an&nbsp;<strong>isolation level</strong>&nbsp;that defines the degree to which one transaction must be isolated from data modifications made by other transactions.<em>&nbsp;Isolation levels</em>&nbsp;are described in terms of which concurrency side effects, such as dirty reads or phantom reads, are allowed.</p>
+
+<p>The SQL standard defines four isolation levels:</p>
+
+<ul>
+	<li><strong>Read Uncommitted &ndash;&nbsp;</strong>Read Uncommitted is the lowest isolation level. In this level, one transaction may read not yet committed changes made by other transactions, thereby allowing dirty reads. In this level, transactions are not isolated from each other.</li>
+	<li><strong>Read Committed &ndash;&nbsp;</strong>This isolation level guarantees that any data read is committed at the moment it is read. Thus it does not allows dirty reads. The transaction holds a read or write lock on the current row, and thus prevent other rows from reading, updating or deleting</li>
+	<li><strong>Repeatable Read &ndash;&nbsp;</strong>This is the most restrictive isolation level. The transaction holds read locks on all rows it references and write locks on all rows it inserts, updates, or deletes. Since other transactions cannot read, update or delete these rows, consequently it avoids non repeatable reads.</li>
+	<li><strong>Serializable &ndash;&nbsp;</strong>This is the highest isolation level. A&nbsp;<em>serializable</em>&nbsp;execution is guaranteed to be serializable. Serializable execution is defined to be an execution of operations in which concurrently executing transactions appears to be serially executing.</li>
+</ul>
+
+<p lang="cs">By default, <em>Entity Framework Core</em> uses&nbsp;an isolation level of <em>Read Committed</em>. Because the sample ERP application could be used by hundreds of users simultaneous updating product and stock quantities - there is a good chance more than one user could be requesting an update to the same database table rows concurrently. To insure data integrity and to prevent phantom updates and loss of data, the <em>UpdateSalesOrderDetail </em>method will begin a <strong><em>serializable </em></strong>transaction. Using a serializable transaction will guarantee that updates to the same product rows will be done in a sequential order in which each SQL-transaction will execute to completion before the next SQL-transaction begins.</p>
+
+<pre lang="cs">
+            
+//
+//    Begin a Serializable Transaction
+//
+
+_inventoryManagementDataService.OpenConnection(_connectionStrings.PrimaryDatabaseConnectionString);
+_inventoryManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
+
+
+</pre>
+
+<h3 lang="cs"><strong>UPDLOCK SQL Hints and Entity Framework Core 2.1</strong></h3>
+
+<p>As it turns out, simply creating a serializable transaction is not enough to ensure data integrity while multiple simultaneous updates are being performed on the same database table rows.<br />
+<br />
+Additionally you need to acquire a row level update lock when selecting a row to be updated. Applying the SQL Server <strong>UPDLOCK </strong>hint to your SELECT statement will do this for you. The UPDLOCK specifies that update locks are to be taken and held until the transaction completes.</p>
+
+<p>One of the cool things with the latest version of Entity Framework Core 2.1 is that you can now override the SELECT statement that Entity Framework&nbsp;Core would normally create. Entity Framework Core allows you to drop down to raw SQL queries when working with a relational database.</p>
+
+<p>This can be useful if the query you want to perform can&#39;t be expressed using LINQ.&nbsp; This is useful in this case because we can create a SQL statement with an UPDLOCK hint and use the Entity Framework Core <em>FromSQL </em>method to execute the SQL statement with a row-level update lock.</p>
+
+<p>As with any API that accepts SQL, it is important to parameterize any user input to protect against a SQL injection attack. &nbsp;Entity Framework Core&nbsp;also supports parameterized queries. You can include parameter placeholders in the SQL query string and then supply parameter values as additional arguments. Any parameter values you supply will automatically be converted to a <em>DbParameter object</em>. In the <em>GetProductInformationUpdate </em>method of the Inventory Management Data Service,&nbsp;the product id is being supplied as a parameterized argument and the selected row is returned to the Inventory Management Business Service while SQL Server holds a lock on that row.</p>
+
+<pre lang="cs">
+    
+/// &lt;summary&gt;
+/// Get Product Information For Update with exclusive row lock
+/// &lt;/summary&gt;
+/// &lt;param name=&quot;productId&quot;&gt;&lt;/param&gt;
+/// &lt;returns&gt;&lt;/returns&gt;
+public async Task&lt;Product&gt; GetProductInformationForUpdate(int productId)
+{
+    string sqlStatement = &quot;SELECT * FROM PRODUCTS WITH (UPDLOCK) WHERE PRODUCTID = @ProductId&quot;;
+
+    DbParameter productIdParameter = new SqlParameter(&quot;ProductId&quot;, productId);
+
+    Product product = await dbConnection.Products.FromSql(sqlStatement, productIdParameter).FirstOrDefaultAsync();
+    return product;
+}
+
+
+</pre>
+
+<h3><strong>Message Queue Transaction Tables</strong></h3>
+
+<p>As a design decision, I wanted each of the microservices to be self contained and not cross boundaries or make remote calls into other microservices. As with most architectural decisions, there is price for entry.&nbsp; In this case, data must be shared across microservices.<br />
+<br />
+To support microservice isolation, the price of entry is duplicating database information in more than one microservice. For example, product information is created and maintained in the Inventory Management microservice. Both the Purchase Order Management microservice and the Sales Order Management microservice need product information to alllow product managers to order products from suppliers and allow customers to place sales orders against available inventory. Product tables and data must exist in each of these microservices.<br />
+This is where message queuing will come into play where information can be transmitted and shared to these microservices real-time.&nbsp;<br />
+<br />
+The structure of the Product table can and will be different between microservices. For example, the Product table in the Inventory Management database will contain every piece of information for a product. but neither&nbsp;the Purchase Order Management database or&nbsp;the Sales Order Management database will need to keep track of the bin location and other warehousing information&nbsp;of a product.</p>
+
+<p>As part of this design decision, I wanted to create message queue messages and payloads that can participate and be committed in&nbsp;database business transactions before any messages are sent. This will guarantee that messages are never lost and that they can be logged and resent if needed.</p>
+
+<p>For each microservice, the following four tables&nbsp;were created in each dedicated microservice database for processing message queue messages and logging their activity.</p>
+
+<ul>
+	<li><strong>TransactionQueueInbound </strong>- contains message queue payload information for inbound messages ready to be processed</li>
+	<li><strong>TransactionQueueInboundHistory</strong> - contains archived inbound message queue messages as they are acknowledged as being completely processed.</li>
+	<li><strong>TransactionQueueOutbound </strong>- contains message queue payload information for outbound messages ready to be processed</li>
+	<li><strong>TransactionQueueOutboundHistory </strong>- contains archived outbound message queue messages as they are acknowledged as being completely processed</li>
+</ul>
+
+<h3><strong>Creating a Message Queue Message Payload</strong></h3>
+
+<p>One of the pieces of a message queue message is its&nbsp;<strong>payload</strong>. The payload is the data that you want to transmit. For the sample application payload information will be saved in the <em>TransactionOutboundQueue </em>table for sending message queue payload information. In the <em>UpdateSalesOrderDetail </em>method of the&nbsp;Inventory Management business service, an inventory transaction was committed to the database, For message queue payload purposes, the inventory transaction will get serialized to a JSON structure and saved as a string in the <em>TransactionOutboundQueue </em>table&nbsp;that will&nbsp;later be retrieved and included in the message queue message payload.</p>
+
+<pre>
+/// &lt;summary&gt;
+/// Generate Inventory Transaction Payload
+/// &lt;/summary&gt;
+/// &lt;param name=&quot;inventoryTransaction&quot;&gt;&lt;/param&gt;
+/// &lt;returns&gt;&lt;/returns&gt;
+private string GenerateInventoryTransactionPayload(InventoryTransaction inventoryTransaction)
+{
+    InventoryTransactionPayload inventoryTransactionPayload = new InventoryTransactionPayload();
+
+    inventoryTransactionPayload.ProductId = inventoryTransaction.ProductId;
+    inventoryTransactionPayload.Quantity = inventoryTransaction.Quantity;
+    inventoryTransactionPayload.UnitCost = inventoryTransaction.UnitCost;
+    inventoryTransactionPayload.EntityId = inventoryTransaction.EntityId;
+    inventoryTransactionPayload.MasterEntityId = inventoryTransaction.MasterEntityId;
+    inventoryTransactionPayload.TransactionDate = inventoryTransaction.TransactionDate;
+
+    string payload = SerializationFunction&lt;InventoryTransactionPayload&gt;.ReturnStringFromObject(inventoryTransactionPayload);
+
+    return payload;
+
+}
+
+
+</pre>
+
+<h3><strong>RabbitMQ Best Practices</strong></h3>
+
+<p>At this point in the process we have a sales order inventory transaction committed to the Inventory Management&nbsp;database but we have yet to tell the Sales Order Management&nbsp;microservice that an order has been shipped. The sales order was updated in the Inventory Management microservice database but the sales order also&nbsp;needs to be updated in the Sales Order Management&nbsp;microservice database.</p>
+
+<p>Before going ahead and implementing RabbitMQ to send a message from the Inventory Management microservice to the Sales Order Management microservice, I wanted to learn more about RabbitMQ best practices.</p>
+
+<p>Some applications require really high throughput while other applications are publishing batch jobs that can be delayed for a while. The goal when designing your system should be to maximize a combination of performance and availability that makes sense for your specific application. Bad architecture design decisions or bugs&nbsp;can damage or affect your throughput.<br />
+<br />
+The following RabbitMQ best practices are documented on the internet:</p>
+
+<ul>
+	<li><strong>Connections and Channels -&nbsp;</strong>Each RabbitMQ connection uses about 100 KB of RAM (and even more, if TLS is used). Thousands of connections can be a heavy burden on a RabbitMQ server. In the worst case, the server can crash due to out-of-memory. The AMQP protocol has a mechanism called channels that &ldquo;multiplexes&rdquo; a single TCP connection. It&rsquo;s recommended that each process only creates one TCP connection, and uses multiple channels in that connection for different threads. Connections should also be long-lived. The handshake process for an AMQP connection is quite involved and requires at least 7 TCP packets (more if TLS is used).</li>
+	<li><strong>Don&rsquo;t share channels between threads -&nbsp;</strong>You should also make sure that you don&rsquo;t share channels between threads as most clients don&rsquo;t make channels thread-safe as it would have a serious negative effect on the performance.</li>
+	<li><strong>Don&rsquo;t open and close connections or channels repeatedly -&nbsp;</strong>Have long lived connections if possible, and use channels for each task. The handshake process for an AMQP connection is quite complex. Channels can be opened and closed more frequently if needed. Even channels should be long-lived if possible, for example,&nbsp;reusing&nbsp;the same channel per thread for publishing. Don&rsquo;t open a channel each time you are publishing. If you can&#39;t have long lived connections, then make sure to gracefully close the connection.</li>
+	<li><b>Separate connections for publisher and consumer - </b>Create separate connections for publishing&nbsp;and consuming messages&nbsp;to get high throughput. RabbitMQ can apply back pressure on the TCP connection when the publisher is sending too many messages to the server to handle. If you consume on the same TCP connection the server might not receive the message acknowledgements from the client. Thus, the consume performance will be affected too. And with lower consume speed the server will be overwhelmed.</li>
+</ul>
+
+<h3><strong>ASP.NET Core 2.1 Scalability&nbsp;</strong></h3>
+
+<p>Reading in detail the RabbitMQ best practices led me to believe that it was not such&nbsp;a great idea to incorporate and implement RabbitMQ directly in the Web API application.&nbsp;</p>
+
+<p>Web server memory and resources should be considered limited resources.&nbsp;ASP.NET Core Web API applications are designed to be stateless applications with threads that are constantly being created and destroyed per web request and thus freeing up memory and increasing application&nbsp;scalability; holding onto to resources increases server&nbsp;memory usage as the user base increases.</p>
+
+<p>As stated in their best practices and recommendations, RabbitMQ connections need to be implemented without repeatedly&nbsp;opening and closing connections. A separate connection should be created for sending and consuming messages, meaning you would at a minimum need to create two separate singleton lifetime threads in the Web API application.&nbsp;<br />
+<br />
+Creating multiple singleton threads seems like an anti-pattern for a stateless&nbsp;ASP.NET Core Web API application. A class object with a singleton lifetime needs to managed for&nbsp;thread safety too. Not handled properly could create a race condition bug in the Web API application. A race condition&nbsp;bug occurs when two or more threads reaches a particular block of code at the same time&nbsp;and thus producing&nbsp;corrupted object and property state.<br />
+<br />
+Avoiding a race condition requires a block of code to be locked so that only one thread at a time can execute the block of code at one&nbsp;time. Locking blocks of code would seem to create a bottleneck and&nbsp;reduce application&nbsp;scalability when you have hundreds of concurrent users accessing your application.</p>
+
+<h3><strong>The Merits of Building a Message Queuing Service</strong></h3>
+
+<p style="background-color: transparent; color: rgb(17, 17, 17); font-family: &amp;quot; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; letter-spacing: normal; line-height: 19.6px; text-align: left; text-decoration: none; text-indent: 0px; text-shadow: none; text-transform: none; word-spacing: 0px"><span style="margin: 0px; color: rgb(17, 17, 17); font-size: 10.5pt">To avoid creating and managing&nbsp;singleton lifetime objects in the Web API application, I decided to create a separate multi-threaded .NET Core 2.1 console application acting as a message queuing service for each microservice that will manage and handle all of the RabbitMQ connections, channels and message processing.</span></p>
+
+<p style="line-height: 14.7pt"><span style="margin: 0px; color: rgb(17, 17, 17); font-size: 10.5pt">These console applications will run multiple threads with each thread running on an&nbsp;predefined interval ( 5 or 15 minutes ) with each thread interacting with both RabbitMQ and SQL Server.</span></p>
+
+<p style="line-height: 14.7pt"><span style="margin: 0px; color: rgb(17, 17, 17); font-size: 10.5pt">Building message queuing services has a lot of merits and advantages over integrating message queue processing within your web API application as they can provide the following:</span></p>
+
+<ul>
+	<li style="line-height: 14.7pt; word-spacing: 0px"><span style="margin: 0px; color: rgb(17, 17, 17); font-size: 10.5pt">You can deploy a message queuing service to one or more separate application servers and off-load the processing of message queuing and not consume web server resources and thus improving web API throughput and ultimately better web application response time.&nbsp;</span></li>
+	<li style="line-height: 14.7pt; word-spacing: 0px"><span style="margin: 0px; color: rgb(17, 17, 17); font-size: 10.5pt">There are many points of failure in a microservices workflow. For example, what happens when you have an online application and the user hits the save button to commit changes to a database and you immediately try to send a message to a message queue but the message broker is down. How to do recover from this?&nbsp;</span></li>
+	<li style="line-height: 14.7pt; word-spacing: 0px"><span style="margin: 0px; color: rgb(17, 17, 17); font-size: 10.5pt">A message queuing service can be designed with retry and recover functionality that can gracefully handle point of failures without effecting the end user.</span></li>
+	<li style="line-height: 14.7pt; word-spacing: 0px"><span style="margin: 0px; color: rgb(17, 17, 17); font-size: 10.5pt">Implementing message queuing services deployed on a separate server doesn&#39;t always have to be available even when you have online users. Managing server memory and message queuing connections and channels may initially be a challenge as you properly tune and configure these correctly over time. Being able to restart a production server and fix server issues provides a lot of flexibility and will lead to better application availability in the long run.</span></li>
+</ul>
+
+<h3><strong>Implementing ASP.NET Core 2.1&nbsp;SignalR</strong></h3>
+
+<p>As a nice to have, I wanted to send messages real-time. So I needed a way to send a message to the console application to wake it up to process messages in case it was sitting idle between intervals. This lead me to&nbsp;ASP.NET Core 2.1 SignalR.</p>
+
+<p><strong>ASP.NET Core SignalR</strong> is an open-source library that simplifies the&nbsp;adding of real-time web functionality to applications. Real-time web functionality enables server-side code to push content to clients instantly.&nbsp;SignalR is most often used to interact with JavaScript clients. In this case, the client is a&nbsp;console application.</p>
+
+<p>SignalR uses&nbsp;<em>hubs</em>&nbsp;to communicate between clients and servers.</p>
+
+<p>A hub is a high-level pipeline that allows a client and a server to call methods on each other. SignalR handles the dispatching across machine boundaries automatically, allowing clients to call methods on the server and vice versa.</p>
+
+<p>To create the <em>Hub </em>you just add a class that inherits from<em>&nbsp;Microsoft.AspNetCore.SignalR.Hub</em> and define methods within the <em>Hub </em>class that can be executed from clients. Since the Inventory Management Web API application will only use SignalR to send messages, the <em>MessageQueueHub </em>class will not have any methods defined.</p>
+
+<pre lang="cs">
+namespace CodeProject.InventoryManagement.WebApi.SignalRHub
+{
+&nbsp; &nbsp; public class MessageQueueHub : Hub
+&nbsp; &nbsp; {
+
+&nbsp;&nbsp; &nbsp;}
+}
+
+</pre>
+
+<p>In ASP.NET Core SignalR, you can access an instance of <strong>IHubContext&nbsp;</strong>via dependency injection. An instance of IHubContext is configured in the start up class and is injected&nbsp;into the Inventory Management sales order controller and&nbsp;the instance can be used to send messages to clients.&nbsp;In the <em>UpdateSalesOrderDetail </em>action method, the following line is executed after the Inventory Management&nbsp;business service has successfully committed the sales order inventory transaction. The <em>Clients.All.SendAynsc</em> statement will send a message to all clients listening for events occuring on&nbsp;URL&nbsp;&quot;<em>https://localhost:44340/MessageQueueHub</em>&quot;. In the&nbsp;case of the Inventory Management Web API,&nbsp;only the Inventory Management Message Queuing Service will be listening on this URL.</p>
+
+<pre lang="cs">
+            
+await _messageQueueContext.Clients.All.SendAsync(MessageQueueEndpoints.InventoryQueue, string.Empty);
+
+
+</pre>
+
+<h3><strong>Listening for ASP.NET Core SignalR Messages</strong></h3>
+
+<p>To listen to ASP.NET Core&nbsp;SignalR messages, the&nbsp;Inventory Management Message Queuing Service implements the <strong><em>Microsoft.AspNetCore.SignalR.Client</em></strong> package. The ASP.NET Core SignalR .NET client library lets you communicate with SignalR hubs from .NET applications.</p>
+
+<p>The message queuing service will kick off separate thread tasks for sending, receiving and processing message queue messages. In the start up of the <em>SendMessages</em> task thread, a connection to SignalR is establish based on the Inventory Management Web API SignalR URL&nbsp;of &quot;<em>https://localhost:44340/MessageQueueHub</em>&quot;.</p>
+
+<p>In case the hub is not up and running when trying to connect to it, reconnection logic was&nbsp;added to retry the connection. Once connected to the hub, the message queuing service listens for <em>On events</em> and on each event raised the service will call the <em>GetMessgaesInQueue</em> method to retrieve messages and send them off to RabbitMQ.</p>
+
+<pre lang="cs">
+    
+/// &lt;summary&gt;
+/// Start Process Interval
+/// &lt;/summary&gt;
+/// &lt;param name=&quot;cancellationToken&quot;&gt;&lt;/param&gt;
+/// &lt;returns&gt;&lt;/returns&gt;
+public Task StartAsync(CancellationToken cancellationToken)
+{
+
+&nbsp;&nbsp; &nbsp;StartSignalRConnection();
+
+&nbsp;&nbsp;  _timer = new Timer(GetMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(_appConfig.SendingIntervalSeconds));
+
+&nbsp;&nbsp; &nbsp;return Task.CompletedTask;
+}
+
+/// &lt;summary&gt;
+/// Start SignalR Connection
+/// &lt;/summary&gt;
+private async void StartSignalRConnection()
+{
+    if (string.IsNullOrEmpty(_appConfig.SignalRHubUrl))
+    {
+        return;
+    }
+
+    string url = _appConfig.SignalRHubUrl; /// &quot;https://localhost:44340/MessageQueueHub&quot;,
+
+    //
+&nbsp;   //  Build Hub Connection
+&nbsp;   //
+
+    Boolean buildHubConnection = false;
+    while (buildHubConnection  == false)
+    {
+        try
+        {
+            _signalRHubConnection = new HubConnectionBuilder().WithUrl(url).Build();
+            buildHubConnection  = true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            await Task.Delay(5000);
+        }
+
+    }
+       
+&nbsp;   //
+&nbsp;   //   Listen for SignalR messages
+&nbsp;   //      
+
+    _signalRHubConnection.On&lt;string&gt;(_signalRQueue, (message) =&gt;
+    {
+        this.GetMessagesInQueue(null);
+
+    });
+
+&nbsp;   //
+&nbsp;   //   Listen for Hub Connection Closed Event
+&nbsp;   //
+
+    _signalRHubConnection.Closed += async (error) =&gt;
+    {
+        Console.WriteLine(&quot;SignalR Connection Closed&quot;);
+        await Task.Delay(10000);
+        await _signalRHubConnection.StartAsync();
+        Console.WriteLine(&quot;Restart SignalR&quot;);
+    };
+
+&nbsp;   //
+&nbsp;   //  Start Hub Connection
+&nbsp;   //
+
+    connected = false;
+    while (connected == false)
+    {
+         try
+         {
+               await _signalRHubConnection.StartAsync();
+               connected = true;
+
+        }
+        catch (Exception ex)
+        {
+              await Task.Delay(10000);
+        }
+
+    }
+        
+}
+
+</pre>
+
+<h3><b>Configuring the Inventory Management Message Queuing Service</b></h3>
+
+<p>When you create a console application using .NET Core, you will notice that an&nbsp;exe will not be created when you build the application. By default&nbsp;.NET Core will generate a&nbsp;dll&nbsp;that is built as a&nbsp;portable application&nbsp;which does not generate an&nbsp;exe. They are executed by the .NET Core shared run-time. You can just run the application by running the command dotnet run.&nbsp;But, if you really want to generate the exe then just run below command:</p>
+
+<p><em>dotnet publish -c Debug -r win10-x64</em> or&nbsp;<em>dotnet publish -c Release -r win10-x64</em></p>
+
+<p>This will create a&nbsp;stand alone application&nbsp;similar to current&nbsp;.NET applications. This allows us to run the application without having&nbsp;to have .NET Core as the shared run-time on&nbsp;the target machine.</p>
+
+<p>Starting with C# version 7.1, you can create console applications with a static entry point as an asynchronous task allowing you to create a multi-threaded console application.&nbsp;Additionally, .NET Core 2.1 comes with a new feature set to simplify the creation of console based services. These new features include <em>IHost </em>and <em><strong>HostBuilder</strong></em>.</p>
+
+<p>.NET Core 2.1 applications configure and launch a&nbsp;<em>host</em>. The host is responsible for application startup and lifetime management. With the .NET Core <em>HostBuilder</em>, background tasks can be implemented <em>as&nbsp;</em><em>hosted services</em>. A hosted service is a class with background task logic that implements the <em>IHostedService&nbsp;</em>interface. For the Inventory Management Message Queuing Service, three background tasks are created that will run on a timer; one for sending messages, one for receiving messages and one for processing messages.</p>
+
+<p>In the Main method of the console application, you can start by creating a <em>HostBuilder </em>and then use extension methods to register services with dependency injection, read configuration and configure the logging that you need for your application. For the message queuing console application, each background task is&nbsp;registered as a service with a transient lifetime using the services.AddTransient method.</p>
+
+<pre lang="cs">
+        
+public static async Task Main(string[] args)
+{
+    //
+    //    get configuration information
+    //
+
+    MessageQueueAppConfig messageQueueAppConfig = new MessageQueueAppConfig();
+    ConnectionStrings connectionStrings = new ConnectionStrings();
+
+    string environment = Environment.GetEnvironmentVariable(&quot;ASPNETCORE_ENVIRONMENT&quot;);
+    string jsonFile = $&quot;appsettings.{environment}.json&quot;;
+
+    var configBuilder = new ConfigurationBuilder()
+        .SetBasePath(Directory.GetCurrentDirectory())
+        .AddJsonFile(jsonFile, optional: true, reloadOnChange: true);
+
+    IConfigurationRoot configuration = configBuilder.Build();
+
+    configuration.GetSection(&quot;MessageQueueAppConfig&quot;).Bind(messageQueueAppConfig);
+    configuration.GetSection(&quot;ConnectionStrings&quot;).Bind(connectionStrings);
+
+    //
+    //    Sending Message
+    //
+
+    IHostedService sendInventoryManagementMessages = new SendMessages();
+
+    //
+&nbsp;   //   Receive Messages 
+&nbsp;   //
+
+    IHostedService receiveInventoryManagementMessages = new ReceiveMessages();
+   
+&nbsp;   //
+    //    Message Processing
+    //   
+
+&nbsp;   IHostedService processMessages = new ProcessMessages();
+
+    var builder = new HostBuilder().ConfigureAppConfiguration((hostingContext, config) =&gt; {})
+        .ConfigureServices((hostContext, services) =&gt;
+        {
+            services.AddTransient&lt;IHostedService&gt;(provider =&gt; processMessages);
+        })
+        .ConfigureServices((hostContext, services) =&gt;
+        {
+            services.AddTransient&lt;IHostedService&gt;(provider =&gt; sendInventoryManagementMessages);
+        })
+        .ConfigureServices((hostContext, services) =&gt;
+        {
+            services.AddTransient&lt;IHostedService&gt;(provider =&gt; receiveInventoryManagementMessages);
+        })
+        .ConfigureLogging((hostingContext, logging) =&gt;
+        {
+            logging.AddConfiguration(hostingContext.Configuration.GetSection(&quot;Logging&quot;));
+            logging.AddConsole();
+        });
+
+        await builder.RunConsoleAsync();
+}
+
+</pre>
+
+<h3><strong>Getting started with RabbitMQ</strong></h3>
+
+<p>To get started with RabbitMQ, you must download the RabbitMQ server&nbsp;and follow the installation instructions as detailed on their web site at <a href="https://www.rabbitmq.com.">https://www.rabbitmq.com.</a>&nbsp;You can also read the installation instructions provided towards the end of this article.&nbsp;When you run the RabbitMQ installer for Windows,&nbsp;it installs RabbitMQ as a Windows service and starts it using the default configuration.</p>
+
+<p>The service will run fine using its default settings. You can&nbsp;customize the RabbitMQ environment and&nbsp;edit it&#39;s configuration where needed.&nbsp;The RabbitMQ service starts automatically. You can stop/reinstall/start the RabbitMQ service from the Start Menu.<br />
+<br />
+RabbitMQ provides a web UI management and monitoring tool for your RabbitMQ server. From the management interface, you can monitor, create, delete and list all your exchanges and&nbsp;queues. You can also&nbsp;monitor server&nbsp;connections and channels and monitor queue length and&nbsp;check message rate, etc.</p>
+
+<p><img height="606" src="rabbitmq3.png" width="709" /></p>
+
+<p>&nbsp;</p>
+
+<h3><strong>RabbitMQ Queues and Exchanges</strong></h3>
+
+<p>Before you can start sending and receiving messages with RabbitMQ, you need to take a RabbitMQ deep dive and understand some concepts of AMQP and RabbitMQ. Some of the main&nbsp;concepts of RabbitMQ messaging includes:</p>
+
+<ul>
+	<li><strong>Exchanges </strong>- <em>Exchanges</em>&nbsp;are AMQP entities where messages are sent. Exchanges take a message and route it into zero or more queues. The routing algorithm used depends on the <em>exchange type</em>&nbsp;and&nbsp;<em>binding rules.</em></li>
+	<li><strong>Queues </strong>- Queues in the AMQP model are very similar to queues in other message and task queuing&nbsp;systems: they store messages that are consumed by applications. Queues share some properties with exchanges, but also have some additional properties:</li>
+	<li><strong>Bindings </strong>- Bindings map an exchange to a queue. Bindings are rules for how a message gets routed from an exchange to one or more queues.</li>
+</ul>
+
+<p>When it comes to an Exchange, there are four type of exchanges in RabbitMQ:</p>
+
+<ul>
+	<li><strong>Direct Exchange </strong>- A direct exchange delivers messages to queues based on the message routing key.&nbsp;</li>
+	<li><strong>Fanout Exchange</strong> - A fanout exchange routes messages to all of the queues that are bound to it and the routing key is ignored.&nbsp;</li>
+	<li><strong>Topic Exchange</strong> - Topic exchanges route messages to one or many queues based on matching between a message routing key and the pattern that was used to bind a queue to an exchange.&nbsp;</li>
+	<li><strong>Headers Exchange </strong>- A headers exchange is designed for routing on multiple attributes that are more easily expressed as message headers than a routing key</li>
+</ul>
+
+<h3><strong>Sending RabbitMQ Messages With a Fanout Exchange</strong></h3>
+
+<p>For the sample application, sending messages using a <strong>Fanout Exchange </strong>seemed liked the best choice. For example, when creating a product in the Inventory Management microservice, the product information needs to be shared with the Sales Order Management microservice and the Purchase Order Management microservice.</p>
+
+<p>Additionally a message should be sent to a logging queue for monitoring and acknowledging the successful completion of the full life-cycle of a message being sent, received and successfully processed by all queues and microservices.</p>
+
+<p>Looking at the Inventory Management Message Queuing Service, the following exchanges have been set up:</p>
+
+<pre lang="cs">
+        
+//
+//    Inventory Received Transactions
+//
+
+IMessageQueueConfiguration inventoryReceivedConfiguration = new MessageQueueConfiguration(MessageQueueExchanges.InventoryReceived, messageQueueAppConfig, sendingQueueConnection);
+
+inventoryReceivedConfiguration.AddQueue(MessageQueueEndpoints.SalesOrderQueue);
+inventoryReceivedConfiguration.AddQueue(MessageQueueEndpoints.PurchaseOrderQueue);
+inventoryReceivedConfiguration.AddQueue(MessageQueueEndpoints.LoggingQueue);
+
+inventoryReceivedConfiguration.InitializeOutboundMessageQueueing();
+messageQueueConfigurations.Add(inventoryReceivedConfiguration);
+            
+//
+//    Product Creation and Updates
+//
+            
+IMessageQueueConfiguration productUpdatedConfiguration = new MessageQueueConfiguration(MessageQueueExchanges.ProductUpdated, messageQueueAppConfig, sendingQueueConnection);
+
+productUpdatedConfiguration.AddQueue(MessageQueueEndpoints.SalesOrderQueue);
+productUpdatedConfiguration.AddQueue(MessageQueueEndpoints.PurchaseOrderQueue);
+productUpdatedConfiguration.AddQueue(MessageQueueEndpoints.LoggingQueue);
+
+productUpdatedConfiguration.InitializeOutboundMessageQueueing();
+messageQueueConfigurations.Add(productUpdatedConfiguration);
+            
+//
+//    Inventory Shipped Transactions
+//
+
+IMessageQueueConfiguration inventoryShippedConfiguration = new MessageQueueConfiguration(MessageQueueExchanges.InventoryShipped, messageQueueAppConfig, sendingQueueConnection);
+
+inventoryShippedConfiguration.AddQueue(MessageQueueEndpoints.SalesOrderQueue);
+inventoryShippedConfiguration.AddQueue(MessageQueueEndpoints.LoggingQueue);
+
+inventoryShippedConfiguration.InitializeOutboundMessageQueueing();
+messageQueueConfigurations.Add(inventoryShippedConfiguration);
+
+</pre>
+
+<h3><strong>Sending RabbitMQ Messages With a Fanout Exchange</strong></h3>
+
+<p>With RabbitMQ, you&#39;ll need to plan a strategy for defining and designing your exchanges and queues. There are best practices and design patterns for designing exchanges and queues&nbsp;on the internet that you can read but for the sample application, the approach I took was to create a separate RabbitMQ exchange for each type of business transaction.</p>
+
+<p>For example, a sample business transaction is creating a product in Inventory Management. When creating a product, the product information needs to be shared with the Sales Order Management microservice and the Purchase Order Management microservice. For this business transaction a dedicated RabbitMQ exchange was created just to route product creation and product update&nbsp;messages.</p>
+
+<p>To meet thes&nbsp;requirements for the sample application, the <em>fanout exchange </em>type will route messages to all of the queues that are bound to it. In the Inventory Management microservice there are three business transactions and thus I created three RabbitMQ exchanges for sending and routing messages as follows:</p>
+
+<ul>
+	<li><strong>Product Creation and Updates Exchange</strong> - sends messages to the Purchase Order Queue, the Sales Order Queue and the Logging Queue</li>
+	<li><strong>Inventory Received Exchange </strong>- sends messages to the Purchase Order Queue, the Sales Order Queue and the Logging Queue</li>
+	<li><strong>Inventory Shipped Exchange</strong> - sends messages to the Sales Order Queue and the Logging Queue</li>
+</ul>
+
+<p>Other exchanges included in the sample application are:</p>
+
+<ul>
+	<li><strong>Purchase Order Submitted Exchange </strong>- sends messages to the Inventory Management Queue and the Logging Queue</li>
+	<li><strong>Sales Order Submitted Exchange</strong> - sends messages to the Inventory Management Queue and the Logging Queue</li>
+	<li><strong>Logging Exchange</strong> - sends messages directly to the Logging Queue</li>
+</ul>
+
+<h3><strong>Sending an Inventory Shipped Message</strong></h3>
+
+<p>For sending message queue messages in the sample application, a generic <strong>SendMessages </strong>class was created that all messaging queuing services will implement. The basic functionality of this class includes:</p>
+
+<ul>
+	<li>Start&nbsp;a SignalR connection</li>
+	<li>Run&nbsp;on a preset internal to retrieve messages in the <em>TransactionQueueOutBound&nbsp;</em>table in SQL-Server</li>
+	<li>Listen for SignalR On events and retrieve messages real-time in the <em>TransactionQueueOutBound&nbsp;</em>table in SQL-Server.</li>
+</ul>
+
+<pre lang="cs">
+using CodeProject.Shared.Common.Interfaces;
+using Microsoft.Extensions.Hosting;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Reactive.Subjects;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using CodeProject.Shared.Common.Models;
+using CodeProject.MessageQueueing;
+using Microsoft.AspNetCore.SignalR.Client;
+using RabbitMQ.Client;
+
+namespace CodeProject.MessageQueueing
+{
+    public class SendMessages : IHostedService, IDisposable
+    {
+        private readonly List&lt;IMessageQueueConfiguration&gt; _messageQueueConfigurations;
+        private readonly IMessageQueueConnection _messageQueueConnection;
+        private readonly IMessageQueueProcessing _messageProcessor;
+        private readonly MessageQueueAppConfig _appConfig;
+        private readonly ConnectionStrings _connectionStrings;
+        private readonly string _signalRQueue;
+
+        private HubConnection _signalRHubConnection;
+        private Timer _timer;
+
+        /// &lt;summary&gt;
+        /// Send Messages
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;messageQueueConnection&quot;&gt;&lt;/param&gt;
+        /// &lt;param name=&quot;messageProcessor&quot;&gt;&lt;/param&gt;
+        /// &lt;param name=&quot;appConfig&quot;&gt;&lt;/param&gt;
+        /// &lt;param name=&quot;connectionStrings&quot;&gt;&lt;/param&gt;
+        /// &lt;param name=&quot;messageQueueConfigurations&quot;&gt;&lt;/param&gt;
+        public SendMessages(IMessageQueueConnection messageQueueConnection, 
+&nbsp;                           IMessageQueueProcessing messageProcessor, 
+&nbsp;                           MessageQueueAppConfig appConfig, 
+&nbsp;                           ConnectionStrings connectionStrings, 
+&nbsp;                           List&lt;IMessageQueueConfiguration&gt; messageQueueConfigurations, 
+&nbsp;                           string signalRQueue)
+        {
+            _messageQueueConnection = messageQueueConnection;
+            _messageQueueConfigurations = messageQueueConfigurations;
+            _connectionStrings = connectionStrings;
+            _messageProcessor = messageProcessor;
+            _appConfig = appConfig;
+            _signalRQueue = signalRQueue;
+        }
+
+        /// &lt;summary&gt;
+        /// Start Process Interval
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;cancellationToken&quot;&gt;&lt;/param&gt;
+        /// &lt;returns&gt;&lt;/returns&gt;
+        public Task StartAsync(CancellationToken cancellationToken)
+        {
+
+            StartSignalRConnection();
+
+            _timer = new Timer(GetMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(_appConfig.SendingIntervalSeconds));
+
+            return Task.CompletedTask;
+        }
+
+        /// &lt;summary&gt;
+        /// Start SignalR Connection
+        /// &lt;/summary&gt;
+        private async void StartSignalRConnection()
+        {
+            _signalRHubConnection = new HubConnectionBuilder().WithUrl(url).Build();
+           
+            _signalRHubConnection.On&lt;string&gt;(_signalRQueue, (message) =&gt;
+            {
+                this.GetMessagesInQueue(null);
+
+            });
+
+            _signalRHubConnection.Closed += async (error) =&gt;
+            {
+                await Task.Delay(10000);
+                await _signalRHubConnection.StartAsync();
+            };
+
+            await _signalRHubConnection.StartAsync();
+                  
+        }
+        
+        /// &lt;summary&gt;
+        /// Get Messages In Queue
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;state&quot;&gt;&lt;/param&gt;
+        private async void GetMessagesInQueue(object state)
+        {
+            ResponseModel&lt;List&lt;MessageQueue&gt;&gt; messages = 
+&nbsp;                await _messageProcessor.SendQueueMessages(_messageQueueConfigurations, _appConfig.OutboundSemaphoreKey, _connectionStrings);
+            
+&nbsp;           Console.WriteLine(&quot;total messages &quot; + messages.Entity.Count.ToString() + &quot; sent at &quot; + DateTime.Now);
+
+        }
+
+        /// &lt;summary&gt; 
+&nbsp;       /// Stop Process  
+&nbsp;       /// &lt;/summary&gt;
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            _timer?.Change(Timeout.Infinite, 0);
+
+            return Task.CompletedTask;
+        }
+
+&nbsp;       /// &lt;summary&gt;
+&nbsp;       /// Dispose Timer
+      &nbsp; /// &lt;/summary&gt;
+        public void Dispose()
+        {
+            _timer?.Dispose();
+        }
+
+    }
+
+}
+
+</pre>
+
+<p>One of my design decisions for message queuing in the sample application was to make sure that all business transactions are&nbsp;<strong>processed sequentially </strong>as business transactions are being committed to the database. In an environment where there could be hundreds of concurrent users on the system,&nbsp;the Inventory Management Queuing Service will&nbsp;receive multiple real-time message requests simultaneously and perhaps effecting the same pieces of data.&nbsp;The goal of of processing business transactions&nbsp;sequentially is&nbsp;to ensure that all transaction logs are&nbsp;recording business transactions in proper order across microservices&nbsp;and ultimately to maintain data integrity.<br />
+<br />
+To guarantee the sequential processing of business transactions, the <em>SendQueueMessages </em>method&nbsp;implements a <em>lock statement</em> to block multiple requests from trying to send messages at the same time. The first request through will acquire an exclusive SQL-Server row lock and proceed to read all pending transactions in the <em>TransactionQueueOutbound&nbsp;</em>table and&nbsp;extract out the message queue <em>payload </em>for each transaction and a message for each transaction will be sent to the appropriate RabbitMQ exchange when the <em>SendMessage </em>method gets executed. Once this cycle has completed, the next message request through will proceed&nbsp;to process the next batch of pending business transactions.</p>
+
+<pre lang="cs">
+        
+/// &lt;summary&gt;
+/// Send Queue Messages
+/// &lt;/summary&gt;
+/// &lt;param name=&quot;messageQueueConfigurations&quot;&gt;&lt;/param&gt;
+/// &lt;param name=&quot;outboundSemaphoreKey&quot;&gt;&lt;/param&gt;
+/// &lt;param name=&quot;connectionStrings&quot;&gt;&lt;/param&gt;
+/// &lt;returns&gt;&lt;/returns&gt;
+public async Task&lt;ResponseModel&lt;List&lt;MessageQueue&gt;&gt;&gt; SendQueueMessages(
+&nbsp;            List&lt;IMessageQueueConfiguration&gt; messageQueueConfigurations, 
+&nbsp;            string outboundSemaphoreKey, 
+&nbsp;            ConnectionStrings connectionStrings)
+{
+    ResponseModel&lt;List&lt;MessageQueue&gt;&gt; returnResponse = new ResponseModel&lt;List&lt;MessageQueue&gt;&gt;();
+    returnResponse.Entity = new List&lt;MessageQueue&gt;();
+
+    Console.WriteLine(&quot;sending = &quot; + _sending);
+
+    lock (_sendingLock)
+    {
+        if (_sending)
+        {
+            Console.WriteLine(&quot;Aborted iteration still sending&quot;);
+            return returnResponse;
+        }
+
+        _sending = true;
+
+    }
+
+    Console.WriteLine(&quot;Start sending&quot;);
+
+    Boolean getMessages = true;
+
+    while (getMessages==true)
+    {
+        ResponseModel&lt;List&lt;MessageQueue&gt;&gt; response = await GetMessagesToSend(messageQueueConfigurations, outboundSemaphoreKey, connectionStrings);
+        foreach (MessageQueue message in response.Entity)
+        {
+            returnResponse.Entity.Add(message);
+        }
+
+        if (response.Entity.Count == 0)
+        {
+            _sending = false;
+            getMessages = false;
+        }
+    }
+
+    return returnResponse;
+
+}
+        
+/// &lt;summary&gt;
+/// Get Messages To Send
+/// &lt;/summary&gt;
+/// &lt;param name=&quot;messageQueueConfigurations&quot;&gt;&lt;/param&gt;
+/// &lt;param name=&quot;outboundSemaphoreKey&quot;&gt;&lt;/param&gt;
+/// &lt;param name=&quot;connectionStrings&quot;&gt;&lt;/param&gt;
+/// &lt;returns&gt;&lt;/returns&gt;
+private async Task&lt;ResponseModel&lt;List&lt;MessageQueue&gt;&gt;&gt; GetMessagesToSend(
+&nbsp;    List&lt;IMessageQueueConfiguration&gt; messageQueueConfigurations, 
+&nbsp;    string outboundSemaphoreKey, ConnectionStrings connectionStrings)
+{
+    TransactionQueueSemaphore transactionQueueSemaphore = null;
+
+    ResponseModel&lt;List&lt;MessageQueue&gt;&gt; returnResponse = new ResponseModel&lt;List&lt;MessageQueue&gt;&gt;();
+    returnResponse.Entity = new List&lt;MessageQueue&gt;();
+
+    try
+    {
+        _inventoryManagementDataService.OpenConnection(connectionStrings.PrimaryDatabaseConnectionString);
+        _inventoryManagementDataService.BeginTransaction((int)IsolationLevel.Serializable);
+
+         List&lt;TransactionQueueOutbound&gt; transactionQueue = await _inventoryManagementDataService.GetOutboundTransactionQueue();
+
+         foreach (TransactionQueueOutbound transactionQueueItem in transactionQueue)
+         {
+            MessageQueue message = new MessageQueue();
+            message.ExchangeName = transactionQueueItem.ExchangeName;
+            message.TransactionQueueId = transactionQueueItem.TransactionQueueOutboundId;
+            message.TransactionCode = transactionQueueItem.TransactionCode;
+            message.Payload = transactionQueueItem.Payload;
+
+            IMessageQueueConfiguration messageQueueConfiguration = messageQueueConfigurations.Where(x =&gt; x.TransactionCode == message.TransactionCode).FirstOrDefault();
+            if (messageQueueConfiguration == null)
+            {
+                break;
+            }
+
+            //
+&nbsp;           //  The SendMessage method will send a message to RabbitMQ
+&nbsp;           //
+
+            ResponseModel&lt;MessageQueue&gt; messageQueueResponse = messageQueueConfiguration.SendMessage(message);
+            if (messageQueueResponse.ReturnStatus == true)
+            {
+                transactionQueueItem.SentToExchange = true;
+                transactionQueueItem.DateSentToExchange = DateTime.UtcNow;
+                await _inventoryManagementDataService.UpdateOutboundTransactionQueue(transactionQueueItem);
+
+                returnResponse.Entity.Add(message);
+            }
+            else
+            {
+                break;
+            }
+
+        }
+
+        await _inventoryManagementDataService.UpdateDatabase();
+
+        _inventoryManagementDataService.CommitTransaction();
+        _inventoryManagementDataService.CloseConnection();
+
+    }
+    catch (Exception ex)
+    {
+        _inventoryManagementDataService.RollbackTransaction();
+        returnResponse.ReturnStatus = false;
+        returnResponse.ReturnMessage.Add(ex.Message);
+    }
+    finally
+    {
+        _inventoryManagementDataService.CloseConnection();
+    }
+
+    return returnResponse;
+}
+
+
+</pre>
+
+<h3><strong>Creating a RabbitMQ Connection</strong></h3>
+
+<p>To write C# code using RabbitMQ, you must install the .NET RabbitMQ.Client library. The RabbitMQ .NET client is an open source library and is an implementation of an AMQP client library for C# and other .NET languages. The first thing you need to do to send and receive messages with RabbitMQ is to create a connection to RabbitMQ.&nbsp; In development mode, the connection just needs the following properties set with the development defaults as:</p>
+
+<p>HostName =&nbsp;localhost<br />
+UserName&nbsp;= guest<br />
+Password =&nbsp;&nbsp;guest</p>
+
+<p>For the sample application, each&nbsp;asynchronous task/thread running in each message queuing service will create and maintain a separate connection to RabbitMQ.</p>
+
+<pre lang="cs">
+using CodeProject.Shared.Common.Interfaces;
+using CodeProject.Shared.Common.Models;
+using RabbitMQ.Client;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace CodeProject.MessageQueueing
+{
+    public class MessageQueueConnection  : IMessageQueueConnection
+    {
+    
+        private ConnectionFactory _connectionFactory;
+        private MessageQueueAppConfig _messageQueueAppConfig;
+        private IConnection _connection;
+
+        public MessageQueueConnection(MessageQueueAppConfig messageQueueAppConfig)
+        {
+            _messageQueueAppConfig = messageQueueAppConfig;
+        }
+
+        /// &lt;summary&gt;
+        /// Create RabbitMQ Connection
+        /// &lt;/summary&gt;
+        public void CreateConnection()
+        {
+            _connectionFactory = new ConnectionFactory();
+
+            _connectionFactory.HostName = _messageQueueAppConfig.MessageQueueHostName;
+            _connectionFactory.UserName = _messageQueueAppConfig.MessageQueueUserName;
+            _connectionFactory.Password = _messageQueueAppConfig.MessageQueuePassword;
+
+            _connection = _connectionFactory.CreateConnection();
+
+        }
+
+        public IConnection GetConnection()
+        {
+            return _connection;
+        }
+
+    }
+}
+
+</pre>
+
+<h3><strong>Declaring, Creating and Configuring RabbitMQ Exchanges and Queues</strong></h3>
+
+<p>There are a couple of ways you can configure and create RabbitMQ exchanges and queues. You can perform these actions using the RabbitMQ Web UI Management console or through the RabbitMQ management command line tools. Another option is to configure exchanges and queues programmatically which I chose to do.</p>
+
+<p>Once you have a connection established to RabbitMQ, you can begin to create and configure RabbitMQ exchanges and queues&nbsp;programmatically. For the sample application, all exchanges will be configured as <em>fanout</em>&nbsp;<em>exchanges</em>. In the&nbsp;<strong>MessageQueueConfiguration </strong>class below, the following is being executed:</p>
+
+<ol>
+	<li>Creates a RabbitMQ <em>channel </em>from an established RabbitMQ connection</li>
+	<li>Creates a <em>IBasicProperties </em>object to configure the exchange to be persistent</li>
+	<li>Declares the exchange with the name of the exchange, the exchange type &quot;<em>fanout</em>&quot;, sets&nbsp;the exchange to be durable with no auto-delete.</li>
+	<li>Declares a collection of queues setting each queue to be durable and with no&nbsp;auto-delete.</li>
+	<li>Binds each queue to the exchange to <em>fanout </em>messages to these queues when a message is received on the exchange.</li>
+</ol>
+
+<p>When declaring exchanges and queues programmatically,&nbsp;if the exchange or queue has not been created on the RabbitMQ server, then it&#39;s at this point where they will be&nbsp;dynamically created. Queues can be bound to more than one exchange.</p>
+
+<p>There are a lot of configuration settings to choose from when declaring exchanges and queues. The&nbsp;main configurations you will probably want to understand are:</p>
+
+<ul>
+	<li><strong>Persistent Messages</strong>&nbsp;- Persistent messages will be written to disk as soon as they reach the queue, while transient messages will be written to disk only so that they can be removed from memory when memory gets low. Persistent messages are also kept in memory when possible and only removed from memory when memory gets low.</li>
+	<li><strong>Durable and Non-Durable Queues</strong> - Durable queues are persisted to disk and thus survive broker restarts. Queues that are not durable are called transient. Not all scenarios and use cases mandate queues to be durable. Durability of a queue does not make&nbsp;<em>messages</em>&nbsp;that are routed to that queue durable. If broker is taken down and then brought back up, a&nbsp; durable queue will be re-declared during broker startup, however, only&nbsp;<em>persistent</em>&nbsp;messages will be recovered.</li>
+	<li><strong>Auto-Delete</strong>&nbsp;-If&nbsp;a queue is set to auto-delete, the queue will be&nbsp;deleted when the last consumer&nbsp;unsubscribes.</li>
+</ul>
+
+<pre lang="cs">
+using CodeProject.Shared.Common.Interfaces;
+using CodeProject.Shared.Common.Models;
+using Newtonsoft.Json;
+using RabbitMQ.Client;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using RabbitMQ.Client.Events;
+using RabbitMQ.Client.MessagePatterns;
+
+namespace CodeProject.MessageQueueing
+{
+    public class MessageQueueConfiguration : IMessageQueueConfiguration
+    {
+        
+        private string _exchangeName;
+        private List&lt;string&gt; _boundedQueues;
+        private MessageQueueAppConfig _messageQueueAppConfig;
+        private readonly IMessageQueueConnection _messageQueueConnection;
+        private Subscription _subscription;
+        private IBasicProperties _basicProperties;
+        private IModel _channel;
+
+        /// &lt;summary&gt;
+        /// Constructor
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;exchangeName&quot;&gt;&lt;/param&gt;
+        /// &lt;param name=&quot;messageQueueAppConfig&quot;&gt;&lt;/param&gt;
+        /// &lt;param name=&quot;messageQueueConnection&quot;&gt;&lt;/param&gt;
+        public MessageQueueConfiguration(string exchangeName, 
+                                         List&lt;string&gt; boundedQueues, 
+                                         MessageQueueAppConfig messageQueueAppConfig, 
+                                         IMessageQueueConnection messageQueueConnection)
+        {
+            _messageQueueAppConfig = messageQueueAppConfig;
+            _messageQueueConnection = messageQueueConnection;
+            _exchangeName = exchangeName;
+            _boundedQueues = boundedQueues;
+        }
+      
+        /// &lt;summary&gt;
+        /// Initialize Initialize RabbitMQ Exchange
+        /// &lt;/summary&gt;
+        public void InitializeRabbitMQExchange()
+        {
+            _channel = _messageQueueConnection.GetConnection().CreateModel();
+
+            _basicProperties = _channel.CreateBasicProperties();
+            _basicProperties.Persistent = true;
+
+            string exchangeName = _exchangeName + &quot;_&quot; + _messageQueueAppConfig.MessageQueueEnvironment;
+
+            _channel.ExchangeDeclare(exchangeName, &quot;fanout&quot;, true, false);
+
+            foreach (string queueName in _boundedQueues)
+            {
+                string queue = queueName + &quot;_&quot; + _messageQueueAppConfig.MessageQueueEnvironment;
+
+                _channel.QueueDeclare(queue, true, false, false);
+                _channel.QueueBind(queue, exchangeName, _messageQueueAppConfig.RoutingKey);
+            }
+        }
+    
+    }
+
+}
+
+</pre>
+
+<h3><strong>Sending a Message to a RabbitMQ Exchange</strong></h3>
+
+<p>When the Inventory Management Message Queuing Service picked up the pending business transactions from the <em>TransctionQueueOutbound&nbsp;</em>table in SQL-Server, it extracted payload information for each transaction and passed the payload to the following <em>SendMessage </em>method which publishes the message to the <em>InventoryShipped </em>RabbitMQ exchange.</p>
+
+<p>RabbitMQ supports the <em>Publish/Subscribe</em> message queuing pattern. The <em>Publish/Subscribe</em> messaging pattern is where senders of messages ( publishers or producers ) publish messages without the knowledge of which subscribers if any, there may be. Similarly,&nbsp;subscribers&nbsp;or consumers, only receive messages that they require, without knowledge of which publishers, if any, there are.</p>
+
+<p>To publish a message with RabbitMQ, you first create a <strong>PublicationAddress </strong>instance and set the exchange name and exchange type&nbsp;properties. To actually send a message to the exchange, the <em>BasicPublish </em>method is executed from a RabbitMQ channel with the publication address, basic properties and the payload for the message being passed into the method. When sending a message, the&nbsp;payload is sent as a&nbsp;UTF8 byte array.</p>
+
+<p>In the <em>SendMessage </em>method below, a try/catch block surrounds the code that is sending the message to RabbitMQ and if an error occurs trying to send the message the error is returned back to the Inventory Management Message Queuing Service where it will leave the business transaction as pending in the <em>TransactionQueueOutbound&nbsp;</em>table. If an error occurs sending a message to RabbitMQ, it essentially means that the RabbitMQ server is down.</p>
+
+<p>Implementing&nbsp;intermediary <em>TransactionQueueInbound and TransactionQueueOutbound&nbsp;</em>tables in SQL-Server makes the entire message queuing process more fault-tolerant and easier&nbsp;to monitor&nbsp;and facilitates recovery and retry functionality. Implementing message queuing without intermediary message queue tables that participate in a SQL-Server commit/rollback transaction makes recovery and retry from error functionality much more difficult to implement.</p>
+
+<pre lang="cs">
+    
+/// &lt;summary&gt;
+/// Send Message
+/// &lt;/summary&gt;
+/// &lt;param name=&quot;entity&quot;&gt;&lt;/param&gt;
+public ResponseModel&lt;MessageQueue&gt; SendMessage(MessageQueue entity)
+{
+    ResponseModel&lt;MessageQueue&gt; response = new ResponseModel&lt;MessageQueue&gt;();
+    response.Entity = new MessageQueue();
+
+    try
+    {
+        string output = JsonConvert.SerializeObject(entity);
+
+        byte[] payload = Encoding.UTF8.GetBytes(output);
+
+        string exchangeName = _exchangeName + &quot;_&quot; + _messageQueueAppConfig.MessageQueueEnvironment;
+
+        PublicationAddress address = new PublicationAddress(ExchangeType.Fanout, exchangeName, _messageQueueAppConfig.RoutingKey);
+
+        _channel.BasicPublish(address, _basicProperties, payload);
+
+        response.Entity.Payload = output;
+
+        response.ReturnStatus = true;
+    }
+    catch (Exception ex)
+    {
+        response.ReturnStatus = false;
+        response.ReturnMessage.Add(ex.Message);
+    }
+
+    return response;
+
+}
+
+
+</pre>
+
+<h3><strong>Creating and Configuring&nbsp;a RabbitMQ Subscription</strong></h3>
+
+<p>The recommended and most convenient way to receive messages is to set up a subscription. In RabbitMQ there are a couple different configuration options for setting up a subscription.&nbsp; For the sample application subscriptions are created using the&nbsp;<strong>RabbitMQ Subscription </strong>object. Once created, the subscription consumes from a queue. Received deliveries can be retrieved by calling <em>Next</em>(), or by using the <em>Subscription</em> object&nbsp;as an <em>IEnumerator</em> in a foreach loop.</p>
+
+<p>In the <em>InitializeRabbitMQSubscription</em> method a&nbsp;Subscription object is created and configured by first declaring a queue in the same way when declaring queues to be bound to an exchange. Once the queue is declared, it is assigned to the subscription and the Subscription object is assigned to a RabbitMQ channel.</p>
+
+<pre lang="cs">
+using CodeProject.Shared.Common.Interfaces;
+using CodeProject.Shared.Common.Models;
+using Newtonsoft.Json;
+using RabbitMQ.Client;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using RabbitMQ.Client.Events;
+using RabbitMQ.Client.MessagePatterns;
+
+namespace CodeProject.MessageQueueing
+{
+    public class MessageQueueConfiguration : IMessageQueueConfiguration
+    {
+        
+        private string _exchangeName;
+        private List&lt;string&gt; _boundedQueues;
+        private MessageQueueAppConfig _messageQueueAppConfig;
+        private readonly IMessageQueueConnection _messageQueueConnection;
+        private Subscription _subscription;
+        private IBasicProperties _basicProperties;
+        private IModel _channel;
+        private string _originatingQueueName;
+
+        /// &lt;summary&gt;
+        /// Constructor
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;exchangeName&quot;&gt;&lt;/param&gt;
+        /// &lt;param name=&quot;messageQueueAppConfig&quot;&gt;&lt;/param&gt;
+        /// &lt;param name=&quot;messageQueueConnection&quot;&gt;&lt;/param&gt;
+        public MessageQueueConfiguration(string exchangeName, MessageQueueAppConfig messageQueueAppConfig, IMessageQueueConnection messageQueueConnection)
+        {
+            TransactionCode = exchangeName;
+
+            _messageQueueAppConfig = messageQueueAppConfig;
+            _messageQueueConnection = messageQueueConnection;
+        }
+
+        /// &lt;summary&gt;
+        /// Initialize RabbitMQ Subscription
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;queueName&quot;&gt;&lt;/param&gt;
+        public void InitializeRabbitMQSubscription(string queueName)
+        {
+            _channel = _messageQueueConnection.GetConnection().CreateModel();
+
+            string queue = queueName + &quot;_&quot; + _messageQueueAppConfig.MessageQueueEnvironment;
+
+ _          _channel.QueueDeclare(queue: queue, durable: true, exclusive: false, autoDelete: false, arguments: null); 
+
+            _subscription = new Subscription(_channel, queue, false);
+
+        }
+       
+    }
+
+}
+
+</pre>
+
+<h3><strong>Consuming and Receiving Messages from a RabbitMQ Queue</strong></h3>
+
+<p>For the sample application, a generic <strong>ReceiveMessages </strong>class was created that all message queuing services will use to consume&nbsp;messages from a queue. The <em>ReceiveMessages </em>class is created as a <em>Hosted Service</em> and runs as a separate asynchronous&nbsp;task in each message queuing service for each microservice,</p>
+
+<p>As the Inventory Management Message Queuing Service sends inventory shipment messages from the <em>Inventory Shipment e</em>xchange&nbsp;to the sales order queue, the Sales Order Management Queuing Service is simultaneously subscribing and listening to the sales order queue. The Sales Order Management Queuing Service implements the <em>ReceiveMessages </em>class to receive messages.</p>
+
+<p>In the <em>GetMessagesInQueue </em>method, a reference to the <em>Subscription </em>object is acquired after it was previously created during the connection and subscription initialization process.</p>
+
+<p>In the Sales Order Management Message Queuing Service, the <em>Subscription </em>consumes from the sales order queue. Received deliveries are retrieved by using the <em>Subscription </em>as an <em>IEnumerator </em>in a foreach loop. With each iteration, a <em>BasicDeliverEventArg </em>object is returned from the subscription. The <em>BasicDeliverEventArg </em>contains all the information about a message delivered from an AMQP broker.</p>
+
+<p>The foreach loop will iterate continuously. When there are no more messages in the queue to process, the loop will sit idle. The foreach loop will begin to iterate again when more messages come into the queue.</p>
+
+<p>The <em>ReceiveMessages </em>class makes reference to a custom message processor component of the base message queuing service functionality. The Sales Order Management Message Queuing Service will take the inbound RabbitMQ message and deserialize it into a <em>MessageQueue</em> object and pass the deserialized&nbsp;object to <em>CommitInBoundMessage </em>method of the message processor and the method will commit the business transaction into the <em>TransactionQueueInbound&nbsp;</em>table in the Sales Order Management database.</p>
+
+<p>Once committed to the&nbsp;<em>TransactionQueueInbound&nbsp;</em>table, an acknowledgement message is sent to the RabbitMQ server letting the server know that the message can be removed from the inbound sales order queue. Finally the message processor is executed again to process the transactions committed in the&nbsp;<em>TransactionQueueInbound&nbsp;</em>table&nbsp;to update the quantity shipped on the sales order.</p>
+
+<pre lang="cs">
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Reactive.Subjects;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using CodeProject.Shared.Common.Models;
+using CodeProject.Shared.Common.Interfaces;
+using CodeProject.Shared.Common.Models.MessageQueuePayloads;
+using Newtonsoft.Json;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using RabbitMQ.Client.MessagePatterns;
+
+namespace CodeProject.MessageQueueing
+{
+
+    public class ReceiveMessages : IHostedService, IDisposable
+    {
+
+        private readonly List&lt;IMessageQueueConfiguration&gt; _messageQueueConfigurations;
+        private readonly IMessageQueueConnection _messageQueueConnection;
+        private readonly IMessageQueueProcessing _messageProcessor;
+        private readonly MessageQueueAppConfig _appConfig;
+        private readonly ConnectionStrings _connectionStrings;
+
+        private Timer _timer;
+        private Boolean _running = false;
+
+        public ReceiveMessages(IMessageQueueConnection messageQueueConnection, 
+&nbsp;                              IMessageQueueProcessing messageProcessor, 
+&nbsp;                              MessageQueueAppConfig appConfig, ConnectionStrings connectionStrings, 
+&nbsp;                              List&lt;IMessageQueueConfiguration&gt; messageQueueConfigurations)
+        {
+            _messageQueueConnection = messageQueueConnection;
+            _messageQueueConfigurations = messageQueueConfigurations;
+            _connectionStrings = connectionStrings;
+            _messageProcessor = messageProcessor;
+            _appConfig = appConfig;
+        }
+
+        /// &lt;summary&gt;
+        /// Start
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;cancellationToken&quot;&gt;&lt;/param&gt;
+        /// &lt;returns&gt;&lt;/returns&gt;
+        public Task StartAsync(CancellationToken cancellationToken)
+        {
+            Console.WriteLine(&quot;Starting Receiving Messages&quot;);
+
+            _timer = new Timer(GetMessagesInQueue, null, TimeSpan.Zero, TimeSpan.FromSeconds(_appConfig.ReceivingIntervalSeconds));
+
+            return Task.CompletedTask;
+        }
+
+        /// &lt;summary&gt;
+        /// Get Messages In Queue
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;state&quot;&gt;&lt;/param&gt;
+        private async void GetMessagesInQueue(object state)
+        {
+    
+            if (_running == true)
+            {
+                return;
+            }
+
+            _running = true;
+
+            Console.WriteLine(&quot;Receiving Messages at &quot; + DateTime.Now);
+
+            Subscription subscription = _messageQueueConfigurations[0].GetSubscription();
+
+            foreach (BasicDeliverEventArgs e in subscription)
+            {
+                string message = Encoding.UTF8.GetString(e.Body);
+
+                MessageQueue messageQueue = JsonConvert.DeserializeObject&lt;MessageQueue&gt;(message);
+
+                ResponseModel&lt;MessageQueue&gt; responseMessage = await _messageProcessor.CommitInboundMessage(messageQueue, _connectionStrings);
+                if (responseMessage.ReturnStatus == true)
+                {
+                   
+                    Console.WriteLine($&quot;Message Committed: {messageQueue.TransactionQueueId}&quot;);
+
+                    subscription.Ack(e);
+                    
+                    await _messageProcessor.ProcessMessages(_appConfig.InboundSemaphoreKey, _connectionStrings);
+
+                }
+
+            }
+
+        }
+        
+        /// &lt;summary&gt;
+        /// Stop Async
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;cancellationToken&quot;&gt;&lt;/param&gt;
+        /// &lt;returns&gt;&lt;/returns&gt;
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            Console.WriteLine(&quot;Stopping.&quot;);
+
+            return Task.CompletedTask;
+        }
+
+        public void Dispose()
+        {
+
+        }
+    }
+}
+
+</pre>
+
+<h3><strong>Microservices Logging Best Practices</strong></h3>
+
+<p>The microservice architecture offers a lot of great benefits like the ability to use different technology stacks, deploy applications independently, solve small problems one at a time, and more. But using microservices comes with a high cost in that they are complex. Not only in how they communicate with each other but also in how to manage them. And they get even more complicated when one or more services fail. Troubleshooting microservices is hard without a meaningful logging&nbsp;mechanism.</p>
+
+<p>For the sample application, a separate logging database was created. All message queue messages that are sent and received through RabbitMQ are also routed to a logging message queue.&nbsp; A Logging Message Queue Service was created to log the messages into either a <em>MessagesSent </em>table or a <em>MessagesReceived </em>table in the centeralized logging database.</p>
+
+<p>Take for example creating a product in the Inventory Management microservice. When this business transaction occurs a message is sent to the <em>Product Update exchange </em>and the message is routed to both the sales order queue and the purchase order queue. When successfully processed by all message queue services, three rows will have been added to the logging database. One for the original message that will be recorded in the <em>MessagesSent</em> table and two rows added to the <em>MessagesReceived </em>table; one each for the sales order queue and the purchase order queue.</p>
+
+<p>The Logging Messaging Queue Service&nbsp;maintains a count of queues bound to each RabbitMQ exchange. This count is used to reconcile messages. When messages have been reconciled, the Logging Message Queuing Service will send out <em>acknowledgement</em> messages back out through&nbsp;RabbitMQ. In the case of the product creation example, the inventory queue will receive an acknowledgement message and the Inventory Management Message Queuing service will process the message and archive <em>TransactionQueueOutbound&nbsp;</em>rows&nbsp;to an <em>TransactionQueueOutboundHistory </em>table.</p>
+
+<p>Additionally, all application error exceptions should also be logged into a centralized logging database. Centralizing error messages can be done the same way as any other type of message via RabbitMQ messages.</p>
+
+<p>Some good pieces of information for logging errors include:</p>
+
+<ul>
+	<li><strong>Date and Time</strong> - It is recommended to use UTC date and time especially if&nbsp;your&nbsp;servers are running in different&nbsp;time zones in a cloud scenario.</li>
+	<li><strong>Stack errors.</strong> You could pass the exception object as a parameter to a logging library.</li>
+	<li><strong>Microservice Name&nbsp;</strong> - This will help you to&nbsp;differentiate which logs are from which microservice.</li>
+	<li><strong>Functions, Class and Method Names</strong> -The function, class, or method name where the error occurred so that you don&rsquo;t have to guess where the problem is.</li>
+	<li><strong>IP address</strong> - The IP address of the server and client request. This information will make it easy to spot an unhealthy server.</li>
+	<li><strong>User-agent </strong>- The User-agent of the application so that you know which browsers or users are having issues.</li>
+</ul>
+
+<p>Contextualizing centralized logging&nbsp;will save you time when you need to troubleshoot problems in the system.</p>
+
+<h3><strong>Microservices and Shared Libraries</strong></h3>
+
+<p>As we have made the progression from a monolith toward a microservices based architecture, the topic of shared libraries in microservices has continued to be a point of contention. One of the primary goals of microservices is to create loosely coupled services which can be changed independently from other microservices. The creation of our own &ldquo;common&rdquo; libraries creates coupling between the projects that depend on them.</p>
+
+<p>As a rule of thumb there should be no need to put business logic into a common library. If you are doing this, then the bounded context of your microservices domains are most likely incorrect, and/or you are missing a microservice. Developers of microservices need to embrace the reality that duplication of code between microservices is actually okay; up to a point. Duplication of code within a specific microservice is not&nbsp;okay.</p>
+
+<p>Of course the reality is that there will be some need for a shared library in a microservice architecture. Code in shared libraries in a microservice architecture could include functions and classes that support common infrastructure functionality across microservices.</p>
+
+<p>There are a several&nbsp;techniques for managing shared libraries in a microservice architecture. In a Microsoft world, shared libraries can be deployed as versioned Nuget packages across microservices, allowing the various microservices to implement the latest version of a shared library when desired. Taking care to avoid making&nbsp;breaking changes to a shared library&nbsp;is another option. Using overloaded functions can help prevent creating a breaking change&nbsp;in a shared library.</p>
+
+<p>Following SOLID Design Principles&nbsp;can help too<strong>.&nbsp; </strong>SOLID is one of the most popular sets of design principles in object-oriented software development. It&rsquo;s a mnemonic acronym for the following five design principles:</p>
+
+<ul>
+	<li>Single Responsibility Principle</li>
+	<li>Open/Closed Principle</li>
+	<li>Liskov Substitution Principle</li>
+	<li>Interface Segregation Principle</li>
+	<li>Dependency Inversion</li>
+</ul>
+
+<p>The argument for both the Single Responsibility Principle and the Open/Closed Principle is relatively simple: it makes your software easier to implement and prevents unexpected side-effects of future changes.</p>
+
+<h3><strong>Installing the Sample Application</strong></h3>
+
+<p>Between Angular 6, .NET Core 2.1 and RabbitMQ, there are a lot of moving parts to install and configure to get the sample application up and running. The sample application also consists of eight Visual Studio 2017 projects.</p>
+
+<p>As exciting as these new technologies are, it can be a <em>Nightmare on Elm Street </em>trying to upgrade to the latest version of these technologies and dealing with all the dependencies surrounding these technologies including dealing with version incompatibilities. And if you have ever upgraded to the latest version of any Visual Studio edition, you probably know how painful upgrading is; to the point that you often regret even upgrading. The sometimes fragile nature&nbsp;of Visual Studio upgrades is almost always two steps forward, one step back.</p>
+
+<p>In attempt to make getting the sample application up and running on your local development environment as painless as possible, I have outlined below the prerequisites&nbsp;and install steps needed to get up and running.</p>
+
+<p>Software installation prerequisites:</p>
+
+<ul>
+	<li>SQL Server Management Studio and SQL Server Express 2014 or greater</li>
+	<li>Visual Studio 2017 Professional or Community Edition</li>
+	<li>.NET Core 2.1&nbsp;</li>
+	<li>RabbitMQ 3.7.9</li>
+	<li>NodeJS 10.13.0 or greater</li>
+	<li>Angular CLI 6</li>
+</ul>
+
+<p><strong>Installing the RabbitMQ Server </strong>-&nbsp;&nbsp;RabbitMQ requires a 64-bit supported version of Erlang for Windows to be installed.&nbsp; There&#39;s a Windows installer for Erlang at <a href="http://www.erlang.org/downloads">http://www.erlang.org/downloads</a>. Important note: the Erlang installer must be run using an administrative account otherwise a&nbsp;registry key expected by the RabbitMQ installer will not be present. Once Erlang has been installed,&nbsp;run the RabbitMQ installer&nbsp;<em>rabbitmq-server-3.7.9.exe,</em> downloadable at <a href="https://www.rabbitmq.com/install-windows.html,">https://www.rabbitmq.com/install-windows.html</a>. It installs RabbitMQ as a Windows service and starts it using the default configuration.</p>
+
+<p><strong>Installing the RabbitMQ Web UI Management tool </strong>- To install the RabbitMQ UI, a management plugin needs to be installed as follows:</p>
+
+<ul>
+	<li>Open a Windows command window in adminstrator mode</li>
+	<li>Change directory to C:\Program Files\RabbitMQ Server\rabbitmq_server-3.7.9\sbin</li>
+	<li>From the command line execute:&nbsp;rabbitmq-plugins enable rabbitmq_management</li>
+	<li>Go to Windows Services and restart the RabbitMQ service.</li>
+	<li>Go to browser and enter the url:&nbsp;http://localhost:15672 and the default&nbsp;login will be&nbsp;user name: guest, password: guest</li>
+</ul>
+
+<p><strong>Sample Application Source Code</strong> - The source for the sample application can be downloaded at <a href="https://github.com/markcaplin/CodeProjectMicroServices">https://github.com/markcaplin/CodeProjectMicroServices.&nbsp;</a>Simply download the zip file and extract all files to a folder of your choice.</p>
+
+<p><strong>Sample Application Databases</strong>&nbsp; - After downloading the source code, run SQL Server Management Studio as Administrator and attach the following databases that resides in the Databases folder:</p>
+
+<ul>
+	<li>&nbsp; &nbsp;MS_AccountManagement_DEV</li>
+	<li>&nbsp; &nbsp;MS_InventoryManagement_DEV</li>
+	<li>&nbsp; &nbsp;MS_LoggingManagement_DEV</li>
+	<li>&nbsp; &nbsp;MS_PurchaseOrderManagement_DEV</li>
+	<li>&nbsp; &nbsp;MS_SalesOrderManagement_DEV</li>
+</ul>
+
+<p><strong>.NET Core 2.1 </strong>- When you download Visual Studio 2017 Professional or Community Edition .NET Core 2.1 should automatically get downloaded with the installation. If you already have Visual Studio 2017, you can verify your installation by going to the Tools menu and selecting Get Tools and Features and this will start the Visual Studio Installer.&nbsp; From the installer options, you can verify that .NET Core 2.1 has been installed.</p>
+
+<p><strong>Build and Run the Sample Application Web API&nbsp;Projects - </strong>To verify everything has been installed correctly, compile the following four web API projects from the sample application:</p>
+
+<ul>
+	<li>InventoryManagement -&gt; CodeProject.InventoryManagement.WebApi.sln</li>
+	<li>SalesOrderManagement -&gt; CodeProject.SalesOrderManagement.WebApi.sln</li>
+	<li>OrderManagement -&gt; CodeProject.PurchaseOrderManagement.WebApi.sln</li>
+	<li>AccountManagement -&gt; CodeProject.AccountManagement.WebApi.sln</li>
+</ul>
+
+<p>These web API&nbsp;projects were configured to use SSL. To avoid SSL issues you&#39;ll need to try and run the project by selecting the <em>IISExpress </em>profile and selecting the run button and&nbsp;ASP.NET Core will create an SSL certificate. Visual Studio will ask you if you would like to trust the self-signed certificate that ASP.NET Core has generated. Choose yes&nbsp;to trust the certificate. Because Visual Studio is Visual Studio, you might have to run the project a second or third time or exit and reload Visual Studio to confirm that everything with the project is working. When the browser launches and displays&nbsp;a database connection string in the browser from the Values controller, you should be good to go.</p>
+
+<p><strong>Build All Projects using the .NET Core CLI&nbsp;</strong>&nbsp;- The .NET Core command-line interface (CLI) is a new cross-platform toolchain for developing .NET applications. The CLI is a foundation upon which higher-level tools, such as Integrated Development Environments (IDEs), editors, and build orchestrators, can use.</p>
+
+<p>There are eight projects in the sample application that need to be built. After manually building the web API projects, the rest of the projects can be built using a DOS batch file called&nbsp;<strong>_BuildAllProjects.bat</strong> that you can find in the Support folder. This DOS batch file executes the .NET Core CLI build command for each project:</p>
+
+<pre lang="text">
+dotnet build SpawnProcesses\SpawnProcesses
+dotnet build ..\AccountManagement\CodeProject.AccountManagement.WebApi
+dotnet build ..\InventoryManagement\CodeProject.InventoryManagement.MessageQueueing
+dotnet build ..\InventoryManagement\CodeProject.InventoryManagement.WebApi
+dotnet build ..\LoggingManagement\CodeProject.LoggingManagement.MessageQueueing
+dotnet build ..\PurchaseOrderManagement\CodeProject.PurchaseOrderManagement.MessageQueueing
+dotnet build ..\PurchaseOrderManagement\CodeProject.PurchaseOrderManagement.WebApi
+dotnet build ..\SalesOrderManagement\CodeProject.SalesOrderManagement.MessageQueueing
+dotnet build ..\SalesOrderManagement\CodeProject.SalesOrderManagement.WebApi
+
+</pre>
+
+<p><strong>Angular CLI 6.0.8 </strong>- The Angular 6 front-end application is built and served through the Angular CLI. You can verify your Angular CLI installation by running ng version. If the Angular CLI is not installed you can install it from the&nbsp;command window&nbsp;by typing npm&nbsp;install&nbsp;-g&nbsp;@angular/cli@6.0.8.</p>
+
+<p><strong>Build the Angular 6 front-end application</strong> - The Angular 6 front-end application is dependent on node modules to be installed in the project&#39;s node_modules&nbsp;folder. Creating all the node modules can be done by opening the by going to the Portal folder and opening the CodeProject.Portal.sln Visual Studio solution file. Right-click on the packages.json file and select <em>Restore Packages</em>. Once the packages have been installed you can build the Angular 6 project using the Angular 6 CLI at the command window and navigate to the Portal -&gt; &nbsp;CodeProject.Portal folder and execute <strong>ng build</strong>.</p>
+
+<h3><strong>Running the Sample Application Back-End Services and Front-End Portal</strong></h3>
+
+<p>Once you have everything built you can begin to run the sample application.&nbsp; First start up all the back-end Web API applications and Message Queuing Services by executing the DOS batch file <strong>_StartAllDevelopmentWebServersAndQueues.bat</strong>&nbsp;from the Support folder. This fille executes a custom built .NET Core application called <em>SpawnProcesses </em>that will start up&nbsp;all the back-end processes&nbsp;for the sample application.&nbsp;</p>
+
+<p>The SpawnProcesses application will start&nbsp;a new process for each of the eight back-end applications.&nbsp; By setting the property <em>CreateNoWindow </em>for each process will force each process to execute&nbsp;in the same DOS window. This is nice because it doesn&#39;t polute your environment with eight separate windows being opened, Also if you need to run and debug one or more of the back-end services from Visual Studio, you can set a property (true or false) in the <em>appsettings.development.json</em> file in the SpawnProcesses project to determine whether or not you wish to start that particular process.</p>
+
+<pre lang="cs">
+if (startUpProcesses.InventoryManagementWebApi == true)
+{
+        Console.WriteLine(&quot;Starting Inventory Management Web Api&quot;);
+
+        Process process1 = new Process();
+        process1.StartInfo.CreateNoWindow = false;
+        process1.StartInfo.UseShellExecute = false;
+        process1.StartInfo.RedirectStandardOutput = false;
+        process1.StartInfo.FileName = runningPath + @&quot;Support\StartInventoryManagementWebApi.bat&quot;;
+        process1.StartInfo.Arguments = runningPath;
+        process1.Start();
+
+}
+
+if (startUpProcesses.SalesOrderManagementWebApi == true)
+{
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Console.WriteLine(&quot;Starting Sales Order Management Web Api&quot;);
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Process process2 = new Process();
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;process2.StartInfo.CreateNoWindow = false;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;process2.StartInfo.UseShellExecute = false;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;process2.StartInfo.RedirectStandardOutput = false;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;process2.StartInfo.FileName = runningPath + @&quot;Support\StartSalesOrderManagementWebApi.bat&quot;;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;process2.StartInfo.Arguments = runningPath;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;process2.Start();
+
+}
+
+</pre>
+
+<p>Each process calls a DOS batch file that excutes the .NET Core CLI run command to launch the application. The below code snippet launches the Inventory Management Web API application.</p>
+
+<pre>
+dotnet run --verbosity m --launch-profile CodeProject.InventoryManagement.WebApi --no-build 
+</pre>
+
+<p>Now with the all the back-end services up and runing, we can now serve up the sample application&#39;s web front-end&nbsp;Angular 6 application. From the DOS window command line, navigate to the Portal -&gt; CodeProject.Portal folder and execute the Angular CLI command: <strong>ng serve.</strong> This will kick off a web server on localhost:4200. To access the Microservices Portal application, navigate&nbsp;to http://localhost:4200 in your browser.</p>
+
+<h3><strong>Angular 6 Web Application - Points of Interest</strong></h3>
+
+<p style="line-height: 14.7pt"><span style="margin: 0px; color: rgb(17, 17, 17); font-size: 10.5pt">I didn&#39;t get too much into the front-end Angular 6 code for the sample application but below is a brief list of points of interest you may want to explore:</span></p>
+
+<ul>
+	<li style="line-height: 14.7pt"><span style="margin: 0px; color: rgb(17, 17, 17); font-size: 10.5pt">The Inventory Management, Sales Order Management and Purchase Order Management modules are downloaded as separately lazy-loaded modules.</span></li>
+	<li style="line-height: 14.7pt"><span style="margin: 0px; color: rgb(17, 17, 17); font-size: 10.5pt">The Angular 6 application implements Angular Material Design components that renders an&nbsp;alternate fresh look and feel compared to the traditional bootstrap format.</span></li>
+	<li style="line-height: 14.7pt"><span style="margin: 0px; color: rgb(17, 17, 17); font-size: 10.5pt">A Angular module called <em><span style="margin: 0px">auth0/angular-jwt </span></em><span style="margin: 0px">was implemented and uses the module&#39;s </span></span><span style="margin: 0px; color: rgb(17, 17, 17); font-size: 10.5pt">JWT Helper Service to extract claim information client-side from the user&#39;s JWT web token, including extracting the expiration date of the token which is used to automatically log out the user when their token has expired.</span></li>
+</ul>
+
+<p>For more information regarding Angular 6 and .NET Core 2.1, check out my Code Project article&nbsp; <a href="https://www.codeproject.com/Articles/1250961/Deploying-an-Angular-Application-with-ASP-NET-Core">Deploying an Angular 6 Application with ASP.NET Core 2.&nbsp;</a></p>
+
+<h3><strong>Summary</strong></h3>
+
+<p>In&nbsp;Kubrick&#39;s movie&nbsp;<em>2001: A Space Odyssey,</em><strong><em>&nbsp;</em></strong>there was&nbsp;a fictional character&nbsp;called the&nbsp;<strong>HAL 9000 </strong>computer. HAL is initially considered a dependable member of the crew,&nbsp;maintaining ship functions and engaging with its human crew mates on an equal footing.&nbsp;In the film the artificial&nbsp;intelligence of HAL is shown to triumph easily. However, as time progresses, HAL begins to malfunction in&nbsp;subtle ways and, as a result, the decision is made to shut down HAL in order to prevent more serious malfunctions.&nbsp;</p>
+
+<p>The microservice architecture is exciting and has a lot of promise and like HAL it seems dependable and engaging. But as good as microservices sounds on paper, they are not without their challenges, the biggest of which is its added complexity. Microservices must be well planned, developed and managed. Inter-process communications need to be facilitated, data must be shared and/or duplicated and all parts of a microservices ecosystem must be continuously monitored to track abnormal behavior and possible failures. As an information technology professional I quote the HAL 9000 -&nbsp;&ldquo;<em>I&#39;ve still got the greatest enthusiasm and confidence in the mission&rdquo;</em>. &nbsp;I am excited and hopeful that the fate of microservices will be a much better one than the fate that became of the HAL 9000.</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>

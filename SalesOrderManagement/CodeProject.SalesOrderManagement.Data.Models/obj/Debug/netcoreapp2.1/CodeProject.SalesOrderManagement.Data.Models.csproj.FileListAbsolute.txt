@@ -1,8 +1,0 @@
-C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.Data.Models\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.Data.Models.csproj.CoreCompileInputs.cache
-C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.Data.Models\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.Data.Models.AssemblyInfoInputs.cache
-C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.Data.Models\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.Data.Models.AssemblyInfo.cs
-C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.Data.Models\bin\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.Data.Models.deps.json
-C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.Data.Models\bin\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.Data.Models.dll
-C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.Data.Models\bin\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.Data.Models.pdb
-C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.Data.Models\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.Data.Models.dll
-C:\MyFiles\_CodeProjectMicroServices\SalesOrderManagement\CodeProject.SalesOrderManagement.Data.Models\obj\Debug\netcoreapp2.1\CodeProject.SalesOrderManagement.Data.Models.pdb
