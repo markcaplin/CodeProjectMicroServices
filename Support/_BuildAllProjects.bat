@@ -1,4 +1,4 @@
-
+dotnet build SpawnProcesses\SpawnProcesses
 dotnet build ..\AccountManagement\CodeProject.AccountManagement.WebApi
 dotnet build ..\InventoryManagement\CodeProject.InventoryManagement.MessageQueueing
 dotnet build ..\InventoryManagement\CodeProject.InventoryManagement.WebApi
@@ -7,4 +7,5 @@ dotnet build ..\PurchaseOrderManagement\CodeProject.PurchaseOrderManagement.Mess
 dotnet build ..\PurchaseOrderManagement\CodeProject.PurchaseOrderManagement.WebApi
 dotnet build ..\SalesOrderManagement\CodeProject.SalesOrderManagement.MessageQueueing
 dotnet build ..\SalesOrderManagement\CodeProject.SalesOrderManagement.WebApi
+
 pause
