@@ -7,7 +7,8 @@
 
 # dependencies
 /node_modules
-
+/wwwroot
+/src/dist
 # IDEs and editors
 /.idea
 .project
