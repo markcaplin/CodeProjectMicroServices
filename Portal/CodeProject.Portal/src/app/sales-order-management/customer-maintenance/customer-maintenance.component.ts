@@ -142,7 +142,7 @@ export class CustomerMaintenanceComponent implements OnInit, OnDestroy {
 
   }
 
-  private editCustomer() {
+  public editCustomer() {
     this.createMode = false;
     this.readonlyMode = false;
   }

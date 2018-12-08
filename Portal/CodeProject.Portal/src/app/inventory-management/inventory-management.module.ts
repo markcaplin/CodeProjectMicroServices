@@ -16,17 +16,19 @@ import { FormsModule } from '@angular/forms';
 import { InventoryManagementRoutingModule } from './inventory-management.routing';
 
 import { MaterialModule } from '../material.module';
+import { FileUploadModule  } from 'ng2-file-upload';
 
 @NgModule({
-    imports: [
-        InventoryManagementRoutingModule,
-        CommonModule,
-        FormsModule,
-        MaterialModule
-    ],
-    declarations: [ProductInquiryComponent, PurchaseOrderInquiryComponent, ProductMaintenanceComponent, 
-        UploadProductMasterComponent, PurchaseOrderReceivingComponent, SalesOrderInquiryComponent, 
-        SalesOrderShipmentsComponent, InventoryManagementNavBarComponent]
+  imports: [
+    InventoryManagementRoutingModule,
+    CommonModule,
+    FormsModule,
+    MaterialModule,
+    FileUploadModule
+  ],
+  declarations: [ProductInquiryComponent, PurchaseOrderInquiryComponent, ProductMaintenanceComponent,
+    UploadProductMasterComponent, PurchaseOrderReceivingComponent, SalesOrderInquiryComponent,
+    SalesOrderShipmentsComponent, InventoryManagementNavBarComponent]
 })
 export class InventoryManagementModule { }
 

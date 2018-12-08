@@ -13,6 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "showCircularDependencies": false,
             "outputPath": "wwwroot",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -43,7 +44,7 @@
               "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
-              "buildOptimizer": true
+              "buildOptimizer": false
             }
           }
         },

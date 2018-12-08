@@ -142,7 +142,7 @@ export class SupplierMaintenanceComponent implements OnInit, OnDestroy {
 
   }
 
-  private editSupplier() {
+  public editSupplier() {
     this.createMode = false;
     this.readonlyMode = false;
   }

@@ -1,0 +1,1 @@
+{"version":3,"file":"sales-order.viewmodel.js","sourceRoot":"","sources":["../../../../../app/sales-order-management/view-models/sales-order.viewmodel.ts"],"names":[],"mappings":";;AAGA;IAEI;QACI,IAAI,CAAC,iBAAiB,GAAG,IAAI,KAAK,EAA6B,CAAC;QAChE,IAAI,CAAC,+BAA+B,GAAG,IAAI,KAAK,EAA6B,CAAC;IAClF,CAAC;IAuBL,0BAAC;AAAD,CAAC,AA5BD,IA4BC;AA5BY,kDAAmB"}

@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+
 import {
   MatButtonModule,
   MatIconModule,
@@ -21,8 +22,7 @@ import {
 import { MatSortModule } from '@angular/material/sort';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatFileUploadModule } from 'angular-material-fileupload';
-
+//import { MatFileUploadModule } from 'angular-material-fileupload';
 
 @NgModule({
   imports: [
@@ -46,8 +46,7 @@ import { MatFileUploadModule } from 'angular-material-fileupload';
     MatSortModule,
     MatMenuModule,
     MatProgressSpinnerModule,
-    MatDialogModule,
-    MatFileUploadModule
+    MatDialogModule
   ],
   exports: [
     MatButtonModule,
@@ -70,8 +69,7 @@ import { MatFileUploadModule } from 'angular-material-fileupload';
     MatSortModule,
     MatMenuModule,
     MatProgressSpinnerModule,
-    MatDialogModule,
-    MatFileUploadModule
+    MatDialogModule
   ]
 })
 export class MaterialModule {}

@@ -1,18 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <TypeScriptToolsVersion>2.8</TypeScriptToolsVersion>
+    <Configurations>Debug;Release;Development;QA</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="src\app\material-design\material.module.ts" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="2.1.1" />
+    <DotNetCliToolReference Include="Microsoft.DotNet.Xdt.Tools" Version="2.0.0" />
   </ItemGroup>
-
+  <!--
   <ItemGroup>
     <Folder Include="src\app\account-management\" />
     <Folder Include="src\app\inventory-management\" />
@@ -20,10 +19,37 @@
     <Folder Include="src\app\shared-components-services\" />
     <Folder Include="src\app\sales-order-management\" />
     <Folder Include="src\app\purchase-order-management\" />
-  </ItemGroup>
+  </ItemGroup>-->
 
-  <ItemGroup>
-    <TypeScriptCompile Include="src\app\material-design\material.module.ts" />
-  </ItemGroup>
+  <PropertyGroup>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+  </PropertyGroup>
+
+  <Target Name="Build Angular Debug" Condition="'$(Configuration)'=='Debug'" BeforeTargets="Build">
+    <Message Text="* * * * * * Building Debug Angular App * * * * * *" Importance="high" />
+    <Exec Command="ng build" />
+  </Target>
+
+  <Target Name="Build Angular Release" Condition="'$(Configuration)'=='Release'" BeforeTargets="Build">
+    <Message Text="* * * * * * Building Release Angular App * * * * * *" Importance="high" />
+    <Exec Command="ng build --prod --aot" />
+  </Target>
+
+  <Target Name="Build Angular QA" Condition="'$(Configuration)'=='QA'" BeforeTargets="Build">
+    <Message Text="* * * * * * Building QA Angular App * * * * * *" Importance="high" />
+    <Exec Command="ng build --prod --extract-css=false" /> 
+  </Target>
+
+  <Target Name="ApplyXdtConfigTransform" BeforeTargets="_TransformWebConfig" Condition="'$(Configuration)'!='Debug'">
+    <PropertyGroup>
+      <_SourceWebConfig>$(MSBuildThisFileDirectory)Web.config</_SourceWebConfig>
+      <_XdtTransform>$(MSBuildThisFileDirectory)Web.$(Configuration).config</_XdtTransform>
+      <_TargetWebConfig>$(PublishDir)Web.config</_TargetWebConfig>
+    </PropertyGroup>
+    <Message Text="$(MSBuildThisFileDirectory)Web.config" Importance="high" />
+    <Message Text="$(MSBuildThisFileDirectory)Web.$(Configuration).config" Importance="high" />
+    <Message Text="$(PublishDir)Web.config" Importance="high" />
+    <Exec Command="dotnet transform-xdt --xml &quot;$(_SourceWebConfig)&quot; --transform &quot;$(_XdtTransform)&quot; --output &quot;$(_TargetWebConfig)&quot;" Condition="Exists('$(_XdtTransform)')" />
+  </Target>
 
 </Project>

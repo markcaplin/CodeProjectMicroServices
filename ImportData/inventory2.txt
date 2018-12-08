@@ -1,0 +1,2 @@
+ProductId	Description	BinLocation	UnitPrice
+823784499-8	Horseradish - Spicy	0069-4395	12.50

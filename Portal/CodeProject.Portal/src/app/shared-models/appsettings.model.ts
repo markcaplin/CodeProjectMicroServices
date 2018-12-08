@@ -3,4 +3,5 @@ export class AppSettings {
     public inventoryManagementWebApiUrl: string;
     public purchaseOrderManagementWebApiUrl: string;
     public salesOrderManagementWebApiUrl: string;
+    public environment: string;
 }

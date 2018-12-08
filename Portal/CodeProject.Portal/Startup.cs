@@ -53,6 +53,19 @@ namespace CodeProject.Portal
             app.UseCookiePolicy();
 
             app.UseMvc();
-        }
+
+            app.Use(async (context, next) => {
+                var request = context.Request;
+                if (request.Path != "/")
+                {
+                    context.Response.Redirect("/" + "?currentRoutePath=" + request.Path);
+                }
+                else
+                {
+                    await next.Invoke();
+                }
+            });
+
     }
+  }
 }
