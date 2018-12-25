@@ -1,2 +1,3 @@
 cd %1SalesOrderManagement\CodeProject.SalesOrderManagement.MessageQueueing
-dotnet run --verbosity m --launch-profile CodeProject.SalesOrderManagement.MessageQueueing --no-build
+REM dotnet run --verbosity m --launch-profile CodeProject.SalesOrderManagement.MessageQueueing --no-build
+dotnet run --verbosity m --launch-profile QA --no-build

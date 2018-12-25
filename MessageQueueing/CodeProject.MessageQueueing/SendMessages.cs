@@ -12,6 +12,7 @@ using CodeProject.Shared.Common.Models;
 using CodeProject.MessageQueueing;
 using Microsoft.AspNetCore.SignalR.Client;
 using RabbitMQ.Client;
+using System.IO;
 
 namespace CodeProject.MessageQueueing
 {
@@ -23,13 +24,15 @@ namespace CodeProject.MessageQueueing
 		private readonly MessageQueueAppConfig _appConfig;
 		private readonly ConnectionStrings _connectionStrings;
 		private readonly string _signalRQueue;
-	
+
+		private const string Path = @"c:\myfiles\InventoryQueue.txt";
+
 		// private IBasicProperties basicProperties;
 		// private IModel_channel;
 
 		HubConnection _signalRHubConnection;
 		private Timer _timer;
-
+	
 		/// <summary>
 		/// Send Messages
 		/// </summary>
@@ -46,6 +49,12 @@ namespace CodeProject.MessageQueueing
 			_messageProcessor = messageProcessor;
 			_appConfig = appConfig;
 			_signalRQueue = signalRQueue;
+
+			using (var sw = File.AppendText(Path))
+			{
+				sw.WriteLine("Send Messages Constructor");
+			}
+
 		}
 
 		/// <summary>
@@ -55,6 +64,11 @@ namespace CodeProject.MessageQueueing
 		/// <returns></returns>
 		public Task StartAsync(CancellationToken cancellationToken)
 		{
+
+			using (var sw = File.AppendText(Path))
+			{
+				sw.WriteLine("Send Mesages StartAsync");
+			}
 
 			StartSignalRConnection();
 
@@ -68,6 +82,11 @@ namespace CodeProject.MessageQueueing
 		/// </summary>
 		private async void StartSignalRConnection()
 		{
+			using (var sw = File.AppendText(Path))
+			{
+				sw.WriteLine("Send Mesages StartSignalRConnection " + _appConfig.SignalRHubUrl);
+			}
+
 			if (string.IsNullOrEmpty(_appConfig.SignalRHubUrl))
 			{
 				return;
@@ -77,16 +96,31 @@ namespace CodeProject.MessageQueueing
 
 			Console.WriteLine("CONNECTING TO SIGNAL R  " + url);
 
+			using (var sw = File.AppendText(Path))
+			{
+				sw.WriteLine("Send Mesages Connecting to Signal R" + _appConfig.SignalRHubUrl);
+			}
+
 			Boolean connected = false;
 			while (connected == false)
 			{
 				try
 				{
+					using (var sw = File.AppendText(Path))
+					{
+						sw.WriteLine("Send Mesages Try Connecting to Signal R" + _appConfig.SignalRHubUrl);
+					}
+
 					_signalRHubConnection = new HubConnectionBuilder().WithUrl(url).Build();
 					connected = true;
 				}
 				catch (Exception ex)
 				{
+					using (var sw = File.AppendText(Path))
+					{
+						sw.WriteLine("Send Mesages Connecting to Signal R ERROR " + ex.Message);
+					}
+
 					Console.WriteLine(ex.Message);
 					await Task.Delay(5000);
 				}
@@ -95,6 +129,10 @@ namespace CodeProject.MessageQueueing
 			
 			_signalRHubConnection.On<string>(_signalRQueue, (message) =>
 			{
+				using (var sw = File.AppendText(Path))
+				{
+					sw.WriteLine("Send Mesages MESSAGE RECEIVED ");
+				}
 				this.GetMessagesInQueue(null);
 
 			});
@@ -102,6 +140,12 @@ namespace CodeProject.MessageQueueing
 			_signalRHubConnection.Closed += async (error) =>
 			{
 				Console.WriteLine("SignalR Connection Closed");
+
+				using (var sw = File.AppendText(Path))
+				{
+					sw.WriteLine("Send Mesages Connection Closed ");
+				}
+
 				await Task.Delay(10000);
 				await _signalRHubConnection.StartAsync();
 				Console.WriteLine("Restart SignalR");
@@ -112,14 +156,29 @@ namespace CodeProject.MessageQueueing
 			{
 				try
 				{
+					using (var sw = File.AppendText(Path))
+					{
+						sw.WriteLine("Send Mesages Connecting to SIGNAL R StartAsync ");
+					}
+
 					Console.WriteLine("CONNECTING TO SIGNARL R");
 					await _signalRHubConnection.StartAsync();
 					Console.WriteLine("CONNECTED TO SIGNAL R " + url);
 					connected = true;
 
+					using (var sw = File.AppendText(Path))
+					{
+						sw.WriteLine("CONNECTED TO SIGNAL R ");
+					}
+
 				}
 				catch (Exception ex)
 				{
+					using (var sw = File.AppendText(Path))
+					{
+						sw.WriteLine("ERROR CONNECTING TO SIGNAL R " + ex.Message);
+					}
+
 					Console.WriteLine("ERROR CONNECTING TO SIGNAL R " + ex.Message);
 					await Task.Delay(10000);
 				}
@@ -128,16 +187,23 @@ namespace CodeProject.MessageQueueing
 
 		}
 		/// <summary>
-
-		/// <summary>
 		/// Get Messages In Queue
 		/// </summary>
 		/// <param name="state"></param>
 		private async void GetMessagesInQueue(object state)
 		{
+
+			using (var sw = File.AppendText(Path))
+			{
+				sw.WriteLine("Get Messages In Queue");
+			}
+
 			ResponseModel<List<MessageQueue>> messages = await _messageProcessor.SendQueueMessages(_messageQueueConfigurations, _appConfig.OutboundSemaphoreKey, _connectionStrings);
 			Console.WriteLine("total messages " + messages.Entity.Count.ToString() + " sent at " + DateTime.Now);
-
+			using (var sw = File.AppendText(Path))
+			{
+				sw.WriteLine("total messages " + messages.Entity.Count.ToString() + " sent at " + DateTime.Now);
+			}
 		}
 
 		public Task StopAsync(CancellationToken cancellationToken)

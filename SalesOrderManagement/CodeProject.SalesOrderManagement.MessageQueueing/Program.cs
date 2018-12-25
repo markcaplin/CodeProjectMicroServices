@@ -13,6 +13,8 @@ using CodeProject.SalesOrderManagement.Business.MessageService;
 using CodeProject.MessageQueueing;
 using System.IO;
 using System.Collections.Generic;
+using Microsoft.Extensions.PlatformAbstractions;
+using DotNetCore.WindowsServices;
 
 namespace CodeProject.SalesOrderManagement.MessageQueueing
 {
@@ -21,87 +23,50 @@ namespace CodeProject.SalesOrderManagement.MessageQueueing
 		public static async Task Main(string[] args)
 		{
 
-			MessageQueueAppConfig messageQueueAppConfig = new MessageQueueAppConfig();
-			ConnectionStrings connectionStrings = new ConnectionStrings();
-
-			string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-			string jsonFile = $"appsettings.{environment}.json";
-
-			var configBuilder = new ConfigurationBuilder()
-			  .SetBasePath(Directory.GetCurrentDirectory())
-			  .AddJsonFile(jsonFile, optional: true, reloadOnChange: true);
-
-			IConfigurationRoot configuration = configBuilder.Build();
-
-			configuration.GetSection("MessageQueueAppConfig").Bind(messageQueueAppConfig);
-			configuration.GetSection("ConnectionStrings").Bind(connectionStrings);
-
-			//
-			//	set up sending queue
-			//
-			IMessageQueueConnection sendingQueueConnection = new MessageQueueConnection(messageQueueAppConfig);
-			sendingQueueConnection.CreateConnection();
-
-			List<IMessageQueueConfiguration> messageQueueConfigurations = new List<IMessageQueueConfiguration>();
-
-			IMessageQueueConfiguration salesOrderSubmittedConfiguration = new MessageQueueConfiguration(MessageQueueExchanges.SalesOrderSubmitted, messageQueueAppConfig, sendingQueueConnection);
-
-			salesOrderSubmittedConfiguration.AddQueue(MessageQueueEndpoints.InventoryQueue);
-			salesOrderSubmittedConfiguration.AddQueue(MessageQueueEndpoints.LoggingQueue);
-
-			salesOrderSubmittedConfiguration.InitializeOutboundMessageQueueing();
-			messageQueueConfigurations.Add(salesOrderSubmittedConfiguration);
-
-			ISalesOrderManagementDataService salesOrderManagementDataService = new SalesOrderManagementDataService();
-			IMessageQueueProcessing messageProcessing = new MessageProcessing(salesOrderManagementDataService);
-
-			IHostedService sendSalesOrderManagementMessages =
-				new SendMessages(sendingQueueConnection, messageProcessing, messageQueueAppConfig,
-				connectionStrings, messageQueueConfigurations, MessageQueueEndpoints.SalesOrderQueue);
-
-
-			//
-			//	set up receiving queue
-			//
-			IMessageQueueConnection receivingConnection = new MessageQueueConnection(messageQueueAppConfig);
-			receivingConnection.CreateConnection();
-
-			List<IMessageQueueConfiguration> inboundMessageQueueConfigurations = new List<IMessageQueueConfiguration>();
-			IMessageQueueConfiguration inboundConfiguration = new MessageQueueConfiguration(messageQueueAppConfig, receivingConnection);
-			inboundMessageQueueConfigurations.Add(inboundConfiguration);
-
-			inboundConfiguration.InitializeInboundMessageQueueing(MessageQueueEndpoints.SalesOrderQueue);
-			inboundConfiguration.InitializeLoggingExchange(MessageQueueExchanges.Logging, MessageQueueEndpoints.LoggingQueue);
-			ISalesOrderManagementDataService inboundSalesOrderManagementDataService = new SalesOrderManagementDataService();
-			IMessageQueueProcessing inboundMessageProcessing = new MessageProcessing(inboundSalesOrderManagementDataService);
-
-			IHostedService receiveSalesOrderManagementMessages = new ReceiveMessages(receivingConnection, inboundMessageProcessing, messageQueueAppConfig, connectionStrings, inboundMessageQueueConfigurations);
-	
-			//
-			//	Set Up Message Processing
-			//
-			ISalesOrderManagementDataService salesOrderManagementProcessingDataService = new SalesOrderManagementDataService();
-			IMessageQueueProcessing messageProcessor = new MessageProcessing(salesOrderManagementProcessingDataService);
-			ProcessMessages processMessages = new ProcessMessages(messageProcessor, messageQueueAppConfig, connectionStrings);
-
-			var builder = new HostBuilder().ConfigureAppConfiguration((hostingContext, config) =>
+			var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+			if (basePath.ToLower().Contains("salesordermanagementqa"))
 			{
-				
-			})
-			.ConfigureServices((hostContext, services) =>
-			{
-				services.AddTransient<IHostedService>(provider => sendSalesOrderManagementMessages);
-			})
-			.ConfigureServices((hostContext, services) =>
-			{
-				services.AddTransient<IHostedService>(provider => processMessages);
-			})
-			.ConfigureServices((hostContext, services) =>
-			{
-				services.AddTransient<IHostedService>(provider => receiveSalesOrderManagementMessages);
-			});
+				var builderRunAsService = new HostBuilder()
+				.ConfigureServices((hostContext, services) =>
+				{
+					services.AddHostedService<WindowsServiceHost>();
+				});
 
-			await builder.RunConsoleAsync();
+				await builderRunAsService.RunAsServiceAsync();
+			}
+			else
+			{
+
+				StartUpConfiguration startUpConfiguration = new StartUpConfiguration();
+				startUpConfiguration.Startup();
+
+				IHostedService sendSalesOrderManagementMessages = startUpConfiguration.SendingHostedService();
+				IHostedService receiveSalesOrderManagementMessages = startUpConfiguration.ReceivingHostedService();
+				IHostedService processMessages = startUpConfiguration.ProcessMessagesHostedService();
+
+				var builder = new HostBuilder().ConfigureAppConfiguration((hostingContext, config) => { })
+					.ConfigureServices((hostContext, services) =>
+					{
+						services.AddTransient<IHostedService>(provider => processMessages);
+					})
+					.ConfigureServices((hostContext, services) =>
+					{
+						services.AddTransient<IHostedService>(provider => sendSalesOrderManagementMessages);
+					})
+					.ConfigureServices((hostContext, services) =>
+					{
+						services.AddTransient<IHostedService>(provider => receiveSalesOrderManagementMessages);
+					})
+					.ConfigureLogging((hostingContext, logging) =>
+					{
+						logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+						logging.AddConsole();
+					});
+
+				builder.RunConsoleAsync().Wait();
+
+			}
 		}
 	}
+
 }

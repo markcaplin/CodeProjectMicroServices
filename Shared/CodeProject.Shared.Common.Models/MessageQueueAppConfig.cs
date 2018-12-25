@@ -30,5 +30,6 @@ namespace CodeProject.Shared.Common.Models
 		public int SendingIntervalSeconds { get; set; }
 		public int ReceivingIntervalSeconds { get; set; }
 		public string SignalRHubUrl { get; set; }
+		public Boolean RunAsService { get; set; }
 	}
 }
